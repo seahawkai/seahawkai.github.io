@@ -3,10 +3,10 @@
    ceremony/accent moments only. Body ink never goes pure black. */
 :root {
   /* ---- Base: Greens (five calibrated tiers) ---- */
-  --green-primary: #1e6e57;   /* headings, dominant single-color brand signal */
-  --green-accent:  #17845c;   /* primary filled CTA + signature fills */
-  --green-deep:    #17332c;   /* deep bands, footers, dark ceremony surfaces */
-  --green-uplift:  #33574c;   /* secondary mid-dark green, decorative only */
+  --green-primary: #2a7e66;   /* headings, dominant single-color brand signal */
+  --green-accent:  #248f68;   /* primary filled CTA + signature fills */
+  --green-deep:    #1f4239;   /* deep bands, footers, dark ceremony surfaces */
+  --green-uplift:  #3f685c;   /* secondary mid-dark green, decorative only */
   --green-light:   #d6e8e1;   /* pale mint wash, valid-state tints */
   --green-consent: #008248;   /* brighter consent/affirmative variant */
 
