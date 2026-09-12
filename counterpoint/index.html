@@ -6,68 +6,73 @@
 <title>Counterpoint</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..900&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
 <style>
 /* ============ DESIGN TOKENS ============ */
 :root{
-  --paper-0:#FBF9F4;
-  --paper-100:#F2EDE2;
-  --paper-200:#E7E0D0;
-  --ink-950:#0C0F14;
-  --ink-800:#181D26;
-  --ink-700:#242B37;
-  --ink-600:#39424F;
-  --slate-600:#5B6472;
-  --slate-500:#707A88;
-  --slate-400:#8A93A0;
+  --paper-0:#F2F3F8;
+  --paper-100:#E5E8F0;
+  --paper-200:#D5D9E6;
+  --ink-950:#090B11;
+  --ink-800:#151A24;
+  --ink-700:#202634;
+  --ink-600:#313A4B;
+  --slate-600:#565F73;
+  --slate-500:#707A90;
+  --slate-400:#8D96AA;
 
-  --brass-300:#E4C077;
-  --brass-500:#B8873A;
-  --brass-600:#9C6F2C;
-  --brass-700:#7A5620;
+  --brass-300:#FFD666;
+  --brass-500:#E3A400;
+  --brass-600:#B27F00;
+  --brass-700:#835D00;
 
-  --teal-300:#7FCBB9;
-  --teal-500:#1F8A72;
-  --teal-600:#166952;
-  --teal-950:#0A2420;
+  --teal-300:#78E4C8;
+  --teal-500:#0A9C7D;
+  --teal-600:#087A62;
+  --teal-950:#062B23;
 
-  --ember-300:#E7A583;
-  --ember-500:#C1502E;
-  --ember-600:#9C3E22;
-  --ember-950:#2A1510;
+  --ember-300:#F8A3AE;
+  --ember-500:#E23350;
+  --ember-600:#B71F3A;
+  --ember-950:#390B15;
 
-  --crimson-500:#C43D3D;
-  --azure-500:#3E6FB0;
+  --crimson-500:#C81E3A;
+  --azure-500:#3D63C9;
+
+  --signal-300:#9BB1FF;
+  --signal-500:#3E5CE8;
+  --signal-600:#2E46B8;
+  --signal-700:#233590;
 
   --bg:var(--paper-0);
   --surface:#ffffff;
   --surface-2:var(--paper-100);
   --surface-3:var(--paper-200);
-  --border:#DDD4C0;
-  --border-soft:#EAE3D3;
-  --text:#1B1E17;
+  --border:#D6DAE6;
+  --border-soft:#E6E9F1;
+  --text:#12151E;
   --text-muted:var(--slate-600);
   --text-faint:var(--slate-500);
-  --accent:var(--brass-500);
-  --accent-ink:#3E2D0F;
-  --accent-soft:#F3E4C4;
-  --accent-soft-text:#5C4212;
+  --accent:var(--signal-500);
+  --accent-ink:#FFFFFF;
+  --accent-soft:#E3E8FC;
+  --accent-soft-text:#2E46B8;
   --for-color:var(--teal-500);
-  --for-soft:#DCF0E9;
+  --for-soft:#DBF3EB;
   --for-text:var(--teal-600);
   --against-color:var(--ember-500);
-  --against-soft:#F7E2D6;
+  --against-soft:#FBE1E5;
   --against-text:var(--ember-600);
   --danger:var(--crimson-500);
-  --shadow-1:0 1px 2px rgba(20,16,8,.06), 0 1px 1px rgba(20,16,8,.04);
-  --shadow-2:0 6px 20px -6px rgba(20,16,8,.18), 0 2px 6px -2px rgba(20,16,8,.08);
-  --shadow-3:0 20px 50px -12px rgba(10,8,4,.35);
+  --shadow-1:0 1px 2px rgba(10,13,22,.07), 0 1px 1px rgba(10,13,22,.05);
+  --shadow-2:0 6px 20px -6px rgba(10,13,22,.20), 0 2px 6px -2px rgba(10,13,22,.09);
+  --shadow-3:0 20px 50px -12px rgba(6,8,16,.38);
   --radius-s:8px;
   --radius-m:14px;
   --radius-l:22px;
-  --font-display:"Fraunces",ui-serif,Georgia,serif;
+  --font-display:"Bricolage Grotesque",ui-sans-serif,system-ui,-apple-system,sans-serif;
   --font-body:"IBM Plex Sans",ui-sans-serif,system-ui,-apple-system,sans-serif;
   --font-mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,monospace;
 }
@@ -77,15 +82,15 @@
     --surface:var(--ink-800);
     --surface-2:var(--ink-700);
     --surface-3:var(--ink-600);
-    --border:#323B49;
-    --border-soft:#262E3A;
-    --text:#F3F1EA;
-    --text-muted:#AAB2C0;
-    --text-faint:#7E8896;
-    --accent:var(--brass-300);
-    --accent-ink:#2A1E0C;
-    --accent-soft:#4A3A18;
-    --accent-soft-text:var(--brass-300);
+    --border:#333D50;
+    --border-soft:#232A38;
+    --text:#EDEFF6;
+    --text-muted:#A9B1C4;
+    --text-faint:#7B849A;
+    --accent:var(--signal-300);
+    --accent-ink:#131A33;
+    --accent-soft:#212A55;
+    --accent-soft-text:var(--signal-300);
     --for-soft:var(--teal-950);
     --for-text:var(--teal-300);
     --against-soft:var(--ember-950);
@@ -99,14 +104,15 @@
   --surface:var(--ink-800);
   --surface-2:var(--ink-700);
   --surface-3:var(--ink-600);
-  --border:#323B49;
-  --border-soft:#262E3A;
-  --text:#F3F1EA;
-  --text-muted:#AAB2C0;
-  --text-faint:#7E8896;
-  --accent:var(--brass-300);
-  --accent-ink:#2A1E0C;
-  --accent-soft:#4A3A18;
+  --border:#333D50;
+  --border-soft:#232A38;
+  --text:#EDEFF6;
+  --text-muted:#A9B1C4;
+  --text-faint:#7B849A;
+  --accent:var(--signal-300);
+  --accent-ink:#131A33;
+  --accent-soft:#212A55;
+  --accent-soft-text:var(--signal-300);
   --for-soft:var(--teal-950);
   --for-text:var(--teal-300);
   --against-soft:var(--ember-950);
@@ -320,7 +326,7 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
 .modal{background:var(--surface);border-radius:var(--radius-l);max-width:520px;width:100%;max-height:88vh;overflow-y:auto;box-shadow:var(--shadow-3)}
 .toast-stack{position:fixed;bottom:20px;right:20px;z-index:90;display:flex;flex-direction:column;gap:8px;max-width:340px}
 @media (max-width:880px){.toast-stack{right:12px;left:12px;bottom:76px;max-width:none}}
-.toast{background:var(--ink-800);color:#F3F1EA;border-radius:var(--radius-s);padding:12px 16px;box-shadow:var(--shadow-2);font-size:13.5px;display:flex;gap:10px;align-items:flex-start;animation:toast-in .25s ease}
+.toast{background:var(--ink-800);color:#EDEFF6;border-radius:var(--radius-s);padding:12px 16px;box-shadow:var(--shadow-2);font-size:13.5px;display:flex;gap:10px;align-items:flex-start;animation:toast-in .25s ease}
 .toast svg{flex:none;margin-top:1px}
 @keyframes toast-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 
@@ -423,8 +429,8 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
 .case-card .case-name{font-family:var(--font-display);font-weight:650;font-size:16.5px}
 
 /* ============ ARENA / LIVE DEBATE ============ */
-.arena{min-height:100vh;background:radial-gradient(ellipse at top,#232a37 0%,var(--ink-950) 55%);color:#F3F1EA;display:flex;flex-direction:column}
-:root[data-theme=light] .arena{background:radial-gradient(ellipse at top,#242a36 0%,#12151c 60%)}
+.arena{min-height:100vh;background:radial-gradient(ellipse at top,#161d3a 0%,var(--ink-950) 55%);color:#EDEFF6;display:flex;flex-direction:column}
+:root[data-theme=light] .arena{background:radial-gradient(ellipse at top,#171d38 0%,#0a0c14 60%)}
 .arena-top{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;border-bottom:1px solid rgba(255,255,255,.08);flex-wrap:wrap;gap:10px}
 .arena-motion{text-align:center;flex:1;min-width:240px}
 .arena-motion .m-label{font-size:10.5px;text-transform:uppercase;letter-spacing:.12em;color:#9AA3B2}
@@ -433,10 +439,10 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
 .arena-body{flex:1;display:grid;grid-template-columns:1fr 300px;gap:0}
 @media (max-width:900px){.arena-body{grid-template-columns:1fr}}
 .arena-main{padding:20px 26px 130px;display:flex;flex-direction:column;gap:16px;overflow-y:auto;max-height:calc(100vh - 66px)}
-.arena-side{border-left:1px solid rgba(255,255,255,.08);padding:20px;display:flex;flex-direction:column;gap:18px;color:#F3F1EA;overflow-y:auto;max-height:calc(100vh - 66px)}
+.arena-side{border-left:1px solid rgba(255,255,255,.08);padding:20px;display:flex;flex-direction:column;gap:18px;color:#EDEFF6;overflow-y:auto;max-height:calc(100vh - 66px)}
 @media (max-width:900px){.arena-side{border-left:none;border-top:1px solid rgba(255,255,255,.08);max-height:none}}
 
-.phase-banner{align-self:center;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);color:#EDE9DE;padding:7px 18px;border-radius:999px;font-size:12px;font-weight:600;letter-spacing:.03em;text-transform:uppercase}
+.phase-banner{align-self:center;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);color:#E6E9F4;padding:7px 18px;border-radius:999px;font-size:12px;font-weight:600;letter-spacing:.03em;text-transform:uppercase}
 
 .msg{display:flex;gap:12px;max-width:78%}
 .msg.student{align-self:flex-end;flex-direction:row-reverse}
@@ -444,10 +450,14 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
 .msg-avatar{width:34px;height:34px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12.5px;font-family:var(--font-mono)}
 .msg.ai .msg-avatar{background:var(--ember-500);color:#fff}
 .msg.student .msg-avatar{background:var(--teal-500);color:#fff}
-.msg-bubble{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.09);border-radius:16px;padding:13px 16px;font-size:14px;line-height:1.55;color:#F3F1EA}
+.msg-bubble{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.09);border-radius:16px;padding:13px 16px;font-size:14px;line-height:1.55;color:#EDEFF6}
 .msg.student .msg-bubble{background:rgba(127,203,185,.14);border-color:rgba(127,203,185,.22)}
 .msg-meta{font-size:10.5px;color:#8892A0;margin-top:5px;display:flex;gap:8px}
-.msg-tag{display:inline-block;font-size:10px;padding:1px 7px;border-radius:999px;background:rgba(196,80,80,.18);color:#F3B9A6;margin-left:6px}
+.msg-tag{display:inline-block;font-size:10px;padding:1px 7px;border-radius:999px;background:rgba(226,51,80,.18);color:#F9BAC4;margin-left:6px}
+.point-list{display:flex;flex-direction:column;gap:10px}
+.point-item{display:flex;gap:9px;align-items:baseline}
+.point-num{flex:none;font-family:var(--font-mono);font-size:11px;font-weight:700;opacity:.55;min-width:14px}
+.point-text{flex:1}
 
 .thinking-row{align-self:flex-start;display:flex;align-items:center;gap:10px;color:#AEB6C4;font-size:13px}
 .thinking-dots{display:flex;gap:3px}
@@ -472,6 +482,8 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
 .mode-toggle button.active{background:rgba(255,255,255,.16);color:#fff}
 .mic-btn{width:42px;height:42px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:flex;align-items:center;justify-content:center;flex:none}
 .mic-btn.recording{background:var(--ember-500);color:#fff;animation:pulse-ring 1.6s infinite}
+.mic-inline-btn{background:var(--surface);border:1px solid var(--border);box-shadow:var(--shadow-1)}
+.mic-inline-btn.recording{color:#fff;background:var(--ember-500);border-color:var(--ember-500);animation:pulse-ring 1.6s infinite}
 .wave-bars{display:flex;align-items:center;gap:2px;height:20px}
 .wave-bars span{width:3px;background:var(--teal-300);border-radius:2px;animation:wavey .8s infinite ease-in-out}
 @keyframes wavey{0%,100%{height:4px}50%{height:18px}}
@@ -482,7 +494,7 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
 .side-panel-h{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:#8892A0;font-weight:700;display:flex;align-items:center;gap:6px}
 
 /* transition / reveal screens */
-.reveal-screen{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px;background:radial-gradient(ellipse at center,#232a37 0%,var(--ink-950) 70%);color:#fff;gap:18px}
+.reveal-screen{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px;background:radial-gradient(ellipse at center,#161d3a 0%,var(--ink-950) 70%);color:#fff;gap:18px}
 .reveal-side{font-family:var(--font-display);font-weight:800;font-size:52px;letter-spacing:.01em}
 @media (max-width:600px){.reveal-side{font-size:36px}}
 .reveal-side.for{color:var(--teal-300)}
@@ -663,7 +675,8 @@ var CATEGORIES = [
   {id:'environment',label:'Environment',icon:'sparkles'},
   {id:'science',label:'Science',icon:'target'},
   {id:'philosophy',label:'Philosophy',icon:'brain'},
-  {id:'fun',label:'Fun & Low-Stakes',icon:'star'}
+  {id:'fun',label:'Fun & Low-Stakes',icon:'star'},
+  {id:'custom',label:'Freestyle',icon:'message'}
 ];
 
 function T(id,category,title,controversy,complexity,evidence,level,blurb,forF,againstF){
@@ -858,19 +871,19 @@ var OPPONENTS = [
 var DIFFICULTIES = [
   {id:'rookie',name:'Rookie',color:'var(--teal-500)',order:1,desc:'Clear, simple opposition that explains its reasoning and leaves room to practice.',
     directives:['Use simple, clearly-signposted arguments and plain vocabulary.','Occasionally leave an obvious logical gap the student could exploit.','Briefly explain a debate concept in plain language when it helps.','Give the student generous benefit of the doubt.','Do not dwell on contradictions unless they are very obvious.'],
-    memoryDepth:'basic',prepMultiplier:1.3},
+    memoryDepth:'basic',prepMultiplier:1.3,maxPoints:2},
   {id:'intermediate',name:'Intermediate',color:'var(--azure-500)',order:2,desc:'Solid, evidence-aware opposition that notices clear contradictions.',
     directives:['Provide reasonable, well-formed opposition with light supporting evidence.','Notice and name clear, obvious contradictions when they occur.','Politely challenge claims made with no support.','Keep pressure moderate — this should feel like a fair fight.'],
-    memoryDepth:'basic',prepMultiplier:1.0},
+    memoryDepth:'basic',prepMultiplier:1.0,maxPoints:2},
   {id:'advanced',name:'Advanced',color:'var(--brass-500)',order:3,desc:'Strong rebuttals that track the whole debate and probe evidence.',
     directives:['Build strong, multi-step rebuttals rather than single-line responses.','Track and reference the student\'s claims from earlier rounds.','Challenge weak or unsupported evidence directly.','Name specific logical fallacies when they clearly occur.','Perform sharp, targeted cross-examination questions.'],
-    memoryDepth:'full',prepMultiplier:0.9},
+    memoryDepth:'full',prepMultiplier:0.9,maxPoints:3},
   {id:'expert',name:'Expert',color:'var(--ember-500)',order:4,desc:'Attacks assumptions, framing, and definitions like a seasoned competitive debater.',
     directives:['Attack underlying assumptions, not just surface claims.','Anticipate the student\'s likely next argument and pre-empt it.','Explicitly compare the relative impact/importance of competing arguments.','Force precise definitions when the student is vague.','Strategically concede minor points to focus fire on the strongest attack.','Reference specific earlier statements when it strengthens the attack.'],
-    memoryDepth:'strategic',prepMultiplier:0.75},
+    memoryDepth:'strategic',prepMultiplier:0.75,maxPoints:4},
   {id:'nightmare',name:'Nightmare',color:'var(--crimson-500)',order:5,desc:'An elite, merciless opponent that remembers everything and hunts for the decisive weakness.',
     directives:['Treat the entire debate as one continuous argument — reference anything said in any prior round.','Identify which of the student\'s arguments is most load-bearing and concentrate attacks there.','Detect evasive, non-responsive answers and call them out directly.','Explicitly exploit dropped arguments ("You never answered...").','Use the student\'s own earlier concessions against them later in the debate.','Build multi-step argument chains that box the student into a contradiction.','Show no unearned mercy — pressure should be constant, calm, and precise.'],
-    memoryDepth:'total',prepMultiplier:0.6}
+    memoryDepth:'total',prepMultiplier:0.6,maxPoints:5}
 ];
 
 /* ---- Judges ---- */
@@ -964,7 +977,7 @@ function defaultStore(){
       theme:'system', reducedMotion:false, fontScale:'md',
       defaultDifficulty:'intermediate', defaultFormat:'freestyle', hintsEnabled:true,
       interruptions:'off', prepEnabled:true, adaptiveDifficulty:false,
-      micEnabled:true, aiVoice:true, aiSpeedVal:1, speechAnalysis:true, liveTranscript:true,
+      micEnabled:true, aiVoice:true, aiSpeedVal:1, voiceURI:null, speechAnalysis:true, liveTranscript:true,
       fillerDetection:true, audibleTimer:false,
       saveHistory:true, saveTranscripts:true, voiceAnalytics:true
     }
@@ -1096,7 +1109,12 @@ function showLevelUp(level){
     '<button class="btn btn-primary btn-block" data-action="close-modal">Continue</button></div>');
 }
 function openModal(html){
-  document.getElementById('modal-root').innerHTML = '<div class="overlay" data-action="close-modal-bg"><div class="modal pop-in" onclick="event.stopPropagation()">'+html+'</div></div>';
+  // No stopPropagation here: this app dispatches every click through one delegated listener on
+  // <body>, so swallowing the event at the modal wrapper would silently break every button inside
+  // every modal (that was exactly the bug — nothing in a modal, e.g. Freestyle Debate, responded to
+  // clicks). Backdrop-click-to-dismiss is instead handled correctly below by checking that the click
+  // landed on the overlay itself, not on anything inside the modal card.
+  document.getElementById('modal-root').innerHTML = '<div class="overlay" data-action="close-modal-bg"><div class="modal pop-in">'+html+'</div></div>';
 }
 function closeModal(){ document.getElementById('modal-root').innerHTML=''; }
 
@@ -1163,32 +1181,65 @@ function noticeOfflineAI(){
    SPEECH SERVICES — thin wrappers over browser APIs, graceful fallback
    ====================================================================== */
 var SpeechToTextService = (function(){
+  // NOTE ON A REAL BUG THIS FIXES: browsers routinely end a "continuous" SpeechRecognition session on
+  // their own — a few seconds of silence while the student thinks, or a brief network hiccup with the
+  // recognizer service — even though the user never clicked stop. The previous version treated every
+  // "onend" as "the user is done talking," silently finalized whatever had been captured so far into the
+  // textbox, and simply stopped listening. Mid-sentence, that reads as "the microphone doesn't work,"
+  // because it quietly stops capturing speech partway through a turn. This version only finalizes on an
+  // EXPLICIT stop() call; any other end is treated as a transient hiccup and the recognizer is silently
+  // restarted, with previously-captured text preserved and carried across the restart.
   var Ctor = window.SpeechRecognition || window.webkitSpeechRecognition;
   var supported = !!Ctor;
-  var rec = null, active = false, onResultCb=null, onEndCb=null, finalText='';
+  var rec = null, active = false, manualStop = false, onResultCb=null, onEndCb=null, onErrorCb=null, accumulatedFinal='';
+  var FATAL_ERRORS = {'not-allowed':1,'service-not-allowed':1,'audio-capture':1};
   function available(){ return supported; }
+  function makeRec(){
+    var r = new Ctor();
+    r.continuous = true;
+    r.interimResults = true;
+    r.lang = 'en-US';
+    var sessionFinal = '';
+    r.onresult = function(e){
+      var interim='', finalPiece='';
+      for(var i=0;i<e.results.length;i++){
+        if(e.results[i].isFinal) finalPiece += e.results[i][0].transcript + ' ';
+        else interim += e.results[i][0].transcript;
+      }
+      sessionFinal = finalPiece;
+      if(onResultCb) onResultCb((accumulatedFinal + sessionFinal + interim).trim());
+    };
+    r.onerror = function(e){
+      var err = e.error;
+      if(FATAL_ERRORS[err]){
+        // Genuinely can't listen (permission denied/blocked, or no microphone device) — don't retry.
+        manualStop = true;
+        if(onErrorCb) onErrorCb(err);
+      }
+      // Everything else (e.g. "no-speech", "network", "aborted") is transient — onend below restarts.
+    };
+    r.onend = function(){
+      accumulatedFinal += sessionFinal;
+      active = false;
+      if(manualStop){ if(onEndCb) onEndCb(accumulatedFinal.trim()); return; }
+      try{ rec = makeRec(); rec.start(); active = true; }
+      catch(e){ if(onEndCb) onEndCb(accumulatedFinal.trim()); }
+    };
+    return r;
+  }
   function start(opts){
     if(!supported) return false;
     opts = opts||{};
-    rec = new Ctor();
-    rec.continuous = true;
-    rec.interimResults = true;
-    rec.lang = 'en-US';
-    finalText='';
-    rec.onresult = function(e){
-      var interim='', final='';
-      for(var i=0;i<e.results.length;i++){
-        if(e.results[i].isFinal) final += e.results[i][0].transcript + ' ';
-        else interim += e.results[i][0].transcript;
-      }
-      finalText = final;
-      if(onResultCb) onResultCb(final + interim, final);
-    };
-    rec.onerror = function(e){ if(opts.onError) opts.onError(e.error); };
-    rec.onend = function(){ active=false; if(onEndCb) onEndCb(finalText); };
+    onErrorCb = opts.onError || null;
+    manualStop = false;
+    accumulatedFinal = '';
+    rec = makeRec();
     try{ rec.start(); active=true; return true; }catch(e){ return false; }
   }
-  function stop(){ if(rec && active){ try{ rec.stop(); }catch(e){} } }
+  function stop(){
+    manualStop = true;
+    if(rec && active){ try{ rec.stop(); }catch(e){} }
+  }
   function onResult(cb){ onResultCb = cb; }
   function onEnd(cb){ onEndCb = cb; }
   return {available:available, start:start, stop:stop, onResult:onResult, onEnd:onEnd, isActive:function(){return active;}};
@@ -1196,31 +1247,60 @@ var SpeechToTextService = (function(){
 
 var TextToSpeechService = (function(){
   var supported = 'speechSynthesis' in window;
-  var voice = null;
   function available(){ return supported; }
-  function pickVoice(){
+  // Web Speech API voices vary wildly in quality by OS/browser — this can only rank what the device
+  // actually offers, never synthesize a better voice from scratch. Voices explicitly labeled as
+  // "Natural"/"Neural"/"Online"/cloud-backed (Edge and Chrome both expose these on many systems) sound
+  // far less robotic than the default on-device voice, so they're ranked to the top when present.
+  function voiceScore(v){
+    var n = v.name||'';
+    var score = 0;
+    if(/natural|neural|online|premium|enhanced|wavenet|studio/i.test(n)) score += 100;
+    if(/google/i.test(n)) score += 25;
+    if(/^en-US|^en_US/.test(v.lang)) score += 10;
+    else if(/^en/i.test(v.lang)) score += 4;
+    if(/compact|espeak|robot/i.test(n)) score -= 40;
+    if(v.localService===false) score += 5;
+    return score;
+  }
+  function englishVoices(){
+    if(!supported) return [];
+    var voices = window.speechSynthesis.getVoices()||[];
+    return voices.filter(function(v){return /^en/i.test(v.lang);}).sort(function(a,b){return voiceScore(b)-voiceScore(a);});
+  }
+  function listVoices(){ return englishVoices().map(function(v){return {uri:v.voiceURI,name:v.name,lang:v.lang};}); }
+  function pickVoice(preferredURI){
     if(!supported) return null;
-    var voices = window.speechSynthesis.getVoices();
-    if(!voices || !voices.length) return null;
-    return voices.find(function(v){return /en-US|en_US/.test(v.lang) && /Google|Natural|Female|Male/.test(v.name);}) ||
-           voices.find(function(v){return /^en/.test(v.lang);}) || voices[0];
+    var voices = window.speechSynthesis.getVoices()||[];
+    if(!voices.length) return null;
+    if(preferredURI){
+      var match = voices.find(function(v){return v.voiceURI===preferredURI;});
+      if(match) return match;
+    }
+    var en = englishVoices();
+    return en[0] || voices[0];
   }
   function speak(text, opts){
     if(!supported) return false;
     opts = opts||{};
     try{ window.speechSynthesis.cancel(); }catch(e){}
     var u = new SpeechSynthesisUtterance(text);
-    voice = pickVoice();
+    var voice = pickVoice(opts.voiceURI);
     if(voice) u.voice = voice;
     u.rate = clamp(opts.rate||1, 0.7, 1.5);
-    u.pitch = opts.pitch || 1;
+    u.pitch = clamp(opts.pitch!=null?opts.pitch:1, 0.6, 1.4);
     if(opts.onEnd) u.onend = opts.onEnd;
     if(opts.onStart) u.onstart = opts.onStart;
     window.speechSynthesis.speak(u);
     return true;
   }
   function stop(){ if(supported){ try{ window.speechSynthesis.cancel(); }catch(e){} } }
-  return {available:available, speak:speak, stop:stop};
+  if(supported && 'onvoiceschanged' in window.speechSynthesis){
+    window.speechSynthesis.onvoiceschanged = function(){
+      if(typeof Router!=='undefined' && Router.view==='settings' && typeof render==='function'){ try{ render(); }catch(e){} }
+    };
+  }
+  return {available:available, speak:speak, stop:stop, listVoices:listVoices};
 })();
 
 /* ======================================================================
@@ -1229,6 +1309,12 @@ var TextToSpeechService = (function(){
 function analyzeDelivery(text, elapsedSec){
   var words = (text.trim().match(/\S+/g))||[];
   var wordCount = words.length;
+  if(wordCount===0){
+    // Nothing was actually said — this must read as "no delivery to evaluate," not as a
+    // clean, filler-free, perfectly-paced turn. Zero content is never a good score.
+    return {wordCount:0, wpm:0, fillerCount:0, fillerHits:[], restarts:0, longPauses:0, sentences:0,
+      completeness:0, deliveryScore:0, elapsedSec:elapsedSec};
+  }
   var minutes = Math.max(elapsedSec/60, 0.08);
   var wpm = Math.round(wordCount/minutes);
   var lower = ' '+text.toLowerCase().replace(/[.,!?;:]/g,' ')+' ';
@@ -1259,13 +1345,17 @@ var STRUCTURE_MARKERS = /\b(because|since|therefore|thus|which means|as a result
 var EVIDENCE_MARKERS = /\b(study|studies|research|data|statistics|percent|%|according to|survey|report|case|precedent|evidence|source)\b/gi;
 var HEDGE_MARKERS = /\b(i guess|maybe|i'?m not sure|it depends|kind of|sort of|i don'?t know)\b/gi;
 function localArgumentHeuristics(text){
+  var words = (text.trim().match(/\S+/g)||[]).length;
+  if(words===0){
+    // No material was actually offered — score it as "nothing to assess," not as an average attempt.
+    return {structHits:0, evidenceHits:0, hedgeHits:0, argScore:12, evScore:12, persScore:12};
+  }
   var structHits = (text.match(STRUCTURE_MARKERS)||[]).length;
   var evidenceHits = (text.match(EVIDENCE_MARKERS)||[]).length;
   var hedgeHits = (text.match(HEDGE_MARKERS)||[]).length;
-  var words = (text.trim().match(/\S+/g)||[]).length;
-  var argScore = clamp(46 + structHits*9 - (words<15?18:0), 20, 96);
-  var evScore = clamp(38 + evidenceHits*13, 20, 95);
-  var persScore = clamp(50 + structHits*4 - hedgeHits*10, 20, 95);
+  var argScore = clamp(46 + structHits*9 - (words<15?18:0) - (words<6?14:0), 15, 96);
+  var evScore = clamp(38 + evidenceHits*13 - (words<6?14:0), 15, 95);
+  var persScore = clamp(50 + structHits*4 - hedgeHits*10 - (words<6?14:0), 15, 95);
   return {structHits:structHits, evidenceHits:evidenceHits, hedgeHits:hedgeHits, argScore:argScore, evScore:evScore, persScore:persScore};
 }
 function overlapScore(a,b){
@@ -1330,29 +1420,41 @@ var AIService = (function(){
       'YOUR OPPONENT, the student, is arguing '+(session.studentSide==='for'?'FOR':'AGAINST')+' the motion. Their framing: '+studentFrame;
   }
 
-  function opponentSchema(){
+  function courtroomBlock(session){
+    if(session.mode!=='courtroom') return '';
+    return '\n\nCOURTROOM REGISTER: this is a simulated courtroom proceeding, not a casual peer debate — speak like a real attorney addressing the bench, not a debate-club opponent. '+
+      'Address the judge as "Your Honor," refer to the other side as "opposing counsel" (never by a casual "you\'re wrong"-style tone), and use authentic courtroom phrasing where it fits naturally — "If it please the Court," "The record should reflect...," "I\'d ask the Court to note...," "Move to strike," "That mischaracterizes the record, Your Honor." '+
+      'When the student\'s last statement has a real, well-grounded procedural problem — an unsupported claim asserted as fact, an irrelevant point, a leading or loaded question, speculation, or badgering — you may open with a short in-character objection as one of your points (e.g. "Objection, Your Honor — that assumes facts not in evidence.") before making your substantive point. Only do this when it is genuinely warranted, never as a reflex every turn.';
+  }
+
+  function opponentSchema(maxPoints){
     return '\nReply with ONLY a JSON object, no markdown fences, in exactly this shape:\n'+
-      '{"speech":"...", "newAiClaims":["..."], "notedConcessions":["..."], "notedContradictions":["..."], '+
+      '{"points":["...","..."], "newAiClaims":["..."], "notedConcessions":["..."], "notedContradictions":["..."], '+
       '"detectedFallacies":[{"type":"...","quote":"...","explanation":"..."}], "droppedByStudent":["..."], "strategyNote":"..."}\n'+
-      'Keep each array to at most 2 short items; use an empty array when nothing applies. "speech" is what you actually say aloud: 2-5 sentences for a normal turn, up to 7 for a closing statement, 1-2 sentences for a cross-examination question.';
+      'RESPONSE LENGTH & STRUCTURE — this matters a lot: "points" is an array of SEPARATE, self-contained points, never one long paragraph. Each entry is exactly ONE idea — one claim, one rebuttal, one question, or one piece of evidence — in 1-2 short sentences, the way a confident speaker would actually pause between points, not a run-on wall of text. '+
+      'Use AT MOST '+maxPoints+' points for this difficulty tier (one more is allowed only for a closing statement) — fewer is better when there is less that actually needs saying; never pad, restate the same idea twice, or add filler just to fill the array. '+
+      'Keep the other arrays to at most 2 short items; use an empty array when nothing applies.';
   }
 
   async function opponentTurn(session, studentText, phase){
     var sample = SampleCap || await SampleCapPromise;
     var d = DIFFICULTIES.find(function(x){return x.id===session.opponent.difficulty;});
     var fmt = session.formatObj;
+    var maxPoints = d.maxPoints || 3;
     var prompt = 'You are the AI debate opponent inside "Counterpoint," a debate-training platform for students. '+safetyBlock()+'\n\n'+
       personaBlock(session.opponent.archetype, session.opponent.difficulty)+'\n\n'+
       'DEBATE FORMAT: '+fmt.name+' — current phase: "'+phase.label+'" (round '+session.round+').\n'+
-      sideLine(session)+'\n\n'+
+      sideLine(session)+courtroomBlock(session)+'\n\n'+
       'DEBATE MEMORY SO FAR:\n'+memoryDigest(session.memory, d.memoryDepth)+'\n\n'+
       'THE STUDENT JUST SAID:\n"'+studentText+'"\n\n'+
       'Decide the strategically best move (rebut, question, concede a minor point, reframe, or counterattack) given the difficulty rules above, then respond in character.'+
-      opponentSchema();
+      opponentSchema(maxPoints);
     if(sample){
       try{
         var res = await sample.json(prompt, {modelTier:'default', cache:false});
         res.source='ai';
+        if(!res.points || !res.points.length) res.points = res.speech ? [res.speech] : ['(No response.)'];
+        res.speech = res.points.join(' ');
         return res;
       }catch(e){ noticeOfflineAI(); }
     } else { noticeOfflineAI(); }
@@ -1365,7 +1467,7 @@ var AIService = (function(){
     var prompt = 'You are the AI debate opponent inside "Counterpoint." '+safetyBlock()+'\n\n'+
       personaBlock(session.opponent.archetype, session.opponent.difficulty)+'\n\n'+
       'This is a CROSS-EXAMINATION phase. '+(askerIsAI ? 'YOU are questioning the student.' : 'The student is about to question YOU — first, prepare to answer directly and honestly in character; keep an answer ready.')+'\n'+
-      sideLine(session)+'\n\nDEBATE MEMORY SO FAR:\n'+memoryDigest(session.memory, d.memoryDepth)+'\n\n'+
+      sideLine(session)+courtroomBlock(session)+'\n\nDEBATE MEMORY SO FAR:\n'+memoryDigest(session.memory, d.memoryDepth)+'\n\n'+
       (askerIsAI ?
         'Ask ONE sharp, strategically aimed cross-examination question that targets a definition, assumption, piece of evidence, contradiction, implementation detail, or impact claim from the student\'s arguments above. Reply with ONLY JSON: {"question":"...", "targets":"definition|assumption|evidence|contradiction|implementation|impact", "reason":"one short internal sentence"}'
         : 'The student will now ask you a question. Reply with ONLY JSON: {"readyNote":"one short sentence noting you are ready to answer directly"}');
@@ -1381,7 +1483,7 @@ var AIService = (function(){
     var d = DIFFICULTIES.find(function(x){return x.id===session.opponent.difficulty;});
     var prompt = 'You are the AI debate opponent inside "Counterpoint." '+safetyBlock()+'\n\n'+
       personaBlock(session.opponent.archetype, session.opponent.difficulty)+'\n\n'+
-      sideLine(session)+'\n\nDEBATE MEMORY SO FAR:\n'+memoryDigest(session.memory, d.memoryDepth)+'\n\n'+
+      sideLine(session)+courtroomBlock(session)+'\n\nDEBATE MEMORY SO FAR:\n'+memoryDigest(session.memory, d.memoryDepth)+'\n\n'+
       'The student, cross-examining you, just asked:\n"'+question+'"\n\n'+
       'Answer directly and in character (a real cross-ex answer, not an argument dodge — unless your difficulty/persona calls for a strategically evasive answer, in which case make the evasion realistic). 1-3 sentences.'+
       '\nReply with ONLY JSON: {"answer":"...", "wasEvasive":true|false, "conceded":["..."]} ("conceded" lists anything you just admitted, if anything; empty array otherwise).';
@@ -1395,7 +1497,8 @@ var AIService = (function(){
   function condensedTranscript(session, maxChars){
     var lines = session.transcript.map(function(t){
       var who = t.speaker==='student' ? 'STUDENT' : 'OPPONENT';
-      return '['+t.phaseLabel+'] '+who+': '+t.text;
+      var body = t.noResponse ? '[NO RESPONSE — time expired with nothing said]' : t.text;
+      return '['+t.phaseLabel+'] '+who+': '+body;
     });
     var joined = lines.join('\n');
     if(joined.length > maxChars){
@@ -1408,10 +1511,22 @@ var AIService = (function(){
   }
 
   async function judge(session){
+    // Hard, deterministic guard: if the student barely said anything (or nothing at all), never spend
+    // an AI call fabricating a plausible-sounding "strongest moment" or generous scores for it. Route
+    // straight to the honest local judge, which is built to say "not enough was said" and score accordingly.
+    var totalWords = totalStudentWords(session.transcript);
+    if(totalWords < MIN_TOTAL_WORDS){
+      return localJudge(session);
+    }
     var sample = SampleCap || await SampleCapPromise;
     var j = JUDGES.find(function(x){return x.id===session.rules.judge;}) || JUDGES[0];
+    var studentTurns = session.transcript.filter(function(t){return t.speaker==='student';});
+    var emptyTurns = studentTurns.filter(function(t){return t.noResponse;}).length;
+    var engagementNote = 'STUDENT ENGAGEMENT NOTE: '+studentTurns.length+' student turn(s) total, '+totalWords+' words of actual student content, '+emptyTurns+' turn(s) where time expired with no response at all.';
     var prompt = 'You are an impartial debate judge ("'+j.name+'": '+j.desc+') evaluating a completed round on "Counterpoint," a debate-training platform. '+
-      'Score the STUDENT\'s performance only (not the AI opponent). Be a fair, rigorous, encouraging coach — specific and actionable, never vague ("your reasoning could be improved" is not allowed; explain exactly what was said, why it was weak, and what would have been stronger).\n\n'+
+      'Score the STUDENT\'s performance only (not the AI opponent). Be a fair, rigorous, encouraging coach — specific and actionable, never vague ("your reasoning could be improved" is not allowed; explain exactly what was said, why it was weak, and what would have been stronger). '+
+      'ACCURACY IS THE TOP PRIORITY: never invent a "strongest moment," quote, rebuttal, or specific praise that isn\'t actually in the transcript below. If a turn is marked [NO RESPONSE — time expired with nothing said], do not treat it as an argument to analyze — say plainly that nothing was said, and do not award credit (e.g. for "good time management") for time that simply ran out unused. If the student\'s overall input is thin, say so honestly and score it low rather than defaulting to a generous or neutral score.\n\n'+
+      engagementNote+'\n\n'+
       'FORMAT: '+session.formatObj.name+'. MOTION: "'+session.topic.title+'". Student argued '+(session.studentSide==='for'?'FOR':'AGAINST')+'.\n\n'+
       'FULL TRANSCRIPT:\n'+condensedTranscript(session, 9000)+'\n\n'+
       'TRACKED MEMORY:\n'+memoryDigest(session.memory,'total')+'\n\n'+
@@ -1434,7 +1549,7 @@ var AIService = (function(){
     return localJudge(session);
   }
 
-  return {opponentTurn:opponentTurn, crossExamQuestion:crossExamQuestion, answerCrossExam:answerCrossExam, judge:judge, condensedTranscript:condensedTranscript, personaBlock:personaBlock, safetyBlock:safetyBlock, sideLine:sideLine};
+  return {opponentTurn:opponentTurn, crossExamQuestion:crossExamQuestion, answerCrossExam:answerCrossExam, judge:judge, condensedTranscript:condensedTranscript, personaBlock:personaBlock, safetyBlock:safetyBlock, sideLine:sideLine, courtroomBlock:courtroomBlock};
 })();
 
 /* ---- Local (offline) fallback engine — deterministic-ish, context-aware ---- */
@@ -1456,21 +1571,42 @@ var LOCAL_OPENERS = {
   strategist:['Let\'s focus on what actually decides this debate:','That\'s not the argument that matters here — this is:','I\'m going to zero in on the weak link in your case:'],
   trickster:['Here\'s a scenario worth considering:','Let me offer you a hypothetical:','Consider this before you commit to that position:']
 };
+function courtroomOpen(){ return choice(['Your Honor, ','If it please the Court, ','With respect to the Court, ']); }
 function localOpponentTurn(session, studentText, phase){
   var arch = session.opponent.archetype;
+  var counter = session.studentSide==='for' ? session.topic.againstFrame : session.topic.forFrame;
+  var d = DIFFICULTIES.find(function(x){return x.id===session.opponent.difficulty;});
+  var maxPoints = (d && d.maxPoints) || 3;
+  var isCourt = session.mode==='courtroom';
+  var noResponse = /did not respond|has not spoken yet/.test(studentText||'');
+  if(noResponse){
+    var passPoints = [
+      (isCourt?'Your Honor, ':'')+'I\'ll take that as a pass — '+counter+'.',
+      'Since there\'s nothing on the record to answer yet, I\'ll continue building my case; '+(isCourt?'opposing counsel':'you')+' can respond whenever ready.'
+    ];
+    return Promise.resolve({
+      speech:passPoints.join(' '), points:passPoints, newAiClaims:[counter.slice(0,90)], notedConcessions:[], notedContradictions:[],
+      detectedFallacies:[], droppedByStudent:[], strategyNote:'local heuristic move (student passed)', source:'local'
+    });
+  }
   var opener = choice(LOCAL_OPENERS[arch.id] || LOCAL_OPENERS.logician);
   var h = localArgumentHeuristics(studentText);
   var quote = pickMemoryQuote(session.memory);
-  var refBit = quote ? (' Earlier you said "'+quote.slice(0,70)+(quote.length>70?'…':'')+'" — how does that square with this?') : '';
-  var evidenceNote = h.evidenceHits===0 ? ' You\'ve offered this without any supporting evidence — why should I accept it on your word alone?' : '';
-  var counter = session.studentSide==='for' ? session.topic.againstFrame : session.topic.forFrame;
-  var speech = opener+' '+counter+'.'+evidenceNote+refBit;
+  var points = [];
+  points.push((isCourt?courtroomOpen():'')+opener+' '+counter+'.');
+  if(h.evidenceHits===0){
+    points.push(isCourt ? 'Objection in substance, Your Honor — that claim is asserted without any supporting evidence.' : 'You\'ve offered this without any supporting evidence — why should I accept it on your word alone?');
+  }
+  if(quote){
+    points.push('Earlier '+(isCourt?'opposing counsel':'you')+' said "'+quote.slice(0,70)+(quote.length>70?'…':'')+'" — how does that square with this?');
+  }
+  points = points.slice(0, phase && phase.type==='closing' ? maxPoints+1 : maxPoints);
   var claims = [counter.slice(0,90)];
   var contradictions = [];
   var fallacies = [];
   if(h.hedgeHits>0 && Math.random()<0.5) fallacies.push({type:'Hasty generalization', quote:studentText.slice(0,60), explanation:'The claim leans on an assumption without ruling out other explanations.'});
   return Promise.resolve({
-    speech:speech, newAiClaims:claims, notedConcessions:[], notedContradictions:contradictions,
+    speech:points.join(' '), points:points, newAiClaims:claims, notedConcessions:[], notedContradictions:contradictions,
     detectedFallacies:fallacies, droppedByStudent:[], strategyNote:'local heuristic move', source:'local'
   });
 }
@@ -1501,10 +1637,43 @@ function localAnswerCrossExam(session, question){
 function localJudge(session){
   var studentTurns = session.transcript.filter(function(t){return t.speaker==='student';});
   var aiTurns = session.transcript.filter(function(t){return t.speaker==='ai';});
-  var allText = studentTurns.map(function(t){return t.text;}).join(' ');
+  var substantive = substantiveStudentTurns(session.transcript);
+  var totalWords = totalStudentWords(session.transcript);
+  var emptyTurns = studentTurns.filter(function(t){return t.noResponse;}).length;
+  var judgeName = JUDGES.find(function(j){return j.id===session.rules.judge;}).name;
+
+  if(totalWords < MIN_TOTAL_WORDS){
+    var lowScores = {argument:14,rebuttal:14,logic:20,evidence:14,persuasion:14,
+      crossExamination: session.crossExam.answers.length ? 18 : 60, organization:14, adaptability:25};
+    var whyLow = studentTurns.length
+      ? (emptyTurns ? emptyTurns+' of your '+studentTurns.length+' turn(s) had no response at all, and ' : '')+'what was said was too brief to form a real case'
+      : 'no turns were recorded this round';
+    return Promise.resolve({
+      winner:'ai',
+      reason:'The student did not put forward enough substantive argument to evaluate a case — '+whyLow+'.',
+      judgeVerdicts:[{judge:judgeName, winner:'ai', reason:'No developed argument was made on the student\'s side to weigh against the opponent.'}],
+      scores:lowScores,
+      strongestMoment:'No standout moment to point to — '+whyLow+'.',
+      biggestMistake: emptyTurns ? 'You did not respond during '+emptyTurns+' of '+studentTurns.length+' turn(s) before time expired.' : 'Your turns were too short to develop a real claim, evidence, or rebuttal.',
+      bestRebuttal:'No rebuttal was substantive enough to evaluate.',
+      missedOpportunity:'Every phase was a chance to state a real position — even one full sentence with a reason would have given the judge something to score.',
+      strongestOpponentAttack: aiTurns.length ? aiTurns[aiTurns.length-1].text.slice(0,110) : '',
+      whatYouShouldHaveSaid:[{said: studentTurns.length ? '(little or nothing was said)' : '(no turns recorded)',
+        whyWeak:'An empty or near-empty turn gives the judge, and your opponent, nothing to respond to — it reads as a forfeited turn rather than a weak argument.',
+        betterStrategy:'Even under time pressure, state one clear claim and one reason for it before time runs out — that alone beats silence.',
+        example:'"I argue that '+((session.studentSide==='for'? session.topic.forFrame : session.topic.againstFrame)||'').slice(0,140)+'"'}],
+      fallacySummary:[],
+      evidenceAnalysis:'No argument was made this round, so there is nothing to check evidence against.',
+      timeManagementNote: emptyTurns ? emptyTurns+' of your '+studentTurns.length+' turn(s) ran out with no response submitted — that time was lost, not used.' : 'Your responses were very short relative to the time available.',
+      whatChangedTheDebate:'The round was decided by default — your opponent was the only side to make a developed case.',
+      source:'local', insufficientContent:true
+    });
+  }
+
+  var allText = substantive.map(function(t){return t.text;}).join(' ');
   var h = localArgumentHeuristics(allText);
   var avgOverlap = 0, reb=0;
-  studentTurns.forEach(function(t,i){
+  substantive.forEach(function(t){
     var priorAi = aiTurns.filter(function(a){return a.round<=t.round;}).slice(-1)[0];
     if(priorAi){ avgOverlap += overlapScore(t.text, priorAi.text); reb++; }
   });
@@ -1522,20 +1691,21 @@ function localJudge(session){
   };
   var avg = Math.round((scores.argument+scores.rebuttal+scores.logic+scores.evidence+scores.persuasion+scores.organization)/6);
   var winner = avg>=58 ? 'student' : (avg<=44 ? 'ai' : 'draw');
-  var lastStudent = studentTurns.length ? studentTurns[studentTurns.length-1].text : '';
+  var lastSubstantive = substantive.length ? substantive[substantive.length-1].text : '';
+  var missedNote = emptyTurns ? (' '+emptyTurns+' of your '+studentTurns.length+' turn(s) had no response at all.') : '';
   return Promise.resolve({
-    winner:winner, reason:'Based on tracked argument structure, rebuttal directness, and evidence use across the transcript.',
-    judgeVerdicts:[{judge:JUDGES.find(function(j){return j.id===session.rules.judge;}).name, winner:winner, reason:'Composite of structure, rebuttal, and evidence signals.'}],
+    winner:winner, reason:'Based on tracked argument structure, rebuttal directness, and evidence use across the transcript.'+missedNote,
+    judgeVerdicts:[{judge:judgeName, winner:winner, reason:'Composite of structure, rebuttal, and evidence signals.'}],
     scores:scores,
-    strongestMoment: studentTurns.length ? 'Your strongest turn: "'+studentTurns[Math.floor(studentTurns.length/2)].text.slice(0,90)+'…"' : 'No strong standout turn was recorded.',
-    biggestMistake: h.evidenceHits===0 ? 'Several of your claims had no supporting evidence attached.' : 'Some rebuttals repeated a prior point instead of advancing new ground.',
-    bestRebuttal: reb ? 'Your rebuttal in round '+(studentTurns[studentTurns.length-1]?studentTurns[studentTurns.length-1].round:1)+' engaged directly with the opponent\'s point.' : 'No rebuttal phase was recorded.',
+    strongestMoment: substantive.length ? 'Your strongest turn: "'+substantive[Math.floor(substantive.length/2)].text.slice(0,90)+'…"' : 'No turn was developed enough to stand out.',
+    biggestMistake: emptyTurns ? 'You did not respond during '+emptyTurns+' of '+studentTurns.length+' turn(s) before time expired.' : (h.evidenceHits===0 ? 'Several of your claims had no supporting evidence attached.' : 'Some rebuttals repeated a prior point instead of advancing new ground.'),
+    bestRebuttal: reb ? 'Your rebuttal in round '+(substantive[substantive.length-1]?substantive[substantive.length-1].round:1)+' engaged directly with the opponent\'s point.' : 'No rebuttal phase was recorded.',
     missedOpportunity: session.memory.droppedArguments.length ? ('You never directly answered: "'+session.memory.droppedArguments[0]+'"') : 'No major dropped arguments were tracked.',
     strongestOpponentAttack: aiTurns.length ? aiTurns[aiTurns.length-1].text.slice(0,110) : '',
-    whatYouShouldHaveSaid:[{said:lastStudent.slice(0,80)||'(no closing captured)', whyWeak:'It restates the claim without weighing it against the opponent\'s strongest point.', betterStrategy:'Directly compare the two impacts and explain why yours matters more.', example:'"Even if my opponent is right that this has a cost, that cost is smaller and more reversible than the harm we\'re preventing."'}],
+    whatYouShouldHaveSaid:[{said:lastSubstantive.slice(0,80)||'(no closing captured)', whyWeak:'It restates the claim without weighing it against the opponent\'s strongest point.', betterStrategy:'Directly compare the two impacts and explain why yours matters more.', example:'"Even if my opponent is right that this has a cost, that cost is smaller and more reversible than the harm we\'re preventing."'}],
     fallacySummary: session.memory.contradictions.map(function(c){return {type:'Possible inconsistency', quote:c, explanation:'This appears to conflict with an earlier claim.', repair:'Acknowledge the tension directly and explain which position you actually hold and why.'};}),
     evidenceAnalysis: h.evidenceHits>0 ? 'You referenced evidence-style language several times — make sure each instance is tied explicitly to the claim it supports.' : 'Very little evidence language was detected — try attaching a concrete example, statistic, or precedent to your key claims.',
-    timeManagementNote:'Time usage was tracked automatically from your turns — see the Time Management panel below.',
+    timeManagementNote: emptyTurns ? emptyTurns+' of your turns ran out with no response submitted — that time was lost, not used well.' : 'Time usage was tracked automatically from your turns — see the Time Management panel below.',
     whatChangedTheDebate: 'The exchange around the middle rounds shaped the final outcome most — that\'s where the strongest attack and response occurred.',
     source:'local'
   });
@@ -1598,11 +1768,12 @@ function extractMemoryFromStudentText(session, text){
 
 async function submitStudentTurn(session, text, elapsedSec){
   var phase = currentPhase(session);
-  var metrics = analyzeDelivery(text, elapsedSec||phase.allottedSec||60);
-  extractMemoryFromStudentText(session, text);
+  var real = text && text.trim();
+  var metrics = analyzeDelivery(real||'', elapsedSec||phase.allottedSec||60);
+  if(real) extractMemoryFromStudentText(session, text);
   session.transcript.push({
     round: session.round, phaseKey: phase.key, phaseLabel: phase.label, speaker:'student',
-    text: text, ts: Date.now(), metrics: metrics
+    text: real||'', ts: Date.now(), metrics: metrics, noResponse: !real
   });
   return metrics;
 }
@@ -1610,7 +1781,8 @@ async function submitStudentTurn(session, text, elapsedSec){
 async function triggerAiTurn(session, onThinking){
   var phase = currentPhase(session);
   var lastStudent = session.transcript.filter(function(t){return t.speaker==='student';}).slice(-1)[0];
-  var studentText = lastStudent ? lastStudent.text : '(The student has not spoken yet — open the debate on their behalf by staking out your position.)';
+  var studentText = !lastStudent ? '(The student has not spoken yet — open the debate on their behalf by staking out your position.)'
+    : (lastStudent.noResponse ? '(The student did not respond — their time expired with nothing said. Do not invent or respond to an argument they never made; briefly note that they passed on this turn, then advance your own case.)' : lastStudent.text);
   if(onThinking) onThinking(true);
   var res = await AIService.opponentTurn(session, studentText, phase);
   if(onThinking) onThinking(false);
@@ -1622,7 +1794,7 @@ async function triggerAiTurn(session, onThinking){
   var fallacies = res.detectedFallacies||[];
   session.transcript.push({
     round: session.round, phaseKey: phase.key, phaseLabel: phase.label, speaker:'ai',
-    text: res.speech, ts: Date.now(), fallacies: fallacies, source: res.source
+    text: res.speech, points: res.points && res.points.length ? res.points : null, ts: Date.now(), fallacies: fallacies, source: res.source
   });
   return res;
 }
@@ -1640,17 +1812,26 @@ async function crossAiAsks(session){
   return res;
 }
 async function crossStudentAnswers(session, text, elapsedSec){
-  var metrics = analyzeDelivery(text, elapsedSec||30);
-  session.transcript.push({round:session.round, phaseKey:currentPhase(session).key, phaseLabel:'Cross-Examination', speaker:'student', text:text, ts:Date.now(), metrics:metrics});
-  extractMemoryFromStudentText(session, text);
-  var evasive = text.trim().split(/\s+/).length < 6 || HEDGE_MARKERS.test(text);
+  var real = text && text.trim();
+  var metrics = analyzeDelivery(real||'', elapsedSec||30);
+  session.transcript.push({round:session.round, phaseKey:currentPhase(session).key, phaseLabel:'Cross-Examination', speaker:'student', text:real||'', ts:Date.now(), metrics:metrics, noResponse:!real});
+  if(real) extractMemoryFromStudentText(session, text);
+  var evasive = !real || text.trim().split(/\s+/).length < 6 || HEDGE_MARKERS.test(text);
   if(evasive) session.crossExam.evasions++;
-  session.crossExam.answers.push({q:session.crossState.pending, a:text, evasive:evasive});
+  session.crossExam.answers.push({q:session.crossState.pending, a:real||null, evasive:evasive, noResponse:!real});
   session.crossState.exchangeIndex++;
   session.crossState.pending = null;
   return metrics;
 }
 async function crossStudentAsks(session, text){
+  var real = text && text.trim();
+  if(!real){
+    // No question was asked before time ran out — record that honestly, don't invent one and don't
+    // force the AI to "answer" a question that was never asked.
+    session.transcript.push({round:session.round, phaseKey:currentPhase(session).key, phaseLabel:'Cross-Examination', speaker:'student', text:'', ts:Date.now(), isQuestion:true, noResponse:true});
+    session.crossState.exchangeIndex++;
+    return {answer:'', wasEvasive:false, conceded:[], source:'local', skipped:true};
+  }
   pushCapped(session.crossExam.studentQuestions, text, 10);
   session.transcript.push({round:session.round, phaseKey:currentPhase(session).key, phaseLabel:'Cross-Examination', speaker:'student', text:text, ts:Date.now(), isQuestion:true});
   var res = await AIService.answerCrossExam(session, text);
@@ -1664,13 +1845,32 @@ async function crossStudentAsks(session, text){
 function crossPhaseDone(session){ return session.crossState.exchangeIndex >= session.crossState.exchangesTotal; }
 
 /* ---- Scoring ---- */
+var MIN_TURN_WORDS = 4;   // fewer real words than this and a turn doesn't count as a developed argument
+var MIN_TOTAL_WORDS = 12; // below this total across the whole debate, there isn't enough to judge fairly
+function wordCountOf(text){ return ((text||'').trim().match(/\S+/g)||[]).length; }
+function substantiveStudentTurns(transcript){
+  return transcript.filter(function(t){ return t.speaker==='student' && !t.noResponse && wordCountOf(t.text)>=MIN_TURN_WORDS; });
+}
+function totalStudentWords(transcript){
+  return transcript.filter(function(t){return t.speaker==='student';}).reduce(function(s,t){return s+wordCountOf(t.text);},0);
+}
 function computeLocalScores(session){
   var studentTurns = session.transcript.filter(function(t){return t.speaker==='student';});
   var aiTurns = session.transcript.filter(function(t){return t.speaker==='ai';});
-  var allText = studentTurns.map(function(t){return t.text;}).join(' ');
+  var substantive = substantiveStudentTurns(session.transcript);
+  var totalWords = totalStudentWords(session.transcript);
+  if(totalWords < MIN_TOTAL_WORDS){
+    return {
+      argument:14, rebuttal:14, logic:20, evidence:14, persuasion:14,
+      crossExamination: session.crossExam.answers.length ? 18 : 60,
+      organization:14, adaptability:25, _h:{structHits:0,evidenceHits:0,hedgeHits:0,argScore:14,evScore:14,persScore:14},
+      insufficientContent:true
+    };
+  }
+  var allText = substantive.map(function(t){return t.text;}).join(' ');
   var h = localArgumentHeuristics(allText);
   var avgOverlap=0, reb=0;
-  studentTurns.forEach(function(t){
+  substantive.forEach(function(t){
     var priorAi = aiTurns.filter(function(a){return a.ts<=t.ts;}).slice(-1)[0];
     if(priorAi){ avgOverlap += overlapScore(t.text, priorAi.text); reb++; }
   });
@@ -1694,17 +1894,26 @@ function computeTimeManagementScore(session){
   var studentTurns = session.transcript.filter(function(t){return t.speaker==='student' && t.metrics;});
   if(!studentTurns.length) return 60;
   var ratios = [];
+  var noResponseCount = 0;
   studentTurns.forEach(function(t){
+    if(t.noResponse){ noResponseCount++; return; }
     var phase = session.phases.find(function(p){return p.key===t.phaseKey;});
     if(phase && phase.allottedSec){
       var r = t.metrics.elapsedSec/phase.allottedSec;
       ratios.push(r);
     }
   });
-  if(!ratios.length) return 68;
-  var avgR = ratios.reduce(function(a,b){return a+b;},0)/ratios.length;
-  // ideal usage ~ 0.7-1.0 of allotted time
-  var score = avgR<0.35 ? 45 : avgR<=1.05 ? clamp(60+ (1-Math.abs(avgR-0.85))*45, 55, 96) : clamp(85-(avgR-1.05)*80, 30, 85);
+  if(!ratios.length && !noResponseCount) return 68;
+  // Running out the clock with nothing said is a time-management failure, not efficient pacing —
+  // so a turn that timed out blank is scored as lost time, never averaged in as "used the full allotment well."
+  var score;
+  if(!ratios.length){
+    score = 20;
+  } else {
+    var avgR = ratios.reduce(function(a,b){return a+b;},0)/ratios.length;
+    score = avgR<0.35 ? 45 : avgR<=1.05 ? clamp(60+ (1-Math.abs(avgR-0.85))*45, 55, 96) : clamp(85-(avgR-1.05)*80, 30, 85);
+  }
+  if(noResponseCount) score = clamp(score - noResponseCount*24, 5, 96);
   return Math.round(score);
 }
 function avgDeliveryScore(session){
@@ -1729,6 +1938,7 @@ async function finalizeDebate(session, onProgress){
   if(onProgress) onProgress('Consulting the judge…');
   var judgeResult = await AIService.judge(session);
   var local = computeLocalScores(session);
+  var insufficientContent = !!(judgeResult.insufficientContent || local.insufficientContent);
   var blended = {};
   ['argument','rebuttal','logic','evidence','persuasion','crossExamination','organization','adaptability'].forEach(function(k){
     if(judgeResult.source==='ai' && judgeResult.scores && typeof judgeResult.scores[k]==='number'){
@@ -1742,7 +1952,9 @@ async function finalizeDebate(session, onProgress){
   var overall = Math.round(SKILLS.reduce(function(s,k){return s+(blended[k.id]||60);},0)/SKILLS.length);
 
   var prevSkills = Object.assign({}, Store.skills);
-  updateSkills(blended);
+  // A round with little or no real content is not a genuine skill signal — don't let it drag down
+  // the student's tracked skill trend. Still reported honestly below, just not absorbed long-term.
+  if(!insufficientContent) updateSkills(blended);
 
   Store.profile.debatesCompleted++;
   if(winner==='student') Store.profile.wins++; else if(winner==='ai') Store.profile.losses++; else Store.profile.draws++;
@@ -1773,12 +1985,19 @@ async function finalizeDebate(session, onProgress){
   };
   checkAchievements(ctx);
 
-  var xp = 40 + DIFFICULTIES.find(function(d){return d.id===session.opponent.difficulty;}).order*9;
-  if(session.meta.sideWasRandom) xp += 15;
-  if(session.rules.timerPreset==='pressure') xp += 18;
-  if(winner==='student') xp += 10; else if(winner==='draw') xp += 5;
-  var improveSum = SKILLS.reduce(function(s,k){return s+Math.max(0,(Store.skills[k.id]-prevSkills[k.id]));},0);
-  xp += Math.round(improveSum);
+  var xp;
+  if(insufficientContent){
+    // Showing up isn't the same as practicing — a round with little or no real content earns only
+    // token participation XP, not the same reward as a genuinely worked round.
+    xp = 6;
+  } else {
+    xp = 40 + DIFFICULTIES.find(function(d){return d.id===session.opponent.difficulty;}).order*9;
+    if(session.meta.sideWasRandom) xp += 15;
+    if(session.rules.timerPreset==='pressure') xp += 18;
+    if(winner==='student') xp += 10; else if(winner==='draw') xp += 5;
+    var improveSum = SKILLS.reduce(function(s,k){return s+Math.max(0,(Store.skills[k.id]-prevSkills[k.id]));},0);
+    xp += Math.round(improveSum);
+  }
 
   var report = {
     id: session.id, createdAt: session.createdAt, format: session.format, formatName: session.formatObj.name,
@@ -1796,7 +2015,7 @@ async function finalizeDebate(session, onProgress){
     delivery: delivery, transcript: Store.settings.saveTranscripts ? session.transcript : [],
     memory: session.memory, crossExam: session.crossExam, xpAwarded: xp, aiSource: judgeResult.source,
     duration: Math.round((Date.now()-session.meta.startedAt)/1000), date: new Date().toISOString(),
-    comeback: comeback,
+    comeback: comeback, insufficientContent: insufficientContent,
     cfgSnapshot: { mode: session.mode, formatId: session.format, courtFormat: session.mode==='courtroom', topic: session.topic,
       side: session.studentSide, opponentId: session.opponent.archetype.id, difficulty: session.opponent.difficulty,
       sliderOverrides: {}, timerPreset: session.rules.timerPreset, judge: session.rules.judge,
@@ -1972,7 +2191,7 @@ VIEWS.dashboard = function(){
   var recDrill = DRILLS.find(function(d){return d.skills.indexOf(weakest.id)>-1;}) || DRILLS[0];
 
   return '<div class="row between" style="margin-bottom:22px;flex-wrap:wrap;gap:12px"><div><div class="eyebrow">'+greeting+(Store.profile.name?', '+esc(Store.profile.name):'')+'</div><h1 class="page-title">Ready for your next argument?</h1></div>'+
-    '<div class="row gap-2"><button class="btn btn-secondary" data-action="nav" data-view="practice">'+Icon('brain')+'Quick Practice</button><button class="btn btn-primary" data-action="nav" data-view="create">'+Icon('plus')+'Start a Debate</button></div></div>'+
+    '<div class="row gap-2 wrap"><button class="btn btn-secondary" data-action="quick-freestyle">'+Icon('message')+'Freestyle Debate</button><button class="btn btn-secondary" data-action="nav" data-view="practice">'+Icon('brain')+'Quick Practice</button><button class="btn btn-primary" data-action="nav" data-view="create">'+Icon('plus')+'Start a Debate</button></div></div>'+
 
     '<div class="grid grid-3" style="margin-bottom:22px">'+statCards+'</div>'+
 
@@ -2311,14 +2530,26 @@ VIEWS.live = function(){
     '<div class="arena-input-dock" id="arena-dock"></div>'+
   '</div>';
 };
+// Shared rendering for a transcript turn's body text: an AI turn with >1 tracked point renders as
+// separate, numbered point blocks instead of one run-on paragraph; everything else renders as plain text.
+function renderTurnBody(t){
+  if(t.noResponse) return '<em style="opacity:.7">No response — time expired before '+(t.isQuestion?'a question was asked':'an answer was given')+'.</em>';
+  if(t.speaker==='ai' && t.points && t.points.length>1){
+    return '<div class="point-list">'+t.points.map(function(p,i){
+      return '<div class="point-item"><span class="point-num">'+(i+1)+'</span><span class="point-text">'+esc(p)+'</span></div>';
+    }).join('')+'</div>';
+  }
+  return esc(t.text);
+}
 function renderTranscript(s){
   if(!s.transcript.length) return '<div class="empty-state" style="color:#8892A0"><p>The floor is yours — state your case when you\'re ready.</p></div>';
   return s.transcript.map(function(t){
     var who = t.speaker==='student' ? 'You' : s.opponent.archetype.name;
     var initials = t.speaker==='student' ? 'YOU' : who.split(' ').map(function(w){return w[0];}).join('').slice(0,2).toUpperCase();
     var fallacyTags = (t.fallacies||[]).map(function(f){return '<span class="msg-tag">'+esc(f.type)+'</span>';}).join('');
-    return '<div class="msg '+t.speaker+'"><div class="msg-avatar">'+initials+'</div><div><div class="msg-bubble">'+esc(t.text)+'</div>'+
-      '<div class="msg-meta"><span>'+esc(t.phaseLabel)+(t.isQuestion?' · Question':'')+'</span>'+(t.metrics?'<span>'+t.metrics.wpm+' wpm</span><span>'+t.metrics.fillerCount+' fillers</span>':'')+fallacyTags+'</div></div></div>';
+    var bubbleText = renderTurnBody(t);
+    return '<div class="msg '+t.speaker+(t.noResponse?' no-response':'')+'"><div class="msg-avatar">'+initials+'</div><div><div class="msg-bubble">'+bubbleText+'</div>'+
+      '<div class="msg-meta"><span>'+esc(t.phaseLabel)+(t.isQuestion?' · Question':'')+'</span>'+(t.metrics && !t.noResponse?'<span>'+t.metrics.wpm+' wpm</span><span>'+t.metrics.fillerCount+' fillers</span>':'')+fallacyTags+'</div></div></div>';
   }).join('');
 }
 function renderMemoryPanel(s){
@@ -2340,7 +2571,7 @@ function renderDock(){
   var placeholder = phase.type==='cross' ? (s.crossState.asker==='ai' ? 'Answer the question…' : 'Type your question…') : (phase.type==='closing' ? 'Deliver your closing…' : 'Make your case…');
   var micOk = SpeechToTextService.available();
   dock.innerHTML = '<div class="dock-inner">'+
-    (LiveArena.mode==='mic' && LiveArena.recording ? '<div class="row gap-2" style="color:#EDE9DE;font-size:12.5px"><div class="wave-bars">'+[1,2,3,4,5].map(function(i){return '<span style="animation-delay:'+(i*0.08)+'s"></span>';}).join('')+'</div><span id="live-interim">Listening…</span></div>' : '')+
+    (LiveArena.mode==='mic' && LiveArena.recording ? '<div class="row gap-2" style="color:#E6E9F4;font-size:12.5px"><div class="wave-bars">'+[1,2,3,4,5].map(function(i){return '<span style="animation-delay:'+(i*0.08)+'s"></span>';}).join('')+'</div><span id="live-interim">Listening…</span></div>' : '')+
     '<textarea class="dock-textarea" id="dock-textarea" placeholder="'+placeholder+'">'+esc(LiveArena.draft||'')+'</textarea>'+
     '<div class="dock-controls">'+
       '<div class="mode-toggle"><button class="'+(LiveArena.mode==='text'?'active':'')+'" data-action="dock-mode" data-mode="text">'+Icon('message','icon-sm')+' Text</button><button class="'+(LiveArena.mode==='mic'?'active':'')+'" data-action="dock-mode" data-mode="mic" '+(micOk?'':'disabled title="Mic not available"')+'>'+Icon('mic','icon-sm')+' Mic</button></div>'+
@@ -2381,7 +2612,9 @@ function paintTimer(){
 }
 function autoSubmitOnTimeout(){
   var ta = document.getElementById('dock-textarea');
-  var text = (ta && ta.value.trim()) ? ta.value.trim() : '(Time expired before a response was given.)';
+  // Leave this genuinely empty rather than inserting placeholder prose — a blank turn must be
+  // scored and remembered as "nothing was said," never quoted back as if the student said it.
+  var text = (ta && ta.value.trim()) ? ta.value.trim() : '';
   submitFromDock(text, LiveArena.secondsTotal||30);
 }
 function setThinking(on){
@@ -2400,11 +2633,28 @@ function refreshArenaDOM(){
   scrollTranscript();
   renderDock();
 }
+function ttsRateFor(session){
+  var arch = session.opponent.archetype;
+  // Blend the opponent persona's own speaking-speed slider with the user's global AI-speed
+  // preference, so a "Speed Debater" still sounds brisker than a "Calm Professor" rather than
+  // every opponent speaking at one identical robotic pace.
+  var base = 0.85 + (arch.sliders.speakingSpeed/100)*0.45;
+  return clamp(base * (Store.settings.aiSpeedVal||1), 0.7, 1.5);
+}
+function ttsPitchFor(session){
+  var arch = session.opponent.archetype;
+  // A touch lower and steadier than the flat default (1.0) reads as more confident and less
+  // sing-song/robotic; more aggressive, assertive personas go slightly lower still for gravitas,
+  // and courtroom mode drops it a little further for a more authoritative, formal register.
+  var p = 0.97 - (arch.sliders.aggressiveness/100)*0.08;
+  if(session.mode==='courtroom') p -= 0.03;
+  return clamp(p, 0.75, 1.05);
+}
 function speakLastAiTurn(){
   var s = ActiveSession;
   if(!Store.settings.aiVoice) return;
   var last = s.transcript.filter(function(t){return t.speaker==='ai';}).slice(-1)[0];
-  if(last) TextToSpeechService.speak(last.text, {rate: Store.settings.aiSpeedVal||1});
+  if(last) TextToSpeechService.speak(last.text, {rate: ttsRateFor(s), pitch: ttsPitchFor(s), voiceURI: Store.settings.voiceURI});
 }
 
 async function advanceFlow(){
@@ -2472,7 +2722,7 @@ async function finishToReport(){
   var s = ActiveSession;
   document.getElementById('arena-dock').innerHTML='';
   var main = document.getElementById('arena-main');
-  if(main) main.innerHTML = '<div class="empty-state" style="color:#EDE9DE"><div class="speaking-orb active" style="margin-bottom:14px"></div><p>The judge is deliberating…</p></div>';
+  if(main) main.innerHTML = '<div class="empty-state" style="color:#E6E9F4"><div class="speaking-orb active" style="margin-bottom:14px"></div><p>The judge is deliberating…</p></div>';
   var report = await finalizeDebate(s);
   LastReport = report;
   if(s.mode==='tournament' && Tournament && Tournament.active && !Tournament.eliminated){
@@ -2534,6 +2784,7 @@ VIEWS.report = function(params){
         '<div><div class="faint" style="font-size:11px;text-transform:uppercase;color:#9AA3B2">Duration</div><div class="mono" style="font-size:26px;font-weight:700;color:#fff">'+fmtTime(r.duration)+'</div></div>'+
       '</div>'+
     '</div>'+
+    (r.insufficientContent ? '<div class="card card-pad" style="margin-top:16px;border-color:var(--ember-500);background:var(--against-soft)"><b>Not enough was said to score this round normally.</b> Scores below are low because there wasn\'t enough real content to evaluate — that\'s expected, not a bug. Start a new debate and try actually stating your case to get a full, meaningful report.</div>' : '')+
     (improveNote ? '<div class="card card-pad" style="margin-top:16px;border-color:var(--teal-500);background:var(--for-soft)"><b>Performance improved '+improveNote.pct+'%</b> — even though the round went to your opponent, '+esc(improveNote.text)+'</div>' : '')+
 
     '<div class="grid" style="grid-template-columns:1fr 1fr;margin-top:22px">'+
@@ -2584,12 +2835,21 @@ function deliveryStat(label,val){
   return '<div class="stat-card" style="background:var(--surface-2)"><span class="stat-label">'+label+'</span><span class="stat-val tabular">'+val+'</span></div>';
 }
 function computeImprovementNote(r){
+  // This badge must reflect a genuine, measured improvement — never a formula that always produces
+  // a positive-sounding number. If there isn't enough real history to compare against, or this round
+  // didn't have enough content to score meaningfully, don't show it at all.
+  if(r.insufficientContent) return null;
+  var priorReports = Store.history.filter(function(h){ return h.id!==r.id && !h.insufficientContent; }).slice(0,5);
+  if(priorReports.length < 2) return null;
+  var priorAvg = priorReports.reduce(function(s,h){return s+h.overall;},0)/priorReports.length;
+  var delta = r.overall - priorAvg;
+  if(delta < 4) return null;
   var bits=[];
   if(r.delivery.fillerCount<=3) bits.push('you kept filler words low');
   if(r.scores.timeManagement>=75) bits.push('you managed your time well');
   if(r.crossExam && r.crossExam.answers.length && (r.crossExam.answers.length-r.crossExam.evasions)/r.crossExam.answers.length>0.7) bits.push('you answered most cross-examination questions directly');
-  if(!bits.length) bits.push('your structure and delivery both held up under pressure');
-  var pct = clamp(Math.round((r.overall-45)/2)+8,3,22);
+  if(!bits.length) bits.push('your overall score was higher than your recent average');
+  var pct = clamp(Math.round((delta/Math.max(priorAvg,1))*100),3,60);
   return {pct:pct, text: bits.join(', ')+'.'};
 }
 /* ======================================================================
@@ -2681,7 +2941,9 @@ VIEWS.witness = function(){
         return '<div class="card" style="padding:12px 14px"><div class="faint" style="font-size:11px;text-transform:uppercase;font-weight:700">'+x.mode+' · Q'+(x.i+1)+'</div><p style="font-size:13px;margin-top:4px"><b>Attorney:</b> '+esc(x.q)+'</p><p style="font-size:13px;margin-top:4px"><b>You:</b> '+esc(x.a)+'</p></div>';
       }).join('')+'</div>'+
       (Witness.loading ? '<div class="thinking-row" style="color:var(--text-muted)"><div class="thinking-dots"><span></span><span></span><span></span></div><span>Attorney is preparing the next question…</span></div>' :
-      '<div class="card card-pad"><p style="font-weight:600;margin-bottom:10px">'+esc(Witness.currentQ)+'</p><textarea class="textarea" id="witness-answer" placeholder="Give your testimony…"></textarea>'+
+      '<div class="card card-pad"><p style="font-weight:600;margin-bottom:10px">'+esc(Witness.currentQ)+'</p>'+
+      '<div style="position:relative"><textarea class="textarea" id="witness-answer" placeholder="Give your testimony…" style="padding-right:44px"></textarea>'+
+      '<div style="position:absolute;top:8px;right:8px">'+micInlineButton('witness-answer')+'</div></div>'+
       '<button class="btn btn-primary" style="margin-top:10px" data-action="witness-answer">Answer '+Icon('send','icon-sm')+'</button></div>')+
       '</div>';
   }
@@ -2755,7 +3017,8 @@ VIEWS.judge = function(){
       '<div class="card card-pad"><div class="pill pill-against" style="margin-bottom:8px">Respondent</div><p style="font-size:13.5px;line-height:1.6">'+esc(j.args.respondent)+'</p></div></div>'+
       '<div class="card card-pad"><div class="section-title" style="margin-bottom:10px">Your Ruling</div>'+
       '<div class="row gap-2" style="margin-bottom:12px"><button class="choice-chip'+(j.side==='for'?' selected':'')+'" data-action="judge-side" data-side="for">Rule for Petitioner</button><button class="choice-chip'+(j.side==='against'?' selected':'')+'" data-action="judge-side" data-side="against">Rule for Respondent</button></div>'+
-      '<textarea class="textarea" id="judge-reasoning" placeholder="Explain your reasoning — engage with the strongest argument on both sides.">'+esc(j.reasoning)+'</textarea>'+
+      '<div style="position:relative"><textarea class="textarea" id="judge-reasoning" placeholder="Explain your reasoning — engage with the strongest argument on both sides." style="padding-right:44px">'+esc(j.reasoning)+'</textarea>'+
+      '<div style="position:absolute;top:8px;right:8px">'+micInlineButton('judge-reasoning')+'</div></div>'+
       '<button class="btn btn-primary" style="margin-top:10px" data-action="judge-submit" '+(j.side?'':'disabled')+'>Deliver Opinion '+Icon('gavel','icon-sm')+'</button></div></div>';
   }
   var e = j.evaluation;
@@ -2877,7 +3140,10 @@ function renderQuizResult(d,q){
 function renderOpenTimerAndInput(){
   var o = DrillOpen;
   return '<div id="drill-timer-mount" style="margin:14px 0"></div>'+
-    '<textarea class="textarea" id="drill-answer" placeholder="Your response…" style="min-height:110px">'+esc(o.draft||'')+'</textarea>'+
+    '<div style="position:relative">'+
+      '<textarea class="textarea" id="drill-answer" placeholder="Your response…" style="min-height:110px;padding-right:44px">'+esc(o.draft||'')+'</textarea>'+
+      '<div style="position:absolute;top:8px;right:8px">'+micInlineButton('drill-answer')+'</div>'+
+    '</div>'+
     '<button class="btn btn-primary" style="margin-top:10px" data-action="drill-submit">Submit '+Icon('send','icon-sm')+'</button>';
 }
 function renderOpenDrill(d){
@@ -2918,6 +3184,7 @@ function mountDrillTimer(){
   },1000);
 }
 async function submitOpenDrill(timedOut){
+  stopGenericMic();
   var o = DrillOpen;
   clearInterval(o.timerHandle);
   var ta = document.getElementById('drill-answer');
@@ -2961,10 +3228,12 @@ function renderCrossexDrill(d){
   return '<div class="wiz-shell"><div class="eyebrow">Cross-Examination Drill · Question '+(o.idx+1)+' of '+o.total+'</div>'+
     '<div class="card card-pad"><p style="font-size:13px" class="faint">Claim under examination:</p><p style="font-weight:600;margin-bottom:14px">"'+esc(o.claim)+'"</p>'+
     '<div class="col gap-2" style="max-height:220px;overflow-y:auto;margin-bottom:12px">'+o.rounds.map(function(r){return '<div class="card" style="padding:10px 12px"><p style="font-size:12.5px"><b>You asked:</b> '+esc(r.q)+'</p><p style="font-size:12.5px;margin-top:3px"><b>Answer:</b> '+esc(r.a)+'</p></div>';}).join('')+'</div>'+
-    '<textarea class="textarea" id="drill-answer" placeholder="Ask a sharp question that probes this claim…" style="min-height:70px"></textarea>'+
+    '<div style="position:relative"><textarea class="textarea" id="drill-answer" placeholder="Ask a sharp question that probes this claim…" style="min-height:70px;padding-right:44px"></textarea>'+
+    '<div style="position:absolute;top:8px;right:8px">'+micInlineButton('drill-answer')+'</div></div>'+
     '<button class="btn btn-primary" style="margin-top:10px" data-action="crossex-ask">Ask '+Icon('send','icon-sm')+'</button></div></div>';
 }
 async function crossexAsk(){
+  stopGenericMic();
   var o = DrillOpen; var ta=document.getElementById('drill-answer'); var q=(ta?ta.value:'').trim(); if(!q) return;
   var sample = SampleCap || await SampleCapPromise;
   var a;
@@ -3000,6 +3269,7 @@ function renderSwitchDrill(d){
 }
 function t_title(t){ return t.title; }
 async function submitSwitchDrill(){
+  stopGenericMic();
   var o = DrillOpen; clearInterval(o.timerHandle);
   var ta = document.getElementById('drill-answer'); var text=(ta?ta.value:'').trim();
   if(o.phase==='side1'){
@@ -3040,6 +3310,7 @@ function renderChaosDrill(d){
     '<div class="card card-pad" style="border-color:var(--ember-500)"><p style="font-weight:600;margin-bottom:10px">'+esc(o.prompt)+'</p>'+renderOpenTimerAndInput()+'</div></div>';
 }
 async function submitChaosStage(){
+  stopGenericMic();
   var o = DrillOpen; clearInterval(o.timerHandle);
   var ta = document.getElementById('drill-answer'); var text=(ta?ta.value:'').trim();
   var m = analyzeDelivery(text, Math.max(3,Math.round((Date.now()-o.startTs)/1000)));
@@ -3094,6 +3365,7 @@ function mountDojoTimer(){
   Dojo.timerHandle = setInterval(function(){ Dojo.secondsLeft--; if(Dojo.secondsLeft<=0){ clearInterval(Dojo.timerHandle); dojoSubmit(true); return;} paint(); },1000);
 }
 function dojoSubmit(timedOut){
+  stopGenericMic();
   clearInterval(Dojo.timerHandle);
   var ta=document.getElementById('drill-answer'); var text=(ta?ta.value:'').trim();
   var h = localArgumentHeuristics(text||'');
@@ -3249,6 +3521,15 @@ VIEWS.settings = function(){
     '<div class="settings-group"><div class="sg-title">Voice</div><div class="card card-pad">'+
       swRow('Microphone','Enable voice input where your browser supports it.','micEnabled', !SpeechToTextService.available())+
       swRow('AI Voice','Hear your opponent speak aloud.','aiVoice', !TextToSpeechService.available())+
+      (TextToSpeechService.available() ? (function(){
+        var vs = TextToSpeechService.listVoices();
+        var opts = '<option value=""'+(!Store.settings.voiceURI?' selected':'')+'>Auto (best available)</option>'+
+          vs.map(function(v){return '<option value="'+esc(v.uri)+'"'+(Store.settings.voiceURI===v.uri?' selected':'')+'>'+esc(v.name)+' ('+esc(v.lang)+')</option>';}).join('');
+        return '<div class="field" style="margin-bottom:12px"><label>AI Voice — System Voice</label>'+
+          '<div style="display:flex;gap:8px;align-items:center"><select class="select" data-action="setting-voice" style="flex:1">'+opts+'</select>'+
+          '<button class="btn btn-ghost btn-sm" type="button" data-action="voice-preview">Preview</button></div>'+
+          '<div style="font-size:12px;opacity:.65;margin-top:6px">Voice quality depends on what your browser/OS provides — this list is ranked by quality, but Counterpoint can\'t generate a new voice beyond what your system offers.</div></div>';
+      })() : '')+
       swRow('Live Transcript','Show your words as you speak.','liveTranscript')+
       swRow('Filler-Word Detection','Flag filler words in your delivery report.','fillerDetection')+
       swRow('Audible Timer','Play a tone at 10 seconds remaining and at time-up.','audibleTimer')+
@@ -3290,14 +3571,16 @@ function buildTimeline(r){
   (r.fallacySummary||[]).forEach(function(f){ keySet[f.quote]=1; });
   return t.map(function(turn){
     var isKey = turn.fallacies && turn.fallacies.length;
-    return '<div class="tl-item '+(isKey?'key':turn.speaker)+'"><div class="tl-round">'+esc(turn.phaseLabel)+' · '+(turn.speaker==='student'?'You':'Opponent')+'</div><div class="tl-text">'+esc(turn.text.slice(0,220))+(turn.text.length>220?'…':'')+'</div></div>';
+    var raw = turn.noResponse ? '(No response — time expired.)' : (turn.points && turn.points.length>1 ? turn.points.join(' · ') : turn.text);
+    var text = turn.noResponse ? raw : (esc(raw.slice(0,220))+(raw.length>220?'…':''));
+    return '<div class="tl-item '+(isKey?'key':turn.speaker)+(turn.noResponse?' no-response':'')+'"><div class="tl-round">'+esc(turn.phaseLabel)+' · '+(turn.speaker==='student'?'You':'Opponent')+'</div><div class="tl-text"'+(turn.noResponse?' style="opacity:.65;font-style:italic"':'')+'>'+text+'</div></div>';
   }).join('');
 }
 function openTranscriptModal(r){
   var t = r.transcript||[];
   openModal('<div class="card-pad"><h3 class="section-title" style="margin-bottom:10px">Full Transcript</h3><div class="col gap-2" style="max-height:70vh;overflow-y:auto">'+
     (t.length ? t.map(function(x){
-      return '<div class="card" style="padding:10px 12px"><div class="faint" style="font-size:11px;font-weight:700;text-transform:uppercase">'+esc(x.phaseLabel)+' · '+(x.speaker==='student'?'You':'Opponent')+'</div><p style="font-size:13px;margin-top:4px">'+esc(x.text)+'</p></div>';
+      return '<div class="card" style="padding:10px 12px"><div class="faint" style="font-size:11px;font-weight:700;text-transform:uppercase">'+esc(x.phaseLabel)+' · '+(x.speaker==='student'?'You':'Opponent')+'</div><div style="font-size:13px;margin-top:4px'+(x.noResponse?';opacity:.65;font-style:italic':'')+'">'+renderTurnBody(x)+'</div></div>';
     }).join('') : '<p class="muted">Transcript wasn\'t saved for this round — enable "Save Transcripts" in Settings for future debates.</p>')+
     '</div></div>');
 }
@@ -3328,6 +3611,56 @@ function startPressureQuick(){
     ActiveSession = createSession(cfg); Router.view='prep'; render();
   }};
   Router.view='reveal'; render();
+}
+/* ---- Freestyle quick-start: topic (+ optional side) only, everything else defaulted ---- */
+var FreestyleQuick = { side:'random', pickedTopic:null };
+var FREESTYLE_EXAMPLES = ['Should homework be abolished?','Should social media require age verification?','Is a hot dog a sandwich?','Should college be free?','Should AI-generated art be copyrightable?','Should zoos exist?'];
+function openFreestyleModal(){
+  FreestyleQuick = { side:'random', pickedTopic:null };
+  openModal(renderFreestyleModal());
+  setTimeout(function(){ var el=document.getElementById('fs-topic-input'); if(el) el.focus(); }, 30);
+}
+function renderFreestyleModal(){
+  return '<div class="card-pad">'+
+    '<h3 class="section-title" style="margin-bottom:4px">'+Icon('message','icon-sm')+' Freestyle Debate</h3>'+
+    '<p class="muted" style="font-size:13px;margin:6px 0 16px">Type any topic — or grab a suggestion — and jump straight in. No format, opponent, or timer setup; everything else uses sensible defaults.</p>'+
+    '<label class="faint" style="font-size:11px;text-transform:uppercase;font-weight:700;letter-spacing:.04em">Topic</label>'+
+    '<input class="input" id="fs-topic-input" placeholder="e.g. Should homework be abolished?" style="margin-top:6px" maxlength="180">'+
+    '<div class="row gap-1 wrap" style="margin-top:10px">'+
+      FREESTYLE_EXAMPLES.map(function(e){ return '<button class="choice-chip" data-action="fs-example" data-text="'+esc(e)+'" style="font-size:12px">'+esc(e)+'</button>'; }).join('')+
+    '</div>'+
+    '<button class="btn btn-secondary btn-sm" data-action="fs-surprise" style="margin-top:10px">'+Icon('shuffle','icon-sm')+'Surprise Me</button>'+
+    '<div style="margin-top:18px">'+
+      '<label class="faint" style="font-size:11px;text-transform:uppercase;font-weight:700;letter-spacing:.04em">Side</label>'+
+      '<div class="row gap-2" style="margin-top:8px">'+
+        ['for','against','random'].map(function(s){
+          var lbl = s==='for'?'FOR':s==='against'?'AGAINST':'Random';
+          return '<button class="choice-chip'+(FreestyleQuick.side===s?' selected':'')+'" data-action="fs-side" data-side="'+s+'">'+lbl+'</button>';
+        }).join('')+
+      '</div>'+
+    '</div>'+
+    '<div class="row gap-2" style="margin-top:22px;justify-content:flex-end">'+
+      '<button class="btn btn-ghost" data-action="close-modal">Cancel</button>'+
+      '<button class="btn btn-primary" data-action="fs-start">'+Icon('play','icon-sm')+'Start Freestyle Debate</button>'+
+    '</div>'+
+  '</div>';
+}
+function startFreestyleDebate(topic, sidePref){
+  var opponent = OPPONENTS.find(function(o){return o.id==='calmprofessor';}) || OPPONENTS[0];
+  var difficulty = Store.settings.defaultDifficulty || 'intermediate';
+  function go(side, wasRandom){
+    var cfg = {mode:'debate', courtFormat:false, formatId:'freestyle', topic:topic, side:side, sideWasRandom:wasRandom,
+      opponentId:opponent.id, sliderOverrides:{}, difficulty:difficulty, adaptive:false, timerPreset:'competitive',
+      judge:'coach', interruptions:'off', prepEnabled:true, learningMode:true};
+    ActiveSession = createSession(cfg); Router.view='prep'; render();
+  }
+  if(sidePref==='random'){
+    var side = Math.random()<0.5?'for':'against';
+    RevealData = { side:side, topic:topic, onContinue:function(){ go(side, true); } };
+    Router.view='reveal'; render();
+  } else {
+    go(sidePref, false);
+  }
 }
 function challengeSideFor(topic){
   if(!topic) return Math.random()<0.5?'for':'against';
@@ -3362,7 +3695,7 @@ function rerenderPreserveFocus(){
 function toggleMic(){
   if(!LiveArena.recording){
     var started = SpeechToTextService.start({onError:function(err){
-      toast('Microphone error ('+err+') — switched to text.', 'mic-off');
+      toast('Microphone blocked ('+err+') — check your browser\'s mic permission for this site. Switched to text.', 'mic-off');
       LiveArena.recording=false; LiveArena.mode='text'; renderDock();
     }});
     if(!started){ toast('Could not access the microphone — using text instead.','mic-off'); LiveArena.mode='text'; renderDock(); return; }
@@ -3381,6 +3714,52 @@ function toggleMic(){
   } else {
     SpeechToTextService.stop();
   }
+}
+
+/* ---- Generic mic-to-text toggle: reusable dictation button for any single textarea, used in
+   Drills, Witness Mode, and Judge Mode so voice input works consistently everywhere in the app,
+   not only in the main Live Arena. Only one target can dictate at a time. ---- */
+var GenericMic = { active:false, targetId:null };
+function stopGenericMic(){ if(GenericMic.active){ SpeechToTextService.stop(); GenericMic.active=false; } }
+function micInlineButton(targetId){
+  if(!SpeechToTextService.available() || !Store.settings.micEnabled) return '';
+  var isThis = GenericMic.active && GenericMic.targetId===targetId;
+  return '<button type="button" class="btn btn-icon btn-ghost mic-inline-btn'+(isThis?' recording':'')+
+    '" data-action="generic-mic-toggle" data-target="'+targetId+'" title="'+(isThis?'Stop dictating':'Dictate your answer aloud')+'">'+
+    Icon(isThis?'mic-off':'mic','icon-sm')+'</button>';
+}
+function renderGenericMicUI(){
+  Array.prototype.forEach.call(document.querySelectorAll('[data-action="generic-mic-toggle"]'), function(b){
+    var isThis = GenericMic.active && b.dataset.target===GenericMic.targetId;
+    b.classList.toggle('recording', isThis);
+    b.title = isThis ? 'Stop dictating' : 'Dictate your answer aloud';
+    b.innerHTML = Icon(isThis?'mic-off':'mic','icon-sm');
+  });
+}
+function genericMicToggle(targetId){
+  if(GenericMic.active){
+    var wasSameTarget = GenericMic.targetId===targetId;
+    SpeechToTextService.stop();
+    if(wasSameTarget) return; // stop() will finalize via onEnd below
+  }
+  GenericMic.targetId = targetId;
+  var started = SpeechToTextService.start({onError:function(err){
+    toast('Microphone blocked ('+err+') — check your browser\'s mic permission for this site. Switched to typing.', 'mic-off');
+    GenericMic.active = false; renderGenericMicUI();
+  }});
+  if(!started){ toast('Could not access the microphone — using text instead.','mic-off'); return; }
+  GenericMic.active = true;
+  renderGenericMicUI();
+  SpeechToTextService.onResult(function(text){
+    var ta = document.getElementById(targetId);
+    if(ta) ta.value = text;
+  });
+  SpeechToTextService.onEnd(function(finalText){
+    GenericMic.active = false;
+    var ta = document.getElementById(targetId);
+    if(ta){ ta.value = (finalText||'').trim(); ta.focus(); }
+    renderGenericMicUI();
+  });
 }
 
 /* ======================================================================
@@ -3461,7 +3840,7 @@ async function handleAction(action, ds, e, el){
     case 'toggle-mobile-nav': openMobileNav(); break;
     case 'new-debate': resetWizard(); navigate('create'); break;
     case 'close-modal': closeModal(); break;
-    case 'close-modal-bg': if(e.target===e.currentTarget) closeModal(); break;
+    case 'close-modal-bg': if(e.target===el) closeModal(); break;
     case 'start-onboarding': Onb={step:1,goals:[],experience:'',practicePref:''}; navigate('onboarding'); break;
 
     /* -------- onboarding -------- */
@@ -3476,6 +3855,41 @@ async function handleAction(action, ds, e, el){
     case 'quick-controversy': startRoulette(true); break;
     case 'quick-pressure': startPressureQuick(); break;
     case 'quick-drill': navigate('drill', {id:ds.drill}); break;
+    case 'quick-freestyle': openFreestyleModal(); break;
+    case 'fs-example': {
+      FreestyleQuick.pickedTopic = null;
+      var fsIn1 = document.getElementById('fs-topic-input');
+      if(fsIn1){ fsIn1.value = ds.text; fsIn1.focus(); }
+      break;
+    }
+    case 'fs-surprise': {
+      var fsTopic = choice(TOPICS);
+      FreestyleQuick.pickedTopic = fsTopic;
+      var fsIn2 = document.getElementById('fs-topic-input');
+      if(fsIn2){ fsIn2.value = fsTopic.title; fsIn2.focus(); }
+      break;
+    }
+    case 'fs-side': {
+      FreestyleQuick.side = ds.side;
+      Array.prototype.forEach.call(document.querySelectorAll('[data-action="fs-side"]'), function(b){ b.classList.toggle('selected', b.getAttribute('data-side')===ds.side); });
+      break;
+    }
+    case 'fs-start': {
+      var fsInput = document.getElementById('fs-topic-input');
+      var fsRaw = fsInput ? fsInput.value.trim() : '';
+      if(!fsRaw){ toast('Enter a topic first — or tap Surprise Me.', 'alert'); if(fsInput) fsInput.focus(); break; }
+      var fsFinalTopic;
+      if(FreestyleQuick.pickedTopic && FreestyleQuick.pickedTopic.title===fsRaw){
+        fsFinalTopic = FreestyleQuick.pickedTopic;
+      } else {
+        fsFinalTopic = { id:'custom-'+uid(), category:'custom', title:fsRaw, blurb:'A freestyle topic.', controversy:2, complexity:'Moderate', evidence:'Flexible', level:'All levels',
+          forFrame:'Argue in favor of: "'+fsRaw+'"', againstFrame:'Argue against: "'+fsRaw+'"' };
+      }
+      var fsSidePref = FreestyleQuick.side;
+      closeModal();
+      startFreestyleDebate(fsFinalTopic, fsSidePref);
+      break;
+    }
 
     /* -------- wizard: step 1 -------- */
     case 'wiz-format': Wizard.formatId=ds.id; render(); break;
@@ -3533,6 +3947,7 @@ async function handleAction(action, ds, e, el){
       ActiveSession=null; closeModal(); navigate('dashboard'); toast('Debate abandoned.', 'x-circle'); break;
     case 'dock-mode': LiveArena.mode=ds.mode; renderDock(); break;
     case 'dock-mic-toggle': toggleMic(); break;
+    case 'generic-mic-toggle': genericMicToggle(ds.target); break;
     case 'dock-submit': { var ta1=document.getElementById('dock-textarea'); var text1=ta1?ta1.value.trim():''; if(!text1) return; submitFromDock(text1); break; }
 
     /* -------- report -------- */
@@ -3595,6 +4010,7 @@ async function handleAction(action, ds, e, el){
     case 'witness-pick-case': Witness.kase=COURT_CASES.find(function(x){return x.id===ds.id;}); render(); break;
     case 'witness-begin': Witness.step='exam'; Witness.mode='direct'; Witness.idx=0; Witness.qa=[]; await witnessAdvance(); break;
     case 'witness-answer': {
+      stopGenericMic();
       var taw=document.getElementById('witness-answer'); var textw=taw?taw.value.trim():''; if(!textw) return;
       Witness.qa.push({mode:Witness.mode,i:Witness.idx,q:Witness.currentQ,a:textw}); Witness.idx++;
       await witnessAdvance(); break;
@@ -3605,6 +4021,7 @@ async function handleAction(action, ds, e, el){
     case 'judge-begin': JudgeMode.loading=true; render(); JudgeMode.args=await judgeCaseArguments(JudgeMode.kase); JudgeMode.loading=false; JudgeMode.step='verdict'; render(); break;
     case 'judge-side': JudgeMode.side=ds.side; render(); break;
     case 'judge-submit': {
+      stopGenericMic();
       var taj=document.getElementById('judge-reasoning'); JudgeMode.reasoning=taj?taj.value.trim():''; if(!JudgeMode.reasoning) return;
       JudgeMode.loading=true; render();
       JudgeMode.evaluation = await evaluateVerdict(JudgeMode.kase, JudgeMode.side, JudgeMode.reasoning);
@@ -3642,6 +4059,8 @@ async function handleAction(action, ds, e, el){
     case 'setting-select': Store.settings[ds.key]=el.value; saveStore(); render(); break;
     case 'setting-theme': Store.settings.theme=el.value; saveStore(); applyTheme(); render(); break;
     case 'setting-ai-speed': { Store.settings.aiSpeedVal=parseFloat(el.value); saveStore(); var v4=el.closest('.slider-row').querySelector('.sl-val'); if(v4) v4.textContent=parseFloat(el.value).toFixed(1)+'×'; break; }
+    case 'setting-voice': Store.settings.voiceURI = el.value || null; saveStore(); break;
+    case 'voice-preview': TextToSpeechService.speak('Objection, Your Honor — opposing counsel is mischaracterizing the record, and I intend to prove it.', {rate:1, pitch:0.95, voiceURI:Store.settings.voiceURI}); break;
     case 'setting-delete-data': confirmDeleteData(); break;
     case 'setting-delete-confirm':
       try{ localStorage.removeItem(LS_KEY); }catch(err){}
