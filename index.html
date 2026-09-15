@@ -827,16 +827,17 @@ const NEWS = ["news", "Recent News", "New models, new tools, and whatever the in
 
 const MEETINGS = [
   ["2026-09-14", "", [
-    ["learn", "Meet the Club", "Who we are, what a meeting looks like, and what a year in here gets you.", "", ""],
-    ["learn", "How AI Works", "Tokens, training, context windows — in plain words, no math.", "", ""]
+    ["learn", "Meet the Club", "Who we are, what a meeting looks like, and what a year in here gets you.", "", ""]
   ]],
   ["2026-10-19", "", [
+    ["learn", "Club Goals", "New faces from the club fair. What we're building this year, and how a meeting actually runs.", "", ""],
     ["build", "Prompting", "How to ask for what you actually want: role, context, constraints, examples.", "", ""],
-    ["build", "AI Chatbot Tools: Skills, Connectors, Plugins", "What skills, connectors and plugins do, and when each one is worth setting up.", "", ""],
-    ["project", "Pick Your Project", "Decide what you're building this year. One idea, written down.", "", ""]
+    ["build", "AI Chatbot Tools: Skills, Connectors, Plugins", "What skills, connectors and plugins do, and when each one is worth setting up.", "", ""]
   ]],
   ["2026-11-02", "", [
+    ["learn", "How AI Works", "Tokens, training, context windows — in plain words, no math.", "", ""],
     ["learn", "Comparing AI Tools", "Which one to reach for: chat, notebook, image, code, research.", "", ""],
+    ["project", "Pick Your Project", "Decide what you're building this year. One idea, written down.", "", ""],
     ["project", "Plan the Build", "Scope it, list what it needs, and pick the tool you'll actually build it in.", "", ""]
   ]],
   ["2026-11-16", "", [
@@ -1093,7 +1094,9 @@ class Component extends DCLogic {
     let nextFound = false;
     return MEETINGS.map((m, i) => {
       const [y, mo, d] = m[0].split("-").map(Number);
-      const dt = new Date(y, mo - 1, d, 23, 59);
+      // A meeting stops being "up next" when it actually ends (4:15 PM), not at
+      // midnight — otherwise it still says up next all afternoon after it finished.
+      const dt = new Date(y, mo - 1, d, 16, 15);
       const past = dt < now;
       const isNext = !past && !nextFound;
       if (isNext) nextFound = true;
