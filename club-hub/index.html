@@ -69,9 +69,11 @@ button{font:inherit;color:inherit}
 .mainnav a:hover{color:var(--ink);text-decoration:none;background:var(--panel-2)}
 .mainnav a.on{color:var(--ink);border-bottom-color:var(--blue);font-weight:600}
 .nav-badge{display:inline-block;min-width:17px;height:17px;padding:0 4px;margin-left:6px;border-radius:9px;background:var(--blue);color:#fff;font-size:11px;font-weight:600;line-height:17px;text-align:center;vertical-align:1px}
-:root[data-theme="dark"] .nav-badge,html:not([data-theme="light"]) .nav-badge{color:var(--paper)}
+:root[data-theme="dark"] .nav-badge{color:var(--paper)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .nav-badge{color:var(--paper)}}
 .avatar{width:31px;height:31px;border-radius:50%;background:var(--green);color:#fff;border:0;display:grid;place-items:center;font-size:13px;font-weight:600;cursor:pointer;flex:none}
-:root[data-theme="dark"] .avatar,html:not([data-theme="light"]) .avatar{color:#0F1A16}
+:root[data-theme="dark"] .avatar{color:#0F1A16}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .avatar{color:#0F1A16}}
 .acct{position:relative}
 .menu{position:absolute;right:0;top:40px;width:232px;background:var(--panel);border:1px solid var(--line-2);border-radius:var(--r-l);box-shadow:0 8px 24px rgba(10,20,28,.16);padding:6px;z-index:50}
 .menu h4{font-family:inherit;font-size:12px;font-weight:600;color:var(--ink-3);padding:8px 10px 4px;margin:0}
@@ -101,7 +103,8 @@ button{font:inherit;color:inherit}
 .btn:hover{background:var(--panel-2);text-decoration:none}
 .btn-pri{background:var(--blue);border-color:var(--blue);color:#fff}
 .btn-pri:hover{background:var(--blue-2);border-color:var(--blue-2)}
-:root[data-theme="dark"] .btn-pri,html:not([data-theme="light"]) .btn-pri{color:#0C1A24}
+:root[data-theme="dark"] .btn-pri{color:#0C1A24}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .btn-pri{color:#0C1A24}}
 .btn-on{background:var(--green-soft);border-color:var(--green-line);color:var(--green)}
 .btn-on:hover{background:var(--green-soft);border-color:var(--green)}
 .btn-sm{padding:4px 10px;font-size:13px}
@@ -202,7 +205,8 @@ select.field{padding:6px 8px;width:auto}
 .seg button{padding:5px 13px;border:0;background:var(--panel);font-size:13.5px;cursor:pointer;border-left:1px solid var(--line-2);white-space:nowrap}
 .seg button:first-child{border-left:0}
 .seg button.on{background:var(--blue);color:#fff;font-weight:500}
-:root[data-theme="dark"] .seg button.on,html:not([data-theme="light"]) .seg button.on{color:#0C1A24}
+:root[data-theme="dark"] .seg button.on{color:#0C1A24}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .seg button.on{color:#0C1A24}}
 .segn{margin-left:6px;font-variant-numeric:tabular-nums;opacity:.72}
 
 /* ---------- match ---------- */
