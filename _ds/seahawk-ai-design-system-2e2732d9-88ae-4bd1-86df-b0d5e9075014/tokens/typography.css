@@ -1,9 +1,9 @@
 /* Seahawk AI — Typography tokens
-   Three faces, three contexts: Public Sans everywhere; Lora for editorial headline moments;
+   Three faces, three contexts: Inter everywhere; Lora for editorial headline moments;
    Caveat for personal/handwritten touches. Tracking is tight (-0.01em) almost universally. */
 :root {
   /* ---- Families ---- */
-  --font-sans:   "Public Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-sans:   Inter, "Helvetica Neue", Helvetica, Arial, sans-serif;
   --font-serif:  Lora, "Iowan Old Style", Georgia, serif;
   --font-script: Caveat, "Comic Sans MS", cursive;
 
