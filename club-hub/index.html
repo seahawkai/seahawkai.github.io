@@ -1,334 +1,1245 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Seahawk Club Hub — Visual Preview</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Seahawk Club Hub</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<script src="https://cdn.tailwindcss.com"></script>
-<script>
-  tailwind.config = {
-    theme: {
-      extend: {
-        colors: {
-          navy: { 950:'#060F20',900:'#0A1B36',800:'#0F2647',700:'#16345E',600:'#1D4576' },
-          action: { 700:'#144FAE',600:'#1B63D6',500:'#2C79EE',400:'#5B9AF5',100:'#E4EDFD' },
-          teal: { 700:'#0A6F62',600:'#0D8B7A',500:'#12A68F',400:'#3DC2AC',100:'#DFF5F0' },
-          surface: { DEFAULT:'#F3F6FA', raised:'#F8FAFD', card:'#FFFFFF', border:'#E3E9F1', borderStrong:'#CBD6E4' },
-          ink: { 900:'#161C26',800:'#232B38',700:'#3A4453',500:'#6B7688',400:'#8D97A8',300:'#B7C0CE' },
-          warn: { DEFAULT:'#B5720B', bg:'#FCF1DC' },
-        },
-        fontFamily: {
-          display: ['"Space Grotesk"','system-ui','sans-serif'],
-          body: ['Inter','system-ui','sans-serif'],
-          mono: ['"JetBrains Mono"','ui-monospace','monospace'],
-        },
-        boxShadow: {
-          soft: '0 1px 2px 0 rgba(10,27,54,.04), 0 4px 16px -4px rgba(10,27,54,.08)',
-          card: '0 1px 3px 0 rgba(10,27,54,.06), 0 8px 24px -8px rgba(10,27,54,.10)',
-          lifted: '0 12px 32px -8px rgba(10,27,54,.22)',
-        }
-      }
-    }
-  }
-</script>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&display=swap" rel="stylesheet">
 <style>
-  body { font-family: 'Inter', system-ui, sans-serif; background:#F3F6FA; }
-  .font-display { font-family: 'Space Grotesk', system-ui, sans-serif; }
-  .font-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
-  .tab-panel { display: none; }
-  .tab-panel.active { display: block; }
-  .preview-nav-btn.active { background:#0A1B36; color:#fff; }
+:root{
+  --paper:#F3F5F3; --panel:#FFFFFF; --panel-2:#E9EDEA; --panel-3:#DFE5E1;
+  --line:#D6DCD8; --line-2:#C2CBC5;
+  --ink:#17222B; --ink-2:#4B5A63; --ink-3:#74838B;
+  --blue:#14507E; --blue-2:#0E3C5F; --blue-soft:#E2EBF3; --blue-line:#B7CCDE;
+  --green:#2A6B57; --green-soft:#DFEBE5; --green-line:#B3CDC1;
+  --warn:#8A5312; --warn-soft:#F3E8D8; --warn-line:#DFC9A6;
+  --r-s:3px; --r-m:5px; --r-l:7px;
+  --nav-h:57px;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#12181C; --panel:#1A2228; --panel-2:#222C33; --panel-3:#2B363E;
+    --line:#2E3A42; --line-2:#3D4A53;
+    --ink:#E6EBEA; --ink-2:#A9B6BC; --ink-3:#83919A;
+    --blue:#7FB4DC; --blue-2:#A6CDEA; --blue-soft:#1B2C39; --blue-line:#2F4A5F;
+    --green:#79C3A9; --green-soft:#172A25; --green-line:#2C4A41;
+    --warn:#D9A961; --warn-soft:#2B2318; --warn-line:#4A3B26;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#12181C; --panel:#1A2228; --panel-2:#222C33; --panel-3:#2B363E;
+  --line:#2E3A42; --line-2:#3D4A53;
+  --ink:#E6EBEA; --ink-2:#A9B6BC; --ink-3:#83919A;
+  --blue:#7FB4DC; --blue-2:#A6CDEA; --blue-soft:#1B2C39; --blue-line:#2F4A5F;
+  --green:#79C3A9; --green-soft:#172A25; --green-line:#2C4A41;
+  --warn:#D9A961; --warn-soft:#2B2318; --warn-line:#4A3B26;
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{-webkit-text-size-adjust:100%;scroll-padding-top:calc(var(--nav-h) + env(safe-area-inset-top,0px) + 8px)}
+body{
+  margin:0;background:var(--paper);color:var(--ink);
+  font-family:"Libre Franklin",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{font-family:"Source Serif 4",Georgia,"Times New Roman",serif;font-weight:600;margin:0;line-height:1.22;letter-spacing:-.005em}
+h1{font-size:30px}h2{font-size:21px}h3{font-size:17px}
+p{margin:0 0 .85em}
+a{color:var(--blue);text-decoration:none}
+a:hover{text-decoration:underline}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--blue);outline-offset:2px;border-radius:2px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ---------- chrome ---------- */
+.topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:40;background:var(--panel);border-bottom:1px solid var(--line)}
+.topbar-in{max-width:1180px;margin:0 auto;height:var(--nav-h);display:flex;align-items:center;gap:26px;padding:0 20px}
+.wordmark{font-family:"Source Serif 4",Georgia,serif;font-weight:700;font-size:19px;color:var(--ink);letter-spacing:-.015em;white-space:nowrap}
+.wordmark:hover{text-decoration:none}
+.wordmark .h{color:var(--green)}
+.mainnav{display:flex;gap:2px;flex:1}
+.mainnav a{position:relative;padding:18px 11px 17px;font-size:14px;font-weight:500;color:var(--ink-2);border-bottom:2px solid transparent;margin-bottom:-1px}
+.mainnav a:hover{color:var(--ink);text-decoration:none;background:var(--panel-2)}
+.mainnav a.on{color:var(--ink);border-bottom-color:var(--blue);font-weight:600}
+.nav-badge{display:inline-block;min-width:17px;height:17px;padding:0 4px;margin-left:6px;border-radius:9px;background:var(--blue);color:#fff;font-size:11px;font-weight:600;line-height:17px;text-align:center;vertical-align:1px}
+:root[data-theme="dark"] .nav-badge,html:not([data-theme="light"]) .nav-badge{color:var(--paper)}
+.avatar{width:31px;height:31px;border-radius:50%;background:var(--green);color:#fff;border:0;display:grid;place-items:center;font-size:13px;font-weight:600;cursor:pointer;flex:none}
+:root[data-theme="dark"] .avatar,html:not([data-theme="light"]) .avatar{color:#0F1A16}
+.acct{position:relative}
+.menu{position:absolute;right:0;top:40px;width:232px;background:var(--panel);border:1px solid var(--line-2);border-radius:var(--r-l);box-shadow:0 8px 24px rgba(10,20,28,.16);padding:6px;z-index:50}
+.menu h4{font-family:inherit;font-size:12px;font-weight:600;color:var(--ink-3);padding:8px 10px 4px;margin:0}
+.menu button,.menu a{display:block;width:100%;text-align:left;padding:7px 10px;border:0;background:none;font-size:14px;border-radius:var(--r-s);cursor:pointer;color:var(--ink)}
+.menu button:hover,.menu a:hover{background:var(--panel-2);text-decoration:none}
+.menu input{width:100%;padding:6px 8px;margin:2px 0 6px;border:1px solid var(--line-2);border-radius:var(--r-s);background:var(--paper);color:var(--ink);font-size:14px}
+.menu hr{border:0;border-top:1px solid var(--line);margin:6px 0}
+.botnav{display:none}
+
+.wrap{max-width:1180px;margin:0 auto;padding:26px 20px 64px}
+.narrow{max-width:760px}
+
+/* ---------- generic ---------- */
+.muted{color:var(--ink-2)}
+.dim{color:var(--ink-3)}
+.small{font-size:13px}
+.xs{font-size:12px}
+.row-between{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.stack>*+*{margin-top:var(--gap,14px)}
+.sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:14px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.sec-head h2{font-size:19px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--r-m)}
+.pad{padding:16px 18px}
+.crumb{font-size:13px;color:var(--ink-2);margin-bottom:10px;display:inline-block}
+
+.btn{display:inline-flex;align-items:center;gap:7px;padding:7px 14px;border-radius:var(--r-s);border:1px solid var(--line-2);background:var(--panel);color:var(--ink);font-size:14px;font-weight:500;cursor:pointer;transition:background .12s,border-color .12s;white-space:nowrap}
+.btn:hover{background:var(--panel-2);text-decoration:none}
+.btn-pri{background:var(--blue);border-color:var(--blue);color:#fff}
+.btn-pri:hover{background:var(--blue-2);border-color:var(--blue-2)}
+:root[data-theme="dark"] .btn-pri,html:not([data-theme="light"]) .btn-pri{color:#0C1A24}
+.btn-on{background:var(--green-soft);border-color:var(--green-line);color:var(--green)}
+.btn-on:hover{background:var(--green-soft);border-color:var(--green)}
+.btn-sm{padding:4px 10px;font-size:13px}
+.btn[disabled]{opacity:.55;cursor:default}
+.linkbtn{background:none;border:0;padding:0;color:var(--blue);cursor:pointer;font-size:14px}
+.linkbtn:hover{text-decoration:underline}
+
+.chip{display:inline-block;padding:2px 8px;border-radius:var(--r-s);font-size:12px;font-weight:500;background:var(--panel-2);color:var(--ink-2);border:1px solid transparent;white-space:nowrap}
+.chip-blue{background:var(--blue-soft);color:var(--blue);border-color:var(--blue-line)}
+.chip-green{background:var(--green-soft);color:var(--green);border-color:var(--green-line)}
+.chip-warn{background:var(--warn-soft);color:var(--warn);border-color:var(--warn-line)}
+.meta{font-size:13px;color:var(--ink-2)}
+.meta span+span::before{content:"•";margin:0 7px;color:var(--ink-3)}
+
+.field{width:100%;padding:9px 12px;border:1px solid var(--line-2);border-radius:var(--r-s);background:var(--panel);color:var(--ink);font:inherit;font-size:14px}
+.field::placeholder{color:var(--ink-3)}
+.field:focus{outline:2px solid var(--blue);outline-offset:-1px;border-color:var(--blue)}
+
+/* ---------- home ---------- */
+.intro{border-bottom:1px solid var(--line);padding-bottom:22px;margin-bottom:24px}
+.intro h1{font-size:32px;margin-bottom:4px}
+.intro .lede{color:var(--ink-2);max-width:60ch;margin-bottom:16px}
+.searchrow{display:flex;gap:9px;max-width:620px}
+.searchrow .field{flex:1}
+.quicklinks{margin-top:12px;font-size:13px;color:var(--ink-3);display:flex;flex-wrap:wrap;gap:0 14px;align-items:baseline}
+.quicklinks b{font-weight:500;color:var(--ink-3)}
+.cols{display:grid;grid-template-columns:minmax(0,1fr) 312px;gap:34px;align-items:start}
+.aside{display:flex;flex-direction:column;gap:18px}
+.aside .panel h3{font-size:16px;margin-bottom:8px}
+
+/* ---------- club rows ---------- */
+.clublist{border-top:1px solid var(--line)}
+.clubrow{display:block;padding:13px 12px 13px 2px;border-bottom:1px solid var(--line);color:inherit;position:relative}
+.clubrow:hover{background:var(--panel);text-decoration:none}
+.clubrow-top{display:flex;align-items:baseline;gap:10px;justify-content:space-between}
+.clubrow-name{font-weight:600;font-size:15.5px;color:var(--ink)}
+.clubrow:hover .clubrow-name{color:var(--blue)}
+.clubrow-sum{font-size:13.5px;color:var(--ink-2);margin:3px 0 6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;max-width:78ch}
+.clubrow-foot{display:flex;align-items:center;gap:10px;justify-content:space-between;flex-wrap:wrap}
+.rowact{display:flex;gap:6px;flex:none}
+.tagline{font-size:12.5px;color:var(--ink-3)}
+
+/* ---------- directory ---------- */
+.dircols{display:grid;grid-template-columns:228px minmax(0,1fr);gap:34px;align-items:start}
+.filters{position:sticky;top:calc(var(--nav-h) + env(safe-area-inset-top,0px) + 18px)}
+.fgroup{border-bottom:1px solid var(--line);padding:13px 0}
+.fgroup:first-child{padding-top:0}
+.fgroup h4{font-family:inherit;font-size:12.5px;font-weight:600;color:var(--ink);margin:0 0 8px}
+.fopt{display:flex;align-items:flex-start;gap:8px;font-size:13.5px;color:var(--ink-2);padding:2.5px 0;cursor:pointer}
+.fopt input{margin:4px 0 0;accent-color:var(--blue);flex:none}
+.fopt:hover{color:var(--ink)}
+.fopt .n{margin-left:auto;color:var(--ink-3);font-size:12px;font-variant-numeric:tabular-nums}
+.resbar{display:flex;align-items:center;justify-content:space-between;gap:14px;padding-bottom:10px;flex-wrap:wrap}
+select.field{padding:6px 8px;width:auto}
+
+/* ---------- skeleton ---------- */
+.sk{background:var(--panel-2);border-radius:var(--r-s);animation:pulse 1.25s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.55}}
+.skrow{padding:13px 2px;border-bottom:1px solid var(--line)}
+.skrow .sk+.sk{margin-top:7px}
+
+/* ---------- detail ---------- */
+.detail-head{border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:22px}
+.detail-head .rule{height:3px;width:46px;border-radius:2px;margin-bottom:12px}
+.detail-head h1{font-size:28px;margin-bottom:6px;max-width:26ch}
+.actions{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.factlist{font-size:13.5px}
+.factlist dt{font-weight:600;color:var(--ink-3);font-size:12px;margin-top:12px}
+.factlist dt:first-child{margin-top:0}
+.factlist dd{margin:2px 0 0;color:var(--ink)}
+.people{list-style:none;padding:0;margin:0;font-size:13.5px}
+.people li{padding:5px 0;border-bottom:1px solid var(--line)}
+.people li:last-child{border-bottom:0}
+
+/* ---------- schedule ---------- */
+.sched-band{margin-top:26px}
+.band-head{display:flex;align-items:baseline;justify-content:space-between;gap:14px;border:1px solid var(--line);border-bottom:0;border-radius:var(--r-m) var(--r-m) 0 0;background:var(--panel-2);padding:9px 14px}
+.band-head h2{font-size:16px}
+.weekgrid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));border:1px solid var(--line);border-radius:0 0 var(--r-m) var(--r-m);background:var(--panel);overflow:hidden}
+.daycol{border-left:1px solid var(--line);padding:11px 11px 14px;min-width:0}
+.daycol:first-child{border-left:0}
+.daycol h4{font-family:inherit;font-size:12px;font-weight:600;color:var(--ink-3);margin:0 0 9px;display:flex;justify-content:space-between;gap:8px}
+.daycol h4 .n{font-variant-numeric:tabular-nums}
+.evt{display:block;width:100%;text-align:left;border:1px solid var(--line);border-radius:var(--r-s);background:var(--paper);padding:8px 9px;margin-bottom:7px;cursor:pointer;transition:background .12s,border-color .12s}
+.evt:hover{background:var(--panel-2);border-color:var(--line-2)}
+.evt .nm{display:block;font-size:13px;font-weight:600;line-height:1.32;margin-bottom:3px;overflow-wrap:break-word;color:var(--ink)}
+.evt .nm .dot{display:inline-block;position:relative;top:0;margin-right:6px}
+.evt .tm{display:block;font-size:12px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.evt .rm{display:block;font-size:12px;color:var(--ink-3)}
+.evt.mine{background:var(--blue-soft);border-color:var(--blue-line)}
+.evt.clash{border-color:var(--warn-line)}
+.evt .warnk{display:block;color:var(--warn);margin-top:4px}
+.evt.flat{background:none;border-style:dashed}
+.untimed{margin-top:12px;border-top:1px solid var(--line);padding-top:10px}
+.untimed h5{font-family:inherit;font-size:11px;font-weight:600;color:var(--ink-3);margin:0 0 7px}
+.bandempty{border:1px solid var(--line);border-top:0;border-radius:0 0 var(--r-m) var(--r-m);background:var(--panel);padding:18px 14px;font-size:13px;color:var(--ink-3)}
+.seg{display:inline-flex;border:1px solid var(--line-2);border-radius:var(--r-s);overflow:hidden}
+.seg button{padding:5px 13px;border:0;background:var(--panel);font-size:13.5px;cursor:pointer;border-left:1px solid var(--line-2);white-space:nowrap}
+.seg button:first-child{border-left:0}
+.seg button.on{background:var(--blue);color:#fff;font-weight:500}
+:root[data-theme="dark"] .seg button.on,html:not([data-theme="light"]) .seg button.on{color:#0C1A24}
+.segn{margin-left:6px;font-variant-numeric:tabular-nums;opacity:.72}
+
+/* ---------- match ---------- */
+.q{border-bottom:1px solid var(--line);padding:20px 0}
+.q:first-of-type{padding-top:6px}
+.q legend,.q .qh{font-size:16px;font-weight:600;font-family:"Source Serif 4",Georgia,serif;margin-bottom:3px;padding:0}
+.q .qs{font-size:13px;color:var(--ink-3);margin-bottom:11px}
+.opts{display:flex;flex-wrap:wrap;gap:7px}
+.opt{display:inline-flex;align-items:center;gap:7px;padding:6px 12px;border:1px solid var(--line-2);border-radius:var(--r-s);background:var(--panel);font-size:13.5px;cursor:pointer;transition:background .12s,border-color .12s}
+.opt:hover{border-color:var(--line-2);background:var(--panel-2)}
+.opt input{position:absolute;opacity:0;width:0;height:0}
+.opt:focus-within{outline:2px solid var(--blue);outline-offset:2px}
+.opt.on{background:var(--blue-soft);border-color:var(--blue);color:var(--blue);font-weight:500}
+.scorebig{font-family:"Source Serif 4",Georgia,serif;font-size:27px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1}
+.bars{display:grid;grid-template-columns:auto 1fr auto;gap:5px 11px;align-items:center;font-size:12.5px;margin-top:10px}
+.bar{height:6px;background:var(--panel-2);border-radius:3px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--blue);border-radius:3px}
+.bars .v{font-variant-numeric:tabular-nums;color:var(--ink-2);font-size:12px}
+.mres{border-bottom:1px solid var(--line);padding:15px 2px}
+.mres-top{display:flex;gap:16px;align-items:flex-start;justify-content:space-between}
+.why{list-style:none;margin:0;padding:0;font-size:13px;color:var(--ink-2);max-width:60ch}
+.why li{padding-left:14px;position:relative;margin-bottom:2px;line-height:1.45}
+.why li::before{content:"";position:absolute;left:2px;top:8px;width:5px;height:5px;border-radius:50%;background:var(--green)}
+.why li.con{color:var(--ink-3)}
+.why li.con::before{background:var(--warn);border-radius:1px}
+.progressbar{height:5px;background:var(--panel-2);border-radius:3px;overflow:hidden;max-width:320px}
+.progressbar i{display:block;height:100%;background:var(--blue);transition:width .25s linear}
+
+/* ---------- messages ---------- */
+.msgcols{display:grid;grid-template-columns:288px minmax(0,1fr);border:1px solid var(--line);border-radius:var(--r-m);overflow:hidden;background:var(--panel);height:min(640px,calc(100vh - 220px));min-height:420px}
+.threads{border-right:1px solid var(--line);overflow-y:auto;background:var(--paper)}
+.thread{display:block;width:100%;text-align:left;padding:11px 14px;border:0;border-bottom:1px solid var(--line);background:none;cursor:pointer}
+.thread:hover{background:var(--panel-2)}
+.thread.on{background:var(--panel);box-shadow:inset 3px 0 0 var(--blue)}
+.thread-top{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.thread-name{font-weight:600;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.thread.unread .thread-name::after{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--blue);margin-left:7px;vertical-align:1px}
+.thread-prev{font-size:12.5px;color:var(--ink-3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:1px}
+.convo{display:flex;flex-direction:column;min-width:0}
+.convo-head{padding:11px 16px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:12px}
+.bubbles{flex:1;overflow-y:auto;padding:18px 16px;display:flex;flex-direction:column;gap:12px;background:var(--paper)}
+.bub{max-width:min(78%,52ch);font-size:14px}
+.bub .who{font-size:11.5px;color:var(--ink-3);margin-bottom:3px}
+.bub .txt{padding:9px 12px;border-radius:var(--r-m);background:var(--panel);border:1px solid var(--line)}
+.bub.me{align-self:flex-end}
+.bub.me .who{text-align:right}
+.bub.me .txt{background:var(--blue-soft);border-color:var(--blue-line)}
+.composer{border-top:1px solid var(--line);padding:11px 14px;display:flex;gap:9px;align-items:flex-end;background:var(--panel)}
+.composer textarea{flex:1;resize:none;min-height:38px;max-height:120px;padding:9px 11px;border:1px solid var(--line-2);border-radius:var(--r-s);background:var(--paper);color:var(--ink);font:inherit;font-size:14px}
+.notice{background:var(--warn-soft);border:1px solid var(--warn-line);color:var(--warn);border-radius:var(--r-s);padding:8px 11px;font-size:12.5px}
+
+/* ---------- dashboard ---------- */
+.upnext{list-style:none;margin:0;padding:0}
+.upnext li{display:flex;gap:11px;align-items:baseline;padding:9px 0;border-bottom:1px solid var(--line)}
+.upnext li:last-child{border-bottom:0}
+.dot{width:8px;height:8px;border-radius:2px;flex:none;position:relative;top:5px}
+.when{font-size:12.5px;color:var(--ink-2);font-variant-numeric:tabular-nums;white-space:nowrap;margin-left:auto}
+.empty{border:1px dashed var(--line-2);border-radius:var(--r-m);padding:26px 22px;text-align:left;color:var(--ink-2);font-size:14px;background:var(--panel)}
+.empty h3{margin-bottom:5px;color:var(--ink)}
+
+/* ---------- legal ---------- */
+.legal h2{font-size:18px;margin:26px 0 7px}
+.legal h1+p{color:var(--ink-2)}
+.legal ul{padding-left:20px}
+.legal li{margin-bottom:5px}
+
+/* ---------- footer ---------- */
+.foot{border-top:1px solid var(--line);background:var(--panel);margin-top:20px}
+.foot-in{max-width:1180px;margin:0 auto;padding:22px 20px 34px;display:flex;justify-content:space-between;gap:22px;flex-wrap:wrap;font-size:13px;color:var(--ink-3)}
+.foot a{color:var(--ink-2)}
+.foot nav{display:flex;gap:18px}
+.credit{margin-top:6px;color:var(--ink-3);font-size:12.5px}
+
+/* ---------- dialog ---------- */
+dialog{border:1px solid var(--line-2);border-radius:var(--r-l);padding:0;background:var(--panel);color:var(--ink);max-width:460px;width:calc(100% - 32px);box-shadow:0 14px 40px rgba(10,20,28,.24)}
+dialog::backdrop{background:rgba(12,20,26,.4)}
+.dlg-head{padding:16px 18px 0}
+.dlg-body{padding:10px 18px 0;font-size:14px}
+.dlg-foot{padding:16px 18px;display:flex;justify-content:flex-end;gap:8px}
+
+@media (max-width:900px){
+  .cols,.dircols{grid-template-columns:minmax(0,1fr);gap:26px}
+  .filters{position:static}
+  .msgcols{grid-template-columns:minmax(0,1fr);height:auto}
+  .threads{max-height:none;border-right:0;border-bottom:1px solid var(--line)}
+  .msgcols.viewing .threads{display:none}
+  .msgcols:not(.viewing) .convo{display:none}
+  .bubbles{min-height:300px}
+  .daylists{grid-template-columns:repeat(2,1fr)}
+  .daylists>div:nth-child(odd){border-left:0}
+  .daylists>div{border-top:1px solid var(--line)}
+}
+@media (max-width:720px){
+  .mainnav{display:none}
+  .topbar-in{justify-content:space-between;gap:12px}
+  .botnav{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:45;background:var(--panel);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+  .botnav a{flex:1;text-align:center;padding:9px 2px 10px;font-size:11px;font-weight:500;color:var(--ink-3);border-top:2px solid transparent;margin-top:-1px}
+  .botnav a.on{color:var(--blue);border-top-color:var(--blue);font-weight:600}
+  .botnav a:hover{text-decoration:none}
+  body{padding-bottom:58px}
+  .wrap{padding:20px 16px 40px}
+  h1,.intro h1{font-size:25px}
+  .clubrow-sum{-webkit-line-clamp:3}
+  .daylists{grid-template-columns:1fr}
+  .daylists>div{border-left:0}
+}
+@media (max-width:1000px){
+  .weekgrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .daycol{border-top:1px solid var(--line)}
+  .daycol:nth-child(odd){border-left:0}
+  .daycol:first-child,.daycol:nth-child(2){border-top:0}
+}
+@media (max-width:640px){
+  .weekgrid{grid-template-columns:minmax(0,1fr)}
+  .daycol{border-left:0;border-top:1px solid var(--line)}
+  .daycol:first-child{border-top:0}
+  .mres-top{flex-direction:column;gap:10px}
+  .mres-top>div:last-child{width:100%!important;text-align:left!important}
+  .bars{max-width:340px}
+}
 </style>
 </head>
-<body class="text-ink-800">
-
-<!-- Preview chrome -->
-<div class="bg-navy-950 text-white text-xs px-4 py-2 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 text-center sm:text-left">
-  <span>Static visual preview — not the running app. Full Next.js project is in the downloaded zip.</span>
-  <span class="hidden sm:inline text-white/50">South Lakes High School · 113 real imported clubs</span>
-</div>
-<div class="sticky top-0 z-50 bg-white border-b border-surface-border">
-  <div class="max-w-[1200px] mx-auto flex gap-1 px-4 py-2 overflow-x-auto">
-    <button class="preview-nav-btn active shrink-0 px-4 py-1.5 rounded-md text-sm font-medium border border-surface-borderStrong" data-tab="home" onclick="showTab('home')">Home</button>
-    <button class="preview-nav-btn shrink-0 px-4 py-1.5 rounded-md text-sm font-medium border border-surface-borderStrong" data-tab="directory" onclick="showTab('directory')">Club Directory</button>
-    <button class="preview-nav-btn shrink-0 px-4 py-1.5 rounded-md text-sm font-medium border border-surface-borderStrong" data-tab="detail" onclick="showTab('detail')">Club Detail</button>
-    <button class="preview-nav-btn shrink-0 px-4 py-1.5 rounded-md text-sm font-medium border border-surface-borderStrong" data-tab="schedule" onclick="showTab('schedule')">Weekly Schedule</button>
-  </div>
-</div>
-
-<!-- ================= HOME ================= -->
-<div id="tab-home" class="tab-panel active">
-  <section class="relative overflow-hidden bg-navy-900">
-    <div class="pointer-events-none absolute -right-32 -top-32 h-[36rem] w-[36rem] rounded-full opacity-20 blur-3xl" style="background:radial-gradient(circle,#12A68F 0%,transparent 70%)"></div>
-    <div class="max-w-[1200px] mx-auto relative grid gap-12 py-16 lg:grid-cols-[1.05fr_0.95fr] lg:items-center px-6">
-      <div>
-        <span class="inline-flex items-center gap-2 rounded-full border border-teal-400/30 bg-teal-400/10 px-3 py-1 text-xs font-medium text-teal-300">✦ Now live for South Lakes High School</span>
-        <h1 class="mt-5 font-display text-4xl sm:text-5xl font-bold leading-[1.08] text-white">Every club, every meeting, one Seahawk Club Hub.</h1>
-        <p class="mt-5 max-w-xl text-lg leading-relaxed text-white/65">Discover clubs, compare schedules, message leadership, and get matched to activities that actually fit your week — built for the South Lakes community, and architected for every FCPS high school.</p>
-        <div class="mt-8 flex flex-wrap gap-3">
-          <button class="rounded-sm bg-teal-600 hover:bg-teal-700 text-white px-6 py-3 font-semibold text-sm shadow-soft" onclick="showTab('directory')">Explore Clubs →</button>
-          <button class="rounded-sm bg-white text-navy-900 border border-white/20 px-6 py-3 font-semibold text-sm shadow-soft">Find My Club Match</button>
-        </div>
-        <div class="mt-10 flex flex-wrap gap-x-8 gap-y-3 text-sm text-white/50">
-          <span><strong class="font-display text-white">113</strong> South Lakes clubs</span>
-          <span><strong class="font-display text-white">11</strong> categories</span>
-          <span><strong class="font-display text-white">24</strong> FCPS schools supported</span>
-        </div>
-      </div>
-      <div>
-        <p class="mb-3 text-xs font-semibold uppercase tracking-wider text-white/40">This week at South Lakes</p>
-        <div class="grid grid-cols-5 gap-2">
-          <script>
-            const rhythmDays = [
-              {d:'Mon', c:['#C23B3B','#1F8A8A','#2E7D4F']},
-              {d:'Tue', c:['#7C5CD4']},
-              {d:'Wed', c:['#4A55C7','#C99A2E','#2E7D4F','#0EA5B5']},
-              {d:'Thu', c:['#E8603C','#8A4B9E','#1E9E6B']},
-              {d:'Fri', c:['#E8603C','#2E7D4F']},
-            ];
-            document.write(rhythmDays.map(day => `
-              <div class="flex flex-col items-center gap-2 rounded-md border border-white/15 bg-white/[0.06] py-5">
-                <span class="text-[11px] font-semibold uppercase tracking-wider text-white/60">${day.d}</span>
-                <div class="flex flex-wrap items-center justify-center gap-1 px-1">
-                  ${day.c.map(c => `<span class="h-2 w-2 rounded-full ring-1 ring-white/30" style="background:${c}"></span>`).join('')}
-                </div>
-              </div>
-            `).join(''));
-          </script>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="bg-white py-16 border-b border-surface-border">
-    <div class="max-w-[1200px] mx-auto px-6">
-      <h2 class="font-display text-2xl sm:text-3xl font-bold">How Seahawk Club Hub works</h2>
-      <p class="mt-2 text-ink-500">From picking your school to landing on your calendar — four steps, start to finish.</p>
-      <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        <div><div class="h-11 w-11 flex items-center justify-center rounded-md bg-navy-900 text-white font-display text-sm font-semibold">1</div><h3 class="mt-3 font-display font-semibold">Choose your school</h3><p class="mt-1.5 text-sm text-ink-500">South Lakes is fully live; every club is scoped to your school only.</p></div>
-        <div><div class="h-11 w-11 flex items-center justify-center rounded-md bg-navy-900 text-white font-display text-sm font-semibold">2</div><h3 class="mt-3 font-display font-semibold">Browse or get matched</h3><p class="mt-1.5 text-sm text-ink-500">Search the directory yourself, or take Seahawk Match for ranked recommendations.</p></div>
-        <div><div class="h-11 w-11 flex items-center justify-center rounded-md bg-navy-900 text-white font-display text-sm font-semibold">3</div><h3 class="mt-3 font-display font-semibold">Show your interest</h3><p class="mt-1.5 text-sm text-ink-500">Save clubs, mark interest, or submit a formal request leaders can review.</p></div>
-        <div><div class="h-11 w-11 flex items-center justify-center rounded-md bg-navy-900 text-white font-display text-sm font-semibold">4</div><h3 class="mt-3 font-display font-semibold">Track it all in one place</h3><p class="mt-1.5 text-sm text-ink-500">Your calendar, messages, and dashboard live in one connected hub.</p></div>
-      </div>
-    </div>
-  </section>
-
-  <section class="py-16">
-    <div class="max-w-[1200px] mx-auto px-6">
-      <div class="flex items-end justify-between mb-8">
-        <div><h2 class="font-display text-2xl sm:text-3xl font-bold">Featured South Lakes clubs</h2><p class="mt-2 text-ink-500">A sample of what's waiting in the full directory.</p></div>
-        <a class="text-action-600 text-sm font-medium">View all 113 clubs →</a>
-      </div>
-      <div id="featured-grid" class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3"></div>
-    </div>
-  </section>
-
-  <section class="bg-navy-950 py-16 text-white">
-    <div class="max-w-[1200px] mx-auto px-6">
-      <h2 class="font-display text-2xl sm:text-3xl font-bold">Built around how club life actually works</h2>
-      <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        <div class="rounded-lg border border-white/10 bg-white/[0.04] p-5"><div class="h-10 w-10 rounded-md bg-teal-400/15 flex items-center justify-center">🧭</div><h3 class="mt-4 font-display font-semibold">Discovery</h3><p class="mt-1.5 text-sm text-white/55">Every club in one searchable, filterable directory.</p></div>
-        <div class="rounded-lg border border-white/10 bg-white/[0.04] p-5"><div class="h-10 w-10 rounded-md bg-teal-400/15 flex items-center justify-center">📅</div><h3 class="mt-4 font-display font-semibold">Scheduling</h3><p class="mt-1.5 text-sm text-white/55">Exact Mon–Fri meeting times with conflicts flagged automatically.</p></div>
-        <div class="rounded-lg border border-white/10 bg-white/[0.04] p-5"><div class="h-10 w-10 rounded-md bg-teal-400/15 flex items-center justify-center">💬</div><h3 class="mt-4 font-display font-semibold">Communication</h3><p class="mt-1.5 text-sm text-white/55">Message presidents, officers, and sponsors right in the platform.</p></div>
-        <div class="rounded-lg border border-white/10 bg-white/[0.04] p-5"><div class="h-10 w-10 rounded-md bg-teal-400/15 flex items-center justify-center">✨</div><h3 class="mt-4 font-display font-semibold">Personalized matching</h3><p class="mt-1.5 text-sm text-white/55">Seahawk Match ranks clubs against your goals — never a gatekeeper.</p></div>
-      </div>
-    </div>
-  </section>
-</div>
-
-<!-- ================= DIRECTORY ================= -->
-<div id="tab-directory" class="tab-panel">
-  <div class="bg-navy-900 py-10">
-    <div class="max-w-[1200px] mx-auto px-6">
-      <p class="text-xs font-semibold uppercase tracking-wider text-teal-300">Fairfax County Public Schools</p>
-      <h1 class="mt-1 font-display text-3xl sm:text-4xl font-bold text-white">South Lakes High School Clubs</h1>
-      <p class="mt-2 text-sm text-white/60">113 clubs and activities, Monday through Friday, before and after school.</p>
+<body>
+<header class="topbar">
+  <div class="topbar-in">
+    <a class="wordmark" href="#/">Seahawk Club Hub</a>
+    <nav class="mainnav" id="mainnav"></nav>
+    <div class="acct">
+      <button class="avatar" id="avatarBtn" aria-haspopup="true" aria-expanded="false" aria-label="Account menu">S</button>
+      <div class="menu" id="acctMenu" hidden></div>
     </div>
   </div>
-  <div class="max-w-[1200px] mx-auto px-6 py-8">
-    <div class="flex flex-col sm:flex-row gap-3 mb-3">
-      <div class="relative flex-1"><input class="w-full h-10 rounded-sm border border-surface-borderStrong pl-9 pr-3 text-sm" placeholder="Search clubs by name, category, sponsor, or interest…" /><span class="absolute left-3 top-1/2 -translate-y-1/2 text-ink-400">🔍</span></div>
-      <button class="h-10 px-4 rounded-sm border border-surface-borderStrong text-sm font-medium flex items-center gap-2">⚙ Filters <span class="bg-action-100 text-action-700 text-xs rounded-full px-1.5">3</span></button>
-      <select class="h-10 px-3 rounded-sm border border-surface-borderStrong text-sm"><option>Recommended</option><option>Alphabetical</option><option>Meeting soon</option><option>Most popular</option></select>
-    </div>
-    <p class="text-xs text-ink-500 mb-4">113 clubs match your filters</p>
-    <div id="directory-grid" class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3"></div>
-  </div>
-</div>
+</header>
 
-<!-- ================= CLUB DETAIL ================= -->
-<div id="tab-detail" class="tab-panel">
-  <div class="relative overflow-hidden bg-navy-900">
-    <div class="absolute inset-x-0 top-0 h-1" style="background:linear-gradient(90deg,#E8603C,transparent)"></div>
-    <div class="max-w-[1200px] mx-auto px-6 py-10">
-      <a class="text-white/60 text-sm mb-6 inline-block">← South Lakes High School Clubs</a>
-      <div class="mb-3 flex flex-wrap items-center gap-2">
-        <span class="h-2.5 w-2.5 rounded-full ring-2 ring-white/40" style="background:#E8603C"></span>
-        <span class="text-xs font-medium px-2.5 py-1 rounded-full bg-white/10 border border-white/15 text-white">🔧 STEM & Technology</span>
-        <span class="text-xs font-medium px-2.5 py-1 rounded-full bg-white/10 border border-white/15 text-white">🏆 Competitive</span>
-      </div>
-      <h1 class="font-display text-3xl sm:text-4xl font-bold text-white">Robotics (FTC)</h1>
-      <p class="mt-3 text-white/70 max-w-2xl">A competition-based club preparing for the FTC robotics competition each fall and winter, with roles spanning media, art, finance, photography, programming, and building.</p>
-    </div>
-  </div>
-  <div class="max-w-[1200px] mx-auto px-6 py-10 grid gap-8 lg:grid-cols-[1fr_340px]">
-    <div class="flex flex-col gap-8">
-      <section>
-        <h2 class="font-display text-lg font-semibold mb-3">About this club</h2>
-        <p class="text-sm leading-relaxed text-ink-700">A competition-based club preparing for the FTC robotics competition each fall and winter, with roles spanning media, art, finance, photography, programming, and building. The team takes on outreach projects after the competition season.</p>
-      </section>
-      <section>
-        <h2 class="font-display text-lg font-semibold mb-3">Weekly schedule</h2>
-        <div class="rounded-lg border border-surface-border overflow-hidden grid grid-cols-1 sm:grid-cols-5 divide-y sm:divide-y-0 sm:divide-x divide-surface-border">
-          <div class="bg-white p-4"><div class="flex justify-between"><span class="text-xs font-semibold uppercase text-ink-400">Monday</span></div><span class="text-xs text-ink-300 block mt-2">No meeting</span></div>
-          <div class="bg-white p-4"><div class="flex justify-between"><span class="text-xs font-semibold uppercase text-ink-400">Tuesday</span></div><span class="text-xs text-ink-300 block mt-2">No meeting</span></div>
-          <div class="bg-white p-4"><div class="flex justify-between"><span class="text-xs font-semibold uppercase text-ink-400">Wednesday</span></div><span class="text-xs text-ink-300 block mt-2">No meeting</span></div>
-          <div class="bg-white p-4"><div class="flex justify-between"><span class="text-xs font-semibold uppercase text-ink-400">Thursday</span><span class="h-2 w-2 rounded-full mt-1" style="background:#E8603C"></span></div><p class="font-mono text-sm font-semibold mt-2">3:05 PM–5:00 PM</p><p class="text-xs text-ink-500 mt-1">📍 Room 150</p><p class="text-xs text-ink-400 mt-1">↻ Every week</p></div>
-          <div class="bg-white p-4"><div class="flex justify-between"><span class="text-xs font-semibold uppercase text-ink-400">Friday</span><span class="h-2 w-2 rounded-full mt-1" style="background:#E8603C"></span></div><p class="font-mono text-sm font-semibold mt-2">3:05 PM–5:00 PM</p><p class="text-xs text-ink-500 mt-1">📍 Room 150</p><p class="text-xs text-ink-400 mt-1">↻ Every week</p></div>
-        </div>
-      </section>
-      <section>
-        <h2 class="font-display text-lg font-semibold mb-3">Announcements</h2>
-        <div class="rounded-lg border border-surface-border bg-white p-4">
-          <div class="flex justify-between"><h3 class="text-sm font-semibold">Build season kickoff this week</h3><span class="text-xs text-ink-400">Jul 28</span></div>
-          <p class="mt-1.5 text-sm text-ink-600">We're kicking off the FTC build season — come by Thursday to pick a subteam (mechanical, programming, or outreach). No experience required.</p>
-        </div>
-      </section>
-    </div>
-    <aside class="flex flex-col gap-5">
-      <div class="rounded-lg border border-surface-border bg-white p-5 shadow-soft">
-        <div class="flex flex-wrap gap-2">
-          <button class="rounded-sm bg-action-600 text-white px-4 py-2.5 text-sm font-semibold">🔖 Add to My Clubs</button>
-          <button class="rounded-sm border border-surface-borderStrong px-4 py-2.5 text-sm font-semibold">⏱ I'm Interested</button>
-          <button class="rounded-sm border border-surface-borderStrong px-4 py-2.5 text-sm font-semibold">📨 Request to Participate</button>
-        </div>
-        <hr class="my-4 border-surface-border" />
-        <button class="w-full rounded-sm border border-surface-borderStrong px-4 py-2.5 text-sm font-semibold">💬 Message Club Leadership</button>
-      </div>
-      <div class="rounded-lg border border-surface-border bg-white p-5 shadow-soft">
-        <h3 class="text-xs font-semibold uppercase tracking-wide text-ink-400 mb-3">Quick facts</h3>
-        <dl class="flex flex-col gap-3 text-sm">
-          <div class="flex justify-between"><dt class="text-ink-500">📍 Location</dt><dd class="font-medium">Room 150</dd></div>
-          <div class="flex justify-between"><dt class="text-ink-500">🛡 Commitment</dt><dd class="font-medium">High commitment</dd></div>
-          <div class="flex justify-between"><dt class="text-ink-500">🏆 Leadership</dt><dd class="font-medium">Opportunities available</dd></div>
-          <div class="flex justify-between"><dt class="text-ink-500">👥 Interest</dt><dd class="font-medium">12 people</dd></div>
-        </dl>
-      </div>
-      <div class="rounded-lg border border-surface-border bg-white p-5 shadow-soft">
-        <h3 class="text-xs font-semibold uppercase tracking-wide text-ink-400 mb-3">Faculty sponsors</h3>
-        <ul class="text-sm flex flex-col gap-1.5"><li>Cecilia Garin</li><li>Alexander P. Turner</li></ul>
-        <p class="mt-3 text-xs text-ink-400">Contact happens through Seahawk Club Hub messaging — sponsor email addresses aren't published here.</p>
-      </div>
-    </aside>
-  </div>
-</div>
+<main id="view" class="wrap" tabindex="-1"></main>
 
-<!-- ================= SCHEDULE ================= -->
-<div id="tab-schedule" class="tab-panel">
-  <div class="max-w-[1200px] mx-auto px-6 py-10">
-    <h1 class="font-display text-3xl font-bold">Weekly Schedule</h1>
-    <p class="mt-2 text-ink-500 max-w-xl">South Lakes High School's club meetings, Monday through Friday. Switch between your clubs, clubs you're interested in, or the full school calendar.</p>
-    <div class="mt-6 flex flex-wrap gap-3">
-      <div class="inline-flex rounded-sm bg-surface-raised p-1 gap-1"><button class="px-3 py-1.5 text-sm font-medium rounded-xs bg-white shadow-soft">My Clubs</button><button class="px-3 py-1.5 text-sm font-medium rounded-xs text-ink-500">Interested</button><button class="px-3 py-1.5 text-sm font-medium rounded-xs text-ink-500">All Clubs</button></div>
-      <div class="inline-flex rounded-sm bg-surface-raised p-1 gap-1"><button class="px-3 py-1.5 text-sm font-medium rounded-xs bg-white shadow-soft">Week</button><button class="px-3 py-1.5 text-sm font-medium rounded-xs text-ink-500">Day</button><button class="px-3 py-1.5 text-sm font-medium rounded-xs text-ink-500">List</button></div>
+<footer class="foot">
+  <div class="foot-in">
+    <div>
+      Seahawk Club Hub is a student project for South Lakes. Club information comes from the
+      2026&ndash;27 activities sheet, last updated September 10, 2026.
+      <div class="credit">Developed by Seahawk AI</div>
     </div>
-
-    <div class="mt-6 flex items-start gap-3 rounded-md border border-warn/30 bg-warn-bg p-4 text-sm">
-      <span>⚠</span>
-      <span><strong>1 schedule conflict</strong> found — Model United Nations and Get2Green both meet Monday after school. Review both clubs' schedules.</span>
-    </div>
-
-    <div id="schedule-grid" class="mt-6 grid grid-cols-1 sm:grid-cols-5 gap-3"></div>
-  </div>
-</div>
-
-<footer class="border-t border-white/10 bg-navy-950 text-white/70 mt-0">
-  <div class="max-w-[1200px] mx-auto px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs">
-    <p>© 2026 Seahawk Club Hub. Fairfax County Public Schools.</p>
-    <p>Created by Seahawk AI</p>
+    <nav>
+      <a href="#/terms">Terms</a>
+      <a href="#/privacy">Privacy</a>
+      <a href="https://southlakeshs.fcps.edu/student-life-activities/clubs-activities-honor-societies" target="_blank" rel="noopener">Start a club</a>
+    </nav>
   </div>
 </footer>
 
+<nav class="botnav" id="botnav"></nav>
+
+<dialog id="dlg">
+  <div class="dlg-head"><h3 id="dlgTitle"></h3></div>
+  <div class="dlg-body" id="dlgBody"></div>
+  <div class="dlg-foot"><button class="btn" id="dlgClose">Close</button></div>
+</dialog>
+
 <script>
-function toggleMark(btn, off, on) {
-  const active = btn.classList.toggle('bg-navy-900');
-  btn.classList.toggle('text-white', active);
-  btn.textContent = active ? on : off;
+"use strict";
+const CLUBS = [{"name":"Student Government Association","category":"Student Government","summary":"The SGA strives to encourage school spirit, give students a representative voice, serve as ambassadors to their school and community, and develop strong student leaders. Must be elected","sponsors":[{"name":"Catherine McDermott","email_b64":"Q2htY2Rlcm1vdHRAZmNwcy5lZHU="},{"name":"Mackenzie Schmidt","email_b64":"bXNzY2htaWR0QGZjcHMuZWR1"}],"leaders":["Executive Committee: Anya Crevits, Elena Catto, Kinsey Versosky, Noah McInerney, Eva Collingham, Erica Ocansey, Kassidy Arnold"],"meeting":{"room":"216","raw":"Room 216 Room 416","days":[],"start":null,"end":null,"freq":null},"status":"active","tags":["leadership"],"commitment":"unknown","when":"unscheduled","selective":true,"acts":["leadership","teamwork","discussion"],"learn":["leadership"]},{"name":"Student Advisory Council (SAC)","category":"Student Government","summary":"SAC is comprised of 4 student delegates and up to 2 alternate delegates. These students attend monthly meetings at various high schools around the county to discuss school topics with other delegates and the superintendent. School topics that are discussed include budget, lunches, use of technology, online resources, the environment, and more. Must apply and be selected. Application process begins in May","sponsors":[{"name":"Kathy Luongo"}],"leaders":["Delegates: Mena Yacob Isabella Zermeno Luisana Moncado Natali Santillan Arana Alternate: Shea Smith Olivia Yang"],"meeting":{"freq":"Twice a month","raw":"Delegates meet twice a month (monthly SAC meeting during school hours and once with the sponsor to review the SAC meeting)","days":[],"start":null,"end":null,"room":null},"status":"active","tags":["leadership","civics"],"commitment":"twicemonth","when":"unscheduled","selective":true,"acts":["discussion","leadership"],"learn":["leadership"]},{"name":"Class of 2027, Seniors","category":"Student Government","summary":"Class council for the Class of 2027","sponsors":[{"name":"Andrea Kasey","email_b64":"YWthc2V5QGZjcHMuZWR1"},{"name":"Tiffany Welborn","email_b64":"dGx3ZWxib3JuQGZjcHMuZWR1"}],"leaders":["Ava-Grace Satterfield Isabella Zermeno Katie Bagley Jasmine Butcher Vivian Pham"],"meeting":{"days":["Thu"],"room":"294","freq":"Monthly","raw":"Room 294 monthly on Thursdays","start":null,"end":null},"status":"active","tags":["leadership"],"commitment":"monthly","when":"unscheduled","selective":false,"acts":["leadership","teamwork"],"learn":[]},{"name":"Class of 2028, Juniors","category":"Student Government","summary":"Class council for the Class of 2028","sponsors":[{"name":"Marianne Bishara","email_b64":"bWJpc2hhcmFAZmNwcy5lZHU="},{"name":"Michael Gueltig","email_b64":"bWxndWVsdGlnQGZjcHMuZWR1"}],"leaders":["Nandini Patankar Chloe Or-Paz Afra Annan Abentee Faye McHugh Jabili Garimella"],"meeting":{"days":[],"raw":"","start":null,"end":null,"room":null,"freq":null},"status":"active","tags":["leadership"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":["leadership","teamwork"],"learn":[]},{"name":"Class of 2029, Sophomores","category":"Student Government","summary":"Class council for the Class of 2029","sponsors":[{"name":"Meghan Baumann","email_b64":"bXJiYXVtYW5uQGZjcHMuZWR1"},{"name":"Michelle Siraj","email_b64":"bWRzaXJhakBmY3BzLmVkdQ=="}],"leaders":["Leala Chung Olivia Damyanidis Setareh Trapp Virginia Marin Hoffman Nahom Henok"],"meeting":{"room":"420","freq":"Monthly","raw":"Room 420 monthly (still TBD on day of the week)","days":[],"start":null,"end":null},"status":"active","tags":["leadership"],"commitment":"monthly","when":"unscheduled","selective":false,"acts":["leadership","teamwork"],"learn":[]},{"name":"Class of 2030, Freshmen","category":"Student Government","summary":"Class council for the Class of 2030","sponsors":[{"name":"Jill Pellerin","email_b64":"amVwZWxsZXJpbkBmY3BzLmVkdQ=="},{"name":"Dawn Garcia","email_b64":"ZG1nYXJjaWFAZmNwcy5lZHU="}],"leaders":[],"meeting":{"days":[],"raw":"","start":null,"end":null,"room":null,"freq":null},"status":"active","tags":["leadership"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":["leadership","teamwork"],"learn":[]},{"name":"Scholastic Bowl/It’s Academic","category":"VHSL Activities","summary":"Scholastic Bowl is a VHSL academic team. We answer trivia questions about a wide range of subjects including geography, math, science, history, and literature. We participate in tournaments and scrimmages where we play against other schools. We also appear on the local TV show \"It's Academic\" on WETA.","sponsors":[{"name":"Kristina Connor Michael Peluso"}],"leaders":["Isla Nicolaidis Iona Bendernagel"],"meeting":{"freq":"Weekly","raw":"Practice once a week - have not yet determined which day","days":[],"start":null,"end":null,"room":null},"status":"active","tags":["academic","competition"],"commitment":"weekly","when":"unscheduled","selective":false,"acts":["competition","teamwork"],"learn":[]},{"name":"Speech & Debate","category":"VHSL Activities","summary":"Speech and Debate is a VHSL-certified team that teaches public speaking, presentation, and debate skills in a non-judgmental environment. The debate style taught and practiced is Lincoln-Douglas Debate, which is a values-based debate style for individuals. A plethora of speech styles are taught, including impromptu and original oratory. There is the option of competing in a type of speech, debate, or both through the National Speech and Debate Association. The club is for anyone who is interested in enhancing one or more of these skills, and people can come as much or as little as they'd like.","sponsors":[{"name":"Matthew Wolfson","email_b64":"bXdvbGZzb25AZmNwcy5lZHU="},{"name":"Mackenzie Schmidt","email_b64":"bXNzY2htaWR0QGZjcHMuZWR1"}],"leaders":["Alden Walcott Madison Tippett"],"meeting":{"days":["Thu"],"start":900,"end":990,"freq":"Weekly","raw":"The club meets in the Library from 3pm-4:30pm on Thursdays.","room":null},"status":"active","tags":["debate","competition"],"commitment":"weekly","when":"after","selective":false,"acts":["speaking","competition","discussion"],"learn":["speaking"]},{"name":"Robotics","category":"VHSL Activities","summary":"This is a competition-based club. Most of the work is towards the FTC competition during late Fall and early Winter. We have several groups and welcome a wide variety of students with skills such as media, art, finance, photography, programming, and building. After the competition season, we do fun outreach projects.","sponsors":[],"leaders":[],"meeting":{"days":["Thu","Fri"],"start":905,"end":1020,"room":"150","raw":"Thursday and Friday in Room 150 after school 3:05-5. During the season,we may have additional meetings.","freq":null},"status":"needs-sponsor","tags":["stem","competition"],"commitment":"multi","when":"after","selective":false,"acts":["building","competition","teamwork"],"learn":["engineering","coding","media","teamwork"]},{"name":"eSports","category":"VHSL Activities","summary":"Esports is a VHSL-certified team that competes in the local league as well as tournaments. Students play the sports (League of Legends, Rocket League, Mario Kart 8 Deluxe & Smash Ultimate) on a VHSL-approved system called PlayVS, an official platform for amateur esports competitions. PlayVS has specific rules of conduct, including being respectful to players, coaches, and league officials, using appropriate language, and playing with integrity.","sponsors":[{"name":"Kelsey Lu-Fleming","email_b64":"a3NsdWZsZW1pbmdAZmNwcy5lZHU="},{"name":"Mike Ravenscroft","email_b64":"bWRyYXZlbnNjcm9mQGZjcHMuZWR1"},{"name":"Jack Lucibello","email_b64":"amx1Y2liZWxsb0BmY3BzLmVkdQ=="}],"leaders":["Fall & Spring Competition Liam West Connor Blair Fall Competition Peter Lee James Phillips Milo Kappatos Spring Competition Caleb Das"],"meeting":{"days":["Mon","Tue","Wed","Thu"],"room":"190","freq":"Weekly","raw":"Monday, Tuesday, Wednesday, and Thursday in Room 190 SLHS eSports Website {https://sites.google.com/view/slhsesports/home} Season dependent, see website.","start":null,"end":null},"web":"https://sites.google.com/view/slhsesports/home","status":"active","tags":["recreation","competition"],"commitment":"multi","when":"unscheduled","selective":false,"acts":["competition","teamwork"],"learn":["teamwork"]},{"name":"Newspaper- The Sentinel","category":"Publications","summary":"To document and report on student life and activities throughout the year and to inform and entertain the South Lakes School and Community.","sponsors":[{"name":"Lisa Trigiano","email_b64":"bG10cmlnaWFub0BmY3BzLmVkdQ=="}],"leaders":[],"meeting":{"room":"400","raw":"Room 400","days":[],"start":null,"end":null,"freq":null},"status":"active","tags":["media"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":["creative","teamwork"],"learn":["writing","media"]},{"name":"Yearbook- Freebird","category":"Publications","summary":"To document student life and activities throughout the year and to inform and entertain the South Lakes School and Community. For students enrolled in the class","sponsors":[{"name":"Mackenzie Schmidt","email_b64":"bXNzY2htaWR0QGZjcHMuZWR1"},{"name":"Jill Pellerin","email_b64":"amVwZWxsZXJpbkBmY3BzLmVkdQ=="}],"leaders":["Phoebe Painter Raven Torres"],"meeting":{"room":"416","raw":"Room 416/415","days":[],"start":null,"end":null,"freq":null},"status":"active","tags":["media"],"commitment":"unknown","when":"unscheduled","selective":true,"acts":["creative","teamwork"],"learn":["media","writing"]},{"name":"Literary Magazine- Portfolio","category":"Publications","summary":"PUBLICATIONS - LIT MAGAZINE Please see sponsor for details","sponsors":[{"name":"Mackenzie Schmidt","email_b64":"bXNzY2htaWR0QGZjcHMuZWR1"}],"leaders":["Yolanda Marie Goyone"],"meeting":{"room":"416","raw":"Room 416","days":[],"start":null,"end":null,"freq":null},"status":"active","tags":["media"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":["creative"],"learn":["writing"]},{"name":"DECA","category":"Co-Curricular","summary":"DECA is an international association that prepares emerging leaders and entrepreneurs to be career and college ready in the areas of marketing, finance, hospitality, and management.","sponsors":[{"name":"Jen Dixon","email_b64":"amVkaXhvbjJAZmNwcy5lZHU="},{"name":"Alena Andrews","email_b64":"YWthbmRyZXdzQGZjcHMuZWR1"}],"leaders":[],"meeting":{"days":["Wed"],"room":"463","freq":"Monthly","raw":"Room 463 Once a month on a determined Wednesday","start":null,"end":null},"status":"active","tags":["business","career","leadership"],"commitment":"monthly","when":"unscheduled","selective":false,"acts":["leadership"],"learn":["business","finance","leadership"]},{"name":"FBLA","category":"Co-Curricular","summary":"FBLA is the largest and oldest business student organization in the world. FBLA provides the opportunity to network and socialize with students and professionals within the state, nationally, and internationally. Competitions are held in a variety of academic conferences having over 75 different events from such as: Job interview, cyber security, Database Design & Applications, Management Decision Makin. Public Speaking, Network Design, Accounting, Business Law, and many more!! students should be in a Business or EPF class or have previously been a member of FBLA","sponsors":[{"name":"Kris King","email_b64":"a2tpbmdAZmNwcy5lZHU="}],"leaders":[],"meeting":{"days":[],"raw":"","start":null,"end":null,"room":null,"freq":null},"status":"active","tags":["business","career","competition"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":["competition","social"],"learn":["business"]},{"name":"Indoor Color Guard","category":"Co-Curricular","summary":"Visual ensemble that includes dance, flag and weapons work. No experience is required. Members perform choreographed routines in the AIA indoor competitions circuit February-March. Season runs late November through First weekend in April.","sponsors":[{"name":"Grayson Fore","email_b64":"R2ZvcmVAZmNwcy5lZHU="},{"name":"Caroline Ramirez","email_b64":"Y2dyYW1pcmV6bmF2QGZjcHMuZWR1"}],"leaders":["Student Leaders Captain and Co-Captain will be selected at auditions in November/December."],"meeting":{"days":["Tue","Thu","Sat"],"room":"360","freq":"2-3x per week","raw":"Room #360. Guard meets 2 to 3 times a week. Rehearsals are typically Tuesday/Thursday/Saturday.","start":null,"end":null},"status":"active","tags":["arts","competition"],"commitment":"multi","when":"unscheduled","selective":false,"acts":["performance","competition","teamwork"],"learn":["music"]},{"name":"Indoor Percussion","category":"Co-Curricular","summary":"Indoor percussion includes percussion, piano, bass, guitar musicians who perform a 5 minute show. Groups competes in the AIA indoor circuit. Season runs November through beginning of April. Ability to read music or tab is plus.","sponsors":[{"name":"Grayson Fore","email_b64":"R2ZvcmVAZmNwcy5lZHU="}],"leaders":["Student Leaders Captain and Co-Captain will be selected at auditions in November/December."],"meeting":{"days":["Tue","Thu","Sat"],"room":"360","freq":"2-3x per week","raw":"Room #360. Percussion meets 2 to 3 times a week. Rehearsals are typically Tuesday/Thursday/ Saturday","start":null,"end":null},"status":"active","tags":["arts","competition"],"commitment":"multi","when":"unscheduled","selective":false,"acts":["performance","competition","teamwork"],"learn":["music"]},{"name":"JROTC","category":"Co-Curricular","summary":"The Junior Reserve Officers' Training Corps (JROTC) program prepares high school students for leadership roles while making them aware of their rights, responsibilities and privileges as American citizens. Must be in the class","sponsors":[{"name":"Tony Handy","email_b64":"YXdoYW5keUBmY3BzLmVkdQ=="}],"leaders":[],"meeting":{"raw":"See counselor for enrollment information","days":[],"start":null,"end":null,"room":null,"freq":null},"status":"active","tags":["leadership","civics"],"commitment":"unknown","when":"unscheduled","selective":true,"acts":["leadership","teamwork"],"learn":["leadership"]},{"name":"FCCLA- Automotive","category":"Co-Curricular","summary":"Academy- This program enables students to have hands on experience learning about the major systems of the automobile with emphasis on lab safety, tool usage, and equipment operations. Students perform a variety of tasks on general automotive maintenance, brakes, steering and suspension, electrical and electronic systems, engine performance and engine repair as defined by the National Automotive Technology Education Foundation (NATEF).","sponsors":[{"name":"David Turley","email_b64":"ZGF0dXJsZXlAZmNwcy5lZHU="}],"leaders":[],"meeting":{"raw":"See counselor for enrollment information","days":[],"start":null,"end":null,"room":null,"freq":null},"status":"active","tags":["career"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":["building"],"learn":["engineering"]},{"name":"FCCLA- Culinary","category":"Co-Curricular","summary":"Academy- An intracurricular organization that promotes personal growth and leadership development through member involvement and Family and Consumer Sciences Education.","sponsors":[{"name":"Cynthia Stowers","email_b64":"Y2xzdG93ZXJzQGZjcHMuZWR1"}],"leaders":[],"meeting":{"raw":"See counselor for enrollment information","days":[],"start":null,"end":null,"room":null,"freq":null},"status":"active","tags":["career","leadership"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":["leadership"],"learn":["leadership"]},{"name":"TSA","category":"Co-Curricular","summary":"Technology Students Association - a co-curricular organization for students who have experience in TechEd classes. Students compete with other teams at other schools in different design and engineering challenges","sponsors":[{"name":"Dave Wirth","email_b64":"ZG13aXJ0aEBmY3BzLmVkdQ=="},{"name":"Amol Patel","email_b64":"YWNwYXRlbEBmY3BzLmVkdQ=="}],"leaders":["Amartya Reddy"],"meeting":{"raw":"TBD","days":[],"start":null,"end":null,"room":null,"freq":null},"status":"active","tags":["stem","competition"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":["competition","building","teamwork"],"learn":["engineering"]},{"name":"Business & IT Honor Society","category":"Honor Societies","summary":"","sponsors":[],"leaders":[],"meeting":{"days":[],"raw":"","start":null,"end":null,"room":null,"freq":null},"status":"needs-sponsor","tags":["academic","business"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":[],"learn":[]},{"name":"French Honor Society","category":"Honor Societies","summary":"To recognize academic excellence in French and provide support to other students through our tutoring program.","sponsors":[{"name":"Laura Bachman","email_b64":"bGFiYWNobWFuQGZjcHMuZWR1"}],"leaders":[],"meeting":{"room":"600","raw":"Room 600","days":[],"start":null,"end":null,"freq":null},"status":"active","tags":["academic","culture"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":["tutoring"],"learn":["languages"]},{"name":"German Honor Society","category":"Honor Societies","summary":"An honor society designated for students with a passion for German language and culture.","sponsors":[{"name":"Cheryl Finley","email_b64":"Y2pmaW5sZXlAZmNwcy5lZHU="}],"leaders":[],"meeting":{"room":"606","raw":"Room 606","days":[],"start":null,"end":null,"freq":null},"status":"active","tags":["academic","culture"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":["discussion"],"learn":["languages","culture"]},{"name":"Japanese Honor Society","category":"Honor Societies","summary":"The Japanese National Honor Society recognizes and encourages achievement and excellence in the study of the Japanese language. To recognize outstanding students, to encourage them to continue in the study of Japanese, and to promote activities that give students ways to use their language skills.","sponsors":[{"name":"Nichole Mayfield"}],"leaders":[],"meeting":{"room":"604","raw":"Room 604","days":[],"start":null,"end":null,"freq":null},"status":"active","tags":["academic","culture"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":["discussion"],"learn":["languages"]},{"name":"Math Honor Society","category":"Honor Societies","summary":"An honors society dedicated to math. Conducts math tutoring for service hours, the AMC 10/12, and Varsity Math League. Math Honor Society is a club that inspires students to appreciate math as they compete in Varsity Math League competitions, engage in peer tutoring, and celebrate Pi Day!","sponsors":[{"name":"Lucy Kirk","email_b64":"bGJraXJrQGZjcHMuZWR1"},{"name":"Shannon Johnson","email_b64":"c21qb2huc29uM0BmY3BzLmVkdQ=="}],"leaders":[],"meeting":{"room":"512","raw":"Optional Welcome/First Meeting Room 512","days":[],"start":null,"end":null,"freq":null},"status":"active","tags":["academic","stem","competition","service"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":["tutoring","competition"],"learn":["math"]},{"name":"National English Honor Society","category":"Honor Societies","summary":"NEHS is an honor society for high school students who demonstrate excellence in the discipline of English. We participate in activities and service hours related to the study of English.","sponsors":[{"name":"Emily Tuttle Mike Peluso"}],"leaders":["Maya Henry Sara Marsh Kellen Schobert"],"meeting":{"days":[],"raw":"","start":null,"end":null,"room":null,"freq":null},"status":"active","tags":["academic","service"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":["volunteering","discussion"],"learn":["writing"]},{"name":"National Honor Society","category":"Honor Societies","summary":"To promote Scholarship, Leadership, Character, and Community Service within the SLHS community. By application. Candidates must be at least a junior, 3.7 or higher GPA, and demonstrate that they value the qualities espoused by the NHS: leadership, scholarship, character, and community service","sponsors":[{"name":"Angelica Ortiz","email_b64":"YW1vcnRpekBmY3BzLmVkdQ=="},{"name":"Jill Pellerin","email_b64":"amVwZWxsZXJpbkBmY3BzLmVkdQ=="}],"leaders":["Isabella Zermeno - President Jackson Smouha - Vice President"],"meeting":{"days":[],"raw":"","start":null,"end":null,"room":null,"freq":null},"web":"https://sites.google.com/fcpsschools.net/slhs-nhs/home?authuser=0","status":"active","tags":["academic","service","leadership"],"commitment":"unknown","when":"unscheduled","selective":true,"acts":["volunteering","leadership"],"learn":["leadership","service"]},{"name":"National Art Honor Society - STEAM Team Public Art Program","category":"Honor Societies","summary":"There are multiple facets of this Society. The STEAM focus is to design and fabricate the public art works for Lake Thoreau. Always seeking to expand in other locations. We are partners with Public Art Reston, a non profit org. Students also do artmaking workshops with the adult residents of Hunters Woods Fellowship House.","sponsors":[{"name":"Marco Rando","email_b64":"bXJhbmRvQGZjcHMuZWR1"}],"leaders":["Jaya Chatfield Teagan Rosade"],"meeting":{"days":["Wed"],"room":"362","freq":"Weekly","raw":"Weds 3:00pm Rm 362 Meetings will increase in the second half of the year.","start":null,"end":null},"status":"active","tags":["academic","arts","service"],"commitment":"weekly","when":"unscheduled","selective":false,"acts":["creative","building","volunteering"],"learn":["art"]},{"name":"Quill and Scroll","category":"Honor Societies","summary":"To honor the hard work and dedication of our Seahawk Journalists. This is an honorary society for students involved in journalism through newspaper and yearbook.","sponsors":[{"name":"Mackenzie Schmidt"}],"leaders":[],"meeting":{"days":[],"raw":"","start":null,"end":null,"room":null,"freq":null},"status":"active","tags":["academic","media"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":[],"learn":["media"]},{"name":"International Thespian Society","category":"Honor Societies","summary":"This group is for students interested in theatre who earn enough points {https://docs.google.com/forms/d/e/1FAIpQLSfORmioWx7MWEstuA-JCF3zpkm7NGRPLftnUEMUWvDoK6qYiA/viewform} while in high school to be inducted. Students must earn 10 points.","sponsors":[{"name":"Viola, Michael D"}],"leaders":["Lana Vittor Zach Masefield Shea Smith Abi Blair Oliver Harman"],"meeting":{"room":"355","freq":"Quarterly","raw":"355 Quarterly Follow @slakestheatre on IG","days":[],"start":null,"end":null},"status":"active","tags":["academic","arts"],"commitment":"monthly","when":"unscheduled","selective":false,"acts":["performance"],"learn":["music"]},{"name":"Science National Honor Society","category":"Honor Societies","summary":"SNHS is a society for all future scientists to gather together and share their love for science. Students will learn and present information about new discoveries and inventions happening in the world of science. Students will also have opportunities to help and support other SLHS students through tutoring and providing science fair help.","sponsors":[{"name":"Usha Mulaparti","email_b64":"dWttdWxhcGFydGlAZmNwcy5lZHU="},{"name":"Mariana Bishara","email_b64":"bWJpc2hhcmFAZmNwcy5lZHU="}],"leaders":[],"meeting":{"days":["Thu"],"room":"618","freq":"Weekly","raw":"Room 618 or 205 4th Thursday of every month, except Nov. and Dec. which will be the 3rd Thursday","start":null,"end":null},"status":"active","tags":["academic","stem"],"commitment":"weekly","when":"unscheduled","selective":false,"acts":["research","discussion","tutoring","speaking"],"learn":["science","research"]},{"name":"Spanish Honor Society","category":"Honor Societies","summary":"The society promotes the use of the Spanish language and helps support the community in different ways.","sponsors":[],"leaders":[],"meeting":{"days":[],"raw":"","start":null,"end":null,"room":null,"freq":null},"status":"needs-sponsor","tags":["academic","culture","service"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":["volunteering"],"learn":["languages"]},{"name":"Tri-M Music Honor Society","category":"Honor Societies","summary":"Tri-M membership is open to students in grades 10-12 who have a 4.0 in music classes and an overall GPA above 3.0 and are members of advanced SLHS musical ensembles.","sponsors":[{"name":"Bryan Baldwin","email_b64":"amJiYWxkd2luQGZjcHMuZWR1"},{"name":"Emily Moser","email_b64":"ZW1vc2VyMUBmY3BzLmVkdQ=="}],"leaders":["Elections will be held in September."],"meeting":{"raw":"TBD","days":[],"start":null,"end":null,"room":null,"freq":null},"status":"active","tags":["academic","arts"],"commitment":"unknown","when":"unscheduled","selective":true,"acts":["performance","teamwork"],"learn":["music"]},{"name":"French Club","category":"Language Clubs","summary":"French Club is about being immersed in Francophone culture outside of French class. We offer tutoring and fun French activities.","sponsors":[{"name":"Laura Bachman","email_b64":"bGFiYWNobWFuQGZjcHMuZWR1"}],"leaders":[],"meeting":{"days":[],"raw":"","start":null,"end":null,"room":null,"freq":null},"status":"active","tags":["culture"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":["tutoring","social"],"learn":["languages","culture"]},{"name":"German Club","category":"Language Clubs","summary":"German Club - Culture activities and events after school (dates will be set for each activity coming soon), organized by German Honor Society. Activities include - game day, movie day, music, trivia etc. German Club is open to all students at SLHS.","sponsors":[{"name":"Cheryl Finley","email_b64":"Y2pmaW5sZXlAZmNwcy5lZHU="}],"leaders":[],"meeting":{"days":[],"raw":"","start":null,"end":null,"room":null,"freq":null},"status":"active","tags":["culture","recreation"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":["social"],"learn":["culture","languages"]},{"name":"Aeronautics Club","category":"Clubs & Activities","summary":"Sharing a love of flight, living out the dream of flying and unbridled enthusiasm for aviation.","sponsors":[],"leaders":[],"meeting":{"days":[],"raw":"","start":null,"end":null,"room":null,"freq":null},"status":"needs-sponsor","tags":["recreation"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":["discussion","social"],"learn":[]},{"name":"All Paws on Deck","category":"Clubs & Activities","summary":"This club is about making supplies for animals for shelters. Some supplies would include blankets, pillows, toys, treats and more.","sponsors":[{"name":"Bill Ferzoco","email_b64":"d2VmZXJ6b2NvQGZjcHMuZWR1"}],"leaders":["Yanet Tsegaye"],"meeting":{"room":"232","raw":"Room 232","days":[],"start":null,"end":null,"freq":null},"status":"active","tags":["service"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":["volunteering","creative"],"learn":["service"]},{"name":"Alliance on Mental Health (Morgan’s Message)","category":"Clubs & Activities","summary":"We create activities and events to normalize the conversation for mental health, build a community by and for student-athletes, and provide a platform for advocacy.","sponsors":[{"name":"Jill Pellerin"}],"leaders":["Savannah Blair (P) Lily Kalish (VP) Sylvie Bowen (VP)"],"meeting":{"days":[],"raw":"","start":null,"end":null,"room":null,"freq":null},"status":"active","tags":["wellness","civics"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":["discussion","teamwork"],"learn":[]},{"name":"Anime Club","category":"Clubs & Activities","summary":"Our club is for people who enjoy and want to learn more about Japanese pop culture including anime, manga, video games, etc.","sponsors":[{"name":"Anita Mulpuri"}],"leaders":["Avery Jones"],"meeting":{"days":["Thu"],"start":900,"end":960,"room":"262","freq":"Weekly","raw":"Thursdays 3-4 pm Room 262"},"status":"active","tags":["recreation","culture"],"commitment":"weekly","when":"after","selective":false,"acts":["social","discussion"],"learn":["culture"]},{"name":"Arts For Awareness","category":"Clubs & Activities","summary":"Members will participate in different forms of art, from digital to performing, to raise awareness for each month’s corresponding awareness month.","sponsors":[{"name":"Emily Moser"}],"leaders":["Shea Smith Jaziah Mays"],"meeting":{"days":[],"raw":"","start":null,"end":null,"room":null,"freq":null},"status":"pending","tags":["arts"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":["creative","performance"],"learn":["art"]},{"name":"Asian Student Association","category":"Clubs & Activities","summary":"The Asian Culture Club welcomes ALL interested in Asian culture! Every month, we hold meetings that explore various aspects unique to Asia, including customs/traditions, festivals, films, cuisines, origami, and more! We offer multiple activities that may be hands-on(creating origami/writing language) and/or hands-off(watching film/learning about history) . Ultimately, we want to establish an engaging and inviting atmosphere for South Lakes students and faculty!","sponsors":[{"name":"Sherri Evans"}],"leaders":["Julie Nguyen Iris Yi"],"meeting":{"raw":"Days TBD","days":[],"start":null,"end":null,"room":null,"freq":null},"status":"active","tags":["culture"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":["social","creative","discussion"],"learn":["culture"]},{"name":"Athlete Mental Performance Club","category":"Clubs & Activities","summary":"The AMP club will have film study, motivational talks, mental preparation, and what students feel they need to mentally get into their peak athletic mindset.","sponsors":[],"leaders":["Blina Sphuza Zoe Bradner"],"meeting":{"days":[],"raw":"","start":null,"end":null,"room":null,"freq":null},"status":"needs-sponsor","tags":["wellness"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":["discussion"],"learn":[]},{"name":"Best Buddies","category":"Clubs & Activities","summary":"Best Buddies is an internationally recognized non profit club that promotes inclusive friendships across the school for students with intellectual disabilities.","sponsors":[{"name":"Chelsea Swasey","email_b64":"Y2Vzd2FzZXlAZmNwcy5lZHU="}],"leaders":["Taylor Bass Sadie Gardner"],"meeting":{"raw":"TBD","days":[],"start":null,"end":null,"room":null,"freq":null},"status":"active","tags":["service"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":["volunteering","social"],"learn":["service"]},{"name":"Black Student Union (BSU)","category":"Clubs & Activities","summary":"BSU's goal is to promote discussion, knowledge of world issues that affect African, African-Americans, increase cultural understanding of African/ African-Americans with others, and take part in events that showcase the variety of Black culture.","sponsors":[{"name":"Kristian King"}],"leaders":[],"meeting":{"room":"299","raw":"Meeting room 299","days":[],"start":null,"end":null,"freq":null},"status":"active","tags":["culture","civics"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":["discussion","social"],"learn":["culture"]},{"name":"Book Club","category":"Clubs & Activities","summary":"In book club we meet once a month to discuss a book we chose the previous meeting. We discuss the plot, characters, writing style and more. We also sometimes watch part of the movie & have snacks.","sponsors":[{"name":"Ms. Barcus"}],"leaders":["Sophie Chesser"],"meeting":{"days":["Mon","Thu"],"freq":"Monthly","raw":"Meet once a month, usually on Monday or Thursday, next meeting decided each month","start":null,"end":null,"room":null},"status":"active","tags":["recreation"],"commitment":"multi","when":"unscheduled","selective":false,"acts":["discussion","social"],"learn":[]},{"name":"Briar Rose Club","category":"Clubs & Activities","summary":"The club will gather to watch movies, play games, make friends, and have fun!","sponsors":[],"leaders":["Sophie Jones Sara Jindal Laura W"],"meeting":{"days":["Tue"],"room":"364","raw":"After school in room 364 on most Tuesdays","start":null,"end":null,"freq":null},"status":"needs-sponsor","tags":["recreation"],"commitment":"weekly","when":"unscheduled","selective":false,"acts":["social"],"learn":[]},{"name":"Broadcast Journalism Club","category":"Clubs & Activities","summary":"The Broadcast Journalism Club will allow students to not only get to know their school and the events that happen within it but also get hands-on experience with filming and editing using professional equipment and hearing from professionals within the industry. Students will explore everything that makes up broadcasting, from editing and producing news segments to making podcasts with their friends, and this club has something for everyone!","sponsors":[{"name":"Evis Vasili"}],"leaders":["Alden Walcott, President"],"meeting":{"days":["Wed"],"start":900,"end":960,"room":"411","freq":"Every other week","raw":"Club meets every other Wednesday, from 3- 4 p.m. Meeting room 411"},"status":"active","tags":["media"],"commitment":"twicemonth","when":"after","selective":false,"acts":["creative","building","teamwork"],"learn":["media"]},{"name":"Cancer Free Future Initiative","category":"Clubs & Activities","summary":"A student-led initiative focused on cancer awareness, prevention, research advocacy, and awareness for cancer-related causes.","sponsors":[],"leaders":[],"meeting":{"days":[],"raw":"","start":null,"end":null,"room":null,"freq":null},"status":"inactive","tags":["wellness","civics"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":["discussion"],"learn":[]},{"name":"SLHS Cancer Kids First","category":"Clubs & Activities","summary":"We are dedicated to raising awareness about cancer, and encouraging students to help children with cancer by carrying out various activities aimed at fostering a sense of empathy, positivity, and community.","sponsors":[],"leaders":[],"meeting":{"days":[],"raw":"","start":null,"end":null,"room":null,"freq":null},"status":"active","tags":["service","wellness"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":["volunteering"],"learn":["service"]},{"name":"Car Club","category":"Clubs & Activities","summary":"A club that connects the students with local organizations allowing them to venture further into their car-related interests. For example, meet with local successful car collectors and learn about their passion for cars and their story.","sponsors":[{"name":"David Turley"}],"leaders":[],"meeting":{"days":[],"raw":"","start":null,"end":null,"room":null,"freq":null},"status":"active","tags":["recreation"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":["social","discussion"],"learn":[]},{"name":"Cards for Good Club","category":"Clubs & Activities","summary":"To create cards to be sent to elders, hospitalized kids, and deployed soldiers in order to spread joy and provide an opportunity for students to complete service learning requirements","sponsors":[{"name":"Joe Selner"}],"leaders":["Wylan Marszalek President Vice President Secretary"],"meeting":{"room":"430","raw":"Room 430","days":[],"start":null,"end":null,"freq":null},"status":"active","tags":["service"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":["volunteering","creative"],"learn":["service"]},{"name":"Chess Club","category":"Clubs & Activities","summary":"Chess club is the place for anyone enthusiastic or curious about chess! Typically students are playing games against each other the entire time. We share our passion for chess and play casual games as well as learn chess basics and advanced strategies depending on the experience of our members.","sponsors":[{"name":"Monica Kambatty Natalya Nalley"}],"leaders":["Caleb Das (President) Caleb Fallon (President)"],"meeting":{"days":["Thu"],"start":900,"end":960,"freq":"Weekly","raw":"Trailer outside door #7 (near tennis courts) Every Thursday 3:00PM to 4:00PM","room":null},"status":"active","tags":["recreation"],"commitment":"weekly","when":"after","selective":false,"acts":["social"],"learn":[]},{"name":"Cinema Classics Club","category":"Clubs & Activities","summary":"Watch iconic and cinematically impactful films that have been released. This includes movies that have won Oscars to cult classics.","sponsors":[{"name":"Justin Gaudenzi"}],"leaders":["Evan Spencer"],"meeting":{"room":"190","raw":"Room 190","days":[],"start":null,"end":null,"freq":null},"status":"active","tags":["recreation"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":["social","discussion"],"learn":[]},{"name":"College Partnership Program (CPP)","category":"Clubs & Activities","summary":"College Partnership Program’s program goals are to increase the academic achievement of students and to increase the number of students, particularly first generation and minority students, who enroll in CPP and succeed in college. The CPP creates opportunities for students to successfully navigate the home, school, college, and work continuum.","sponsors":[{"name":"Patrick Tubbins","email_b64":"cGV0dWJiaW5zQGZjcHMuZWR1"}],"leaders":[],"meeting":{"days":[],"raw":"","start":null,"end":null,"room":null,"freq":null},"status":"active","tags":["academic","career"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":["discussion"],"learn":[]},{"name":"Creative Writing Club","category":"Clubs & Activities","summary":"We talk about writing and also work on our creative writing stories.","sponsors":[{"name":"Julie Miller and Adam Temple"}],"leaders":["Ana-Maria Manea"],"meeting":{"days":["Thu"],"start":900,"end":960,"room":"450","freq":"Every other week","raw":"Every other Thursday from 3-4 pm in room 450; alternate meeting space Miller/414."},"status":"active","tags":["arts"],"commitment":"twicemonth","when":"after","selective":false,"acts":["creative","discussion","independent"],"learn":["writing"]},{"name":"Entrepreneurship Club","category":"Clubs & Activities","summary":"Promoting women entrepreneurship at SLHS through activities including women speakers, service project collaborations with local women owned businesses, mentoring programs/events for elementary school age future entrepreneurs.","sponsors":[],"leaders":[],"meeting":{"days":[],"raw":"","start":null,"end":null,"room":null,"freq":null},"status":"inactive","tags":["business","service","leadership"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":["volunteering","leadership"],"learn":["business","leadership"]},{"name":"Fashion and Design","category":"Clubs & Activities","summary":"","sponsors":[],"leaders":[],"meeting":{"days":[],"raw":"","start":null,"end":null,"room":null,"freq":null},"status":"inactive","tags":["arts"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":["creative"],"learn":["art"]},{"name":"Film Club Also known as Seahawks Film Club","category":"Clubs & Activities","summary":"Have you ever wanted to work on a film project as a writer, director, actor, editor or camera operator? Then the Seahawks’ Film Club is a great start for you!","sponsors":[],"leaders":[],"meeting":{"days":[],"raw":"","start":null,"end":null,"room":null,"freq":null},"status":"active","tags":["media","arts"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":["creative","teamwork"],"learn":["media"]},{"name":"Fine Arts Club","category":"Clubs & Activities","summary":"Our goal is to allow students who could not participate in an art class, get a chance to express their creativity through a club. We learn about art and its history and we’ll read about amazing painters in different periods of time. Students participating in this club can paint and draw based on the given prompt. There will be voting, contests, and prizes!","sponsors":[],"leaders":["Sana Babakhani Thanwa Dahab"],"meeting":{"days":[],"raw":"","start":null,"end":null,"room":null,"freq":null},"status":"needs-sponsor","tags":["arts"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":["creative","discussion"],"learn":["art"]},{"name":"FCA Fellowship of Christian Athlete (FCA)","category":"Clubs & Activities","summary":"Students come together for food, fellowship and fun :) Our club meets at 7:30am every Thursday in the lecture hall. We play games, eat food, and do a mini Bible study (food, fun, and fellowship). It’s a safe space where you can make friends and grow in your faith. You don’t have to be an athlete or Christian to join!","sponsors":[{"name":"Lisa Trigiano","email_b64":"bG10cmlnaWFub0BmY3BzLmVkdQ=="}],"leaders":["Ava Satterfield Savannah Blair Abigail Blair George Zarechnak"],"meeting":{"days":["Thu"],"start":450,"end":510,"raw":"Lecture Hall Thursday mornings","fromDesc":true,"openEnd":true,"room":null,"freq":null},"status":"active","tags":["culture","recreation"],"commitment":"weekly","when":"before","selective":false,"acts":["social","discussion"],"learn":[]},{"name":"Fishing Club","category":"Clubs & Activities","summary":"Dedicated to helping students learn about and discuss fishing, the environment, local lakes and more. Promote conservation and clean water efforts.","sponsors":[{"name":"Chris Bass"}],"leaders":["Nate Cissel"],"meeting":{"room":"219","raw":"Room #219","days":[],"start":null,"end":null,"freq":null},"status":"active","tags":["recreation","environment"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":["discussion","social"],"learn":[]},{"name":"Gender Sexuality Alliance (GSA)","category":"Clubs & Activities","summary":"We act as a support group and a place to socialize for LGBTQ+ students and allies. We also plan to host events dedicated to representing our LGBTQ+ student body and advocating for LGBTQ+ rights.","sponsors":[{"name":"Sydelle Keisler","email_b64":"c2xrZWlzbGVyQGZjcHMuZWR1"},{"name":"Emily Bridges","email_b64":"ZWFicmlkZ2VzQGZjcHMuZWR1"}],"leaders":["Theo Carney Aubree Strange Seyffert Sayer"],"meeting":{"room":"402","raw":"Room 402","days":[],"start":null,"end":null,"freq":null},"status":"active","tags":["culture","civics"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":["social","discussion"],"learn":[]},{"name":"Get2Green","category":"Clubs & Activities","summary":"We work to increase environmental stewardship at SLHS and in our local community. We operate the Recycling collections, will be facilitating and supporting teacher use of the Outdoor Learning Space, and developing a Share Table in the cafeteria.","sponsors":[{"name":"Laura Bachman","email_b64":"bGFiYWNobWFuQGZjcHMuZWR1"},{"name":"Amol Patel","email_b64":"YWNwYXRlbEBmY3BzLmVkdQ=="}],"leaders":["Jasmine Butcher"],"meeting":{"days":["Mon"],"start":905,"end":960,"room":"600","freq":"Every other week","raw":"Every other Monday, room 600, from 3:05 to 4pm"},"status":"active","tags":["environment","service"],"commitment":"twicemonth","when":"after","selective":false,"acts":["volunteering","teamwork"],"learn":["service"]},{"name":"The Giving Shelf","category":"Clubs & Activities","summary":"A club to raise awareness of food insecurity in the Reston community, and to design and encourage involvement in service activities to alleviate hunger.","sponsors":[{"name":"Dawn Garcia","email_b64":"ZG1nYXJjaWFAZmNwcy5lZHU="}],"leaders":["Alden Walcott"],"meeting":{"days":["Wed"],"room":"421","freq":"Every other week","raw":"Every other Wednesday Rm 421","start":null,"end":null},"status":"active","tags":["service"],"commitment":"twicemonth","when":"unscheduled","selective":false,"acts":["volunteering"],"learn":["service"]},{"name":"GlamourGals","category":"Clubs & Activities","summary":"GlamourGals' philosophy centers on building intergenerational connections to combat elder isolation and foster compassionate, empathetic leaders among young volunteers. The organization uses complimentary beauty makeovers and companionship as a vehicle for creating meaningful relationships between high school students and seniors in residential care.","sponsors":[{"name":"John Lucibello Desiree Satterfield","email_b64":"ZGpzYXR0ZXJmaWVsQGZjcHMuZWR1"}],"leaders":["Zahra Nikzad"],"meeting":{"days":["Fri"],"start":900,"end":960,"freq":"Weekly","raw":"Two Fridays a month 3-4pm","room":null},"status":"active","tags":["service"],"commitment":"weekly","when":"after","selective":false,"acts":["volunteering"],"learn":["service","leadership"]},{"name":"Green Initiative Club","category":"Clubs & Activities","summary":"","sponsors":[{"name":"Amol Patel Laura Bachman"}],"leaders":["Jasmine Butcher"],"meeting":{"days":[],"raw":"","start":null,"end":null,"room":null,"freq":null},"status":"active","tags":["environment"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":[],"learn":[]},{"name":"Habitat South Lakes","category":"Clubs & Activities","summary":"Student-led organization dedicated to supporting affordable housing and addressing housing insecurity in our community. The club aims to inform students about Habitat for Humanity to raise awareness, and participate in service that helps families gain safe, affordable housing.","sponsors":[{"name":"Mackenzie Schmidt"}],"leaders":["Varun Phadke Ramsey Hafez"],"meeting":{"room":"472","raw":"472","days":[],"start":null,"end":null,"freq":null},"status":"active","tags":["service","civics"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":["volunteering"],"learn":["service"]},{"name":"Help Health (Pending)","category":"Clubs & Activities","summary":"This club is focused on improving access to basic healthcare resources in underserved communities through fundraisers like baking sale. This club also includes activities like card-making.","sponsors":[{"name":"Michelle Siraj"}],"leaders":["Azza Ali Mena Yacob"],"meeting":{"room":"420","raw":"420","days":[],"start":null,"end":null,"freq":null},"status":"pending","tags":["service","wellness"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":["volunteering"],"learn":["service"]},{"name":"Hispanic Student Association","category":"Clubs & Activities","summary":"To unite, educate, and empower the Latino community through awareness. To bring together students who share similar backgrounds or are interested in learning about the culture.","sponsors":[{"name":"Diego Hernandez Guillen"}],"leaders":["Jovanna Rosales-Menendez Aidan Ryan"],"meeting":{"days":["Wed"],"room":"520","freq":"Every other week","raw":"Room 520 Every other Wednesday","start":null,"end":null},"status":"active","tags":["culture"],"commitment":"twicemonth","when":"unscheduled","selective":false,"acts":["social","discussion"],"learn":["culture"]},{"name":"Ice Hockey Interest Club","category":"Clubs & Activities","summary":"Brings together students from various “club” hockey teams that otherwise do not have the opportunity to play with one another.","sponsors":[],"leaders":[],"meeting":{"days":[],"raw":"","start":null,"end":null,"room":null,"freq":null},"status":"active","tags":["recreation"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":["social","teamwork"],"learn":[]},{"name":"Indian Student Association","category":"Clubs & Activities","summary":"This club is open to any student who is interested in learning about Indian culture, likes to socialize with people with similar cultures and likes to eat delicious Indian food. We learn about festivals, cultures of different states, we play good Bollywood music and dance. Celebrating and teaching Indian culture within the South Lakes Community","sponsors":[],"leaders":["Vacant"],"meeting":{"days":[],"raw":"","start":null,"end":null,"room":null,"freq":null},"status":"needs-sponsor","tags":["culture","recreation"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":["social"],"learn":["culture"]},{"name":"Interact Club (Rotary)","category":"Clubs & Activities","summary":"The Interact Club, in collaboration with the Rotary Club of Reston/Herndon, offers students excellent chances to showcase their leadership skills and participate in various service projects to earn valuable service hours.","sponsors":[{"name":"Tiffany Welborn","email_b64":"dGx3ZWxib3JuQGZjcHMuZWR1"},{"name":"Jill Koppel","email_b64":"amdrb3BwZWxAZmNwcy5lZHU="},{"name":"Sree Prabhaker","email_b64":"c3ByYWJoYWthckBmY3BzLmVkdQ=="}],"leaders":["Mazin El-Zein (President) Anya Crevits (Vice-President) Diana Foley (Secretary) Sinclair Lyon (Treasurer) Morgan Church (Social Media Manager) Maya Nelson (Project Manager)"],"meeting":{"days":["Wed"],"freq":"Weekly","raw":"Lecture Hall After school every 2nd Wednesday of the month","start":null,"end":null,"room":null},"status":"active","tags":["service","leadership"],"commitment":"weekly","when":"unscheduled","selective":false,"acts":["volunteering","leadership"],"learn":["service","leadership"]},{"name":"International Club","category":"Clubs & Activities","summary":"We celebrate and recognize different holidays and cultural/religious celebrations. We meet in room 502 on Wednesdays.","sponsors":[{"name":"Sarah Noll Sree Prabhakar"}],"leaders":["Furtuna Deglel Bilen Amare"],"meeting":{"days":["Wed"],"raw":"Room Wednesdays","start":null,"end":null,"room":null,"freq":null},"status":"active","tags":["culture"],"commitment":"weekly","when":"unscheduled","selective":false,"acts":["social"],"learn":["culture"]},{"name":"Jewish Student Association (JSA)","category":"Clubs & Activities","summary":"JSA’s overall goal is to promote interest and discussion of Judaism through educational, cultural, social, religious, and service activities.","sponsors":[{"name":"Suzanne Bruens Mackenzie Schmidt","email_b64":"bXNzY2htaWR0QGZjcHMuZWR1"}],"leaders":["Annie Leiber"],"meeting":{"room":"416","raw":"Room 416 Days TBD","days":[],"start":null,"end":null,"freq":null},"status":"active","tags":["culture","service"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":["discussion","social","volunteering"],"learn":["culture"]},{"name":"K Pop Dance Club","category":"Clubs & Activities","summary":"To learn and enjoy dancing to Korean pop songs.","sponsors":[],"leaders":[],"meeting":{"days":[],"raw":"","start":null,"end":null,"room":null,"freq":null},"status":"inactive","tags":["arts","recreation"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":["performance","social"],"learn":["music"]},{"name":"Key Club","category":"Clubs & Activities","summary":"Serve the community by giving students service hour opportunities like organizing food drives and volunteerting at shelters.","sponsors":[{"name":"TBA"}],"leaders":["Adriene Zappone Claire McQuery"],"meeting":{"days":[],"raw":"","start":null,"end":null,"room":null,"freq":null},"status":"pending","tags":["service"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":["volunteering"],"learn":["service"]},{"name":"Knitting and Pie Club","category":"Clubs & Activities","summary":"We crochet/knit blankets, scarves, plushies, etc that are donated to charity and eat pie. We plan on crocheting hearts that will have kind messages attached to them to put around the school (needs to be approved). Students knit and crochet projects to donate to charity and can earn service hours","sponsors":[{"name":"Jennifer Holah","email_b64":"SkNIb2xhaDFAZmNwcy5lZHU="}],"leaders":["Avigaelle Alexander Isla Nicolaidis Gwen O'Connor Nidhi Rangnath"],"meeting":{"days":["Wed"],"room":"228","raw":"Room 228 Wednesdays","start":null,"end":null,"freq":null},"status":"active","tags":["service","recreation"],"commitment":"weekly","when":"unscheduled","selective":false,"acts":["creative","volunteering","social"],"learn":[]},{"name":"Literary & Film Analysis","category":"Clubs & Activities","summary":"","sponsors":[],"leaders":["Virginia Nardelli"],"meeting":{"days":[],"raw":"","start":null,"end":null,"room":null,"freq":null},"status":"active","tags":["media"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":["discussion"],"learn":[]},{"name":"Marine Life Club","category":"Clubs & Activities","summary":"This club will focus on learning and raising awareness about ocean ecosystems, marine animals, and conservation. Members will explore marine life through fun activities like short documentaries, games, animal spotlights, and hands-on activities.","sponsors":[{"name":"Joseph Selner"}],"leaders":["Camille Eustis Olivia Tarrant Delaney Stacy Edward McHugh"],"meeting":{"days":["Wed","Fri"],"start":900,"end":945,"room":"430","freq":"Weekly","raw":"Once every 3 weeks, Wednesdays or Fridays 3-3:45 Room 430 Dates TBD- check Schoology"},"status":"active","tags":["environment","stem"],"commitment":"multi","when":"after","selective":false,"acts":["discussion"],"learn":["science"]},{"name":"Math Mentors Club","category":"Clubs & Activities","summary":"","sponsors":[],"leaders":["Alicia Lee"],"meeting":{"days":[],"raw":"","start":null,"end":null,"room":null,"freq":null},"status":"needs-sponsor","tags":["academic","stem"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":["tutoring"],"learn":["math"]},{"name":"Model United Nations","category":"Clubs & Activities","summary":"Model United Nations (Model UN or MUN) is a simulation of how the UN conducts debates. Students take the roles of ambassadors, countries, or other entities to diplomatically approach global problems. This is often extended to television, history, social media, and other fun topics to simulate! Members meet weekly to participate in simulations and occasionally prepare for conferences, which we offer the opportunity to attend several times per year.","sponsors":[],"leaders":["Cory Dake Chloe Carter (Or-paz) Ari Bhonsle"],"meeting":{"freq":"Weekly","raw":"Weekly","days":[],"start":null,"end":null,"room":null},"status":"needs-sponsor","tags":["debate","civics"],"commitment":"weekly","when":"unscheduled","selective":false,"acts":["speaking","discussion","teamwork"],"learn":["speaking"]},{"name":"Muslim Student Association","category":"Clubs & Activities","summary":"To create a positive awareness of Muslim student body at SLHS. To discuss, learn, develop confidence and participate in activities involving Islam.","sponsors":[{"name":"Thomas Castro","email_b64":"dGhjYXN0cm9AZmNwcy5lZHU="}],"leaders":["Malak Daoud Hina Ehsan"],"meeting":{"room":"432","raw":"Room 432","days":[],"start":null,"end":null,"freq":null},"status":"active","tags":["culture"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":["discussion","social"],"learn":["culture"]},{"name":"New Hawks - New Student Ambassador Program","category":"Clubs & Activities","summary":"Student-run new student program. Ambassadors meet new students on their first day, give tours and answer questions. They are buddied up with a new student and check in with them throughout the year. Within our group are the Purple Star Ambassadors. These are Ambassadors which specialize in supporting military and government connected students.","sponsors":[{"name":"Lauren Ericson","email_b64":"bHZlcmljc29uQGZjcHMuZWR1"}],"leaders":["Ambassador Coordinators: Afra Annan Abantee Reem Abdelrazig Kayla Grigsby Christopher Mendelsohn Purple Star (Military/Government-connected) Leaders: Ainsley Sachse - President Ava-Grace Satterfield - Co Vice President Emily Inman - Co Vice President Evelyn Pound - Secretary"],"meeting":{"raw":"New student tours/ events as announced","days":[],"start":null,"end":null,"room":null,"freq":null},"status":"active","tags":["service","leadership"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":["volunteering","social","leadership"],"learn":["leadership"]},{"name":"Noteworthy A Cappella Ensemble","category":"Clubs & Activities","summary":"Student-run contemporary a cappella vocal ensemble. Students perform in the community and at school events.","sponsors":[{"name":"Emily Moser"}],"leaders":["Lily Clark Isabel Cheruvarthur"],"meeting":{"raw":"TBA","days":[],"start":null,"end":null,"room":null,"freq":null},"status":"active","tags":["arts"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":["performance","teamwork"],"learn":["music"]},{"name":"Neuroscience Club","category":"Clubs & Activities","summary":"A discussion and research based club which will look into the neuroscience behind both psychological phenomenons and other neurological conditions.","sponsors":[{"name":"Bill Ferzoco"}],"leaders":["Arik Weizman"],"meeting":{"room":"232","raw":"Room 232","days":[],"start":null,"end":null,"freq":null},"status":"active","tags":["stem","academic"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":["research","discussion"],"learn":["science","research"]},{"name":"One Love (The Committee for Relationship Safety)","category":"Clubs & Activities","summary":"Students will discuss and educate each other on relationship health, and providing resources for help and support to those who may need it.","sponsors":[],"leaders":["Maisie Smith"],"meeting":{"room":"213","raw":"Room 213","days":[],"start":null,"end":null,"freq":null},"status":"needs-sponsor","tags":["wellness"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":["discussion"],"learn":[]},{"name":"Our Minds Matter","category":"Clubs & Activities","summary":"A club aimed at increasing awareness and reducing the stigma around seeking support for mental illness. The club participates in de-stressing activities, learns about a wide variety of issues impacting mental health and creates awareness campaigns in the school community.","sponsors":[{"name":"Karyn Mrowka","email_b64":"a2Ftcm93a2FAZmNwcy5lZHU="},{"name":"Kathy Luongo","email_b64":"a21sdW9uZ29AZmNwcy5lZHU="}],"leaders":["Sydney Rice and Kally Sosa"],"meeting":{"days":["Wed"],"room":"332","raw":"One Wednesday per month, room 332","start":null,"end":null,"freq":null},"status":"active","tags":["wellness"],"commitment":"weekly","when":"unscheduled","selective":false,"acts":["discussion","social"],"learn":[]},{"name":"Pickleball Interest Club","category":"Clubs & Activities","summary":"We will give all interested students a chance to learn about an upcoming sport. Students will have the opportunity to get 1 on 1 feedback, play interactive pickleball themed games, and watch professional games.","sponsors":[{"name":"Mackenzie Schmidt","email_b64":"bXNzY2htaWR0QGZjcHMuZWR1"}],"leaders":["Christopher Mendelsohn Isla Eckhardt Alexander Calhoun Elena Catto"],"meeting":{"days":[],"raw":"","start":null,"end":null,"room":null,"freq":null},"status":"active","tags":["recreation"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":["social"],"learn":[]},{"name":"Photo/Video Club","category":"Clubs & Activities","summary":"Photo club is for students interested in interacting with others with an interest in photography. We take walks and take photos, we share cool photos, and we learn cool techniques to try on our own. Depending on interest, some students become responsible for capturing images at sporting events and for the office frames.","sponsors":[{"name":"Justin Gaudenzi Tim Meleck"}],"leaders":["VACANT"],"meeting":{"days":["Wed"],"freq":"Weekly","raw":"Wednesdays Room and time TBD","start":null,"end":null,"room":null},"status":"active","tags":["arts","media"],"commitment":"weekly","when":"unscheduled","selective":false,"acts":["creative","independent","social"],"learn":["art","media"]},{"name":"Pre-Med (Health Sciences)","category":"Clubs & Activities","summary":"The pre-med club is for students who are interested in entering the medical field in some way for their future career. We will have guest speakers who will come and talk about their journey and what they do within their field. We will also have volunteer opportunities related to the field for the members of the club.","sponsors":[{"name":"Marianne Bishara","email_b64":"bWJpc2hhcmFAZmNwcy5lZHU="}],"leaders":["Emily Pattison Isha Saini Ariana Medina Mena Yacoub"],"meeting":{"room":"205","raw":"Room 205, Dates TBD","days":[],"start":null,"end":null,"freq":null},"status":"active","tags":["career","stem"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":["discussion"],"learn":["science"]},{"name":"Ted-Ed Student Club","category":"Clubs & Activities","summary":"To teach members how to be clear, confident, and persuasive when presenting ideas.","sponsors":[{"name":"Billy Watts"}],"leaders":[],"meeting":{"days":["Mon"],"room":"138","freq":"Weekly","raw":"Room 138 Mondays after school","start":null,"end":null},"status":"active","tags":["debate"],"commitment":"weekly","when":"unscheduled","selective":false,"acts":["speaking"],"learn":["speaking"]},{"name":"Psychology Club","category":"Clubs & Activities","summary":"Inactive","sponsors":[],"leaders":[],"meeting":{"days":[],"raw":"","start":null,"end":null,"room":null,"freq":null},"status":"active","tags":[],"commitment":"unknown","when":"unscheduled","selective":false,"acts":[],"learn":[]},{"name":"Red Cross Club","category":"Clubs & Activities","summary":"","sponsors":[{"name":"Bill Ferzoco"}],"leaders":["Nandita Cherukuri Parker Oakes Nandana Velayudhan"],"meeting":{"freq":"Monthly","raw":"Once a month- contact students","days":[],"start":null,"end":null,"room":null},"status":"active","tags":["service"],"commitment":"monthly","when":"unscheduled","selective":false,"acts":["volunteering"],"learn":["service"]},{"name":"Rocketry Club","category":"Clubs & Activities","summary":"Using physics and rocket building to deepen connections with friends and our understanding of the real world. We would also develop hands-on engineering experiences and problem-solving skills.","sponsors":[],"leaders":["Heidi Koolmees Zoey Rosst Evan Spencer Alshaima Hamza Elyse Hauenstein"],"meeting":{"days":[],"raw":"","start":null,"end":null,"room":null,"freq":null},"status":"needs-sponsor","tags":["stem"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":["building","teamwork","research"],"learn":["engineering","science"]},{"name":"ROSY","category":"Clubs & Activities","summary":"","sponsors":[{"name":"Laura Bachman","email_b64":"bGFiYWNobWFuQGZjcHMuZWR1"}],"leaders":[],"meeting":{"room":"600","raw":"Room 600","days":[],"start":null,"end":null,"freq":null},"status":"active","tags":[],"commitment":"unknown","when":"unscheduled","selective":false,"acts":[],"learn":[]},{"name":"Seahawk Culture Society (SCS)","category":"Clubs & Activities","summary":"A society of students who celebrate and recognize diverse cultures while creating community events.","sponsors":[{"name":"Nate Tashjy"}],"leaders":["Ilana Collingham"],"meeting":{"room":"222","raw":"Rm 222","days":[],"start":null,"end":null,"freq":null},"status":"active","tags":["culture"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":["social","teamwork"],"learn":["culture"]},{"name":"Scones for Service Club","category":"Clubs & Activities","summary":"The club includes meetings, baking in the kitchen and at home, donating food to the homeless shelter, and creating events.","sponsors":[{"name":"Carlos D’Alvano"}],"leaders":["Olivia Rosengart Anna Rasmussen"],"meeting":{"raw":"Culinary Side Kitchen","days":[],"start":null,"end":null,"room":null,"freq":null},"status":"active","tags":["service"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":["volunteering"],"learn":["service"]},{"name":"Seahawk AI","category":"Clubs & Activities","summary":"The AI club is centered around building student interest in AI through hands-on activities, discussions, collaborative projects, and real-world applications, while fostering leadership, teamwork, critical thinking, and problem-solving skills.","sponsors":[{"name":"Dr. Marvin Rodriguez"}],"leaders":["Raphael Osinovsky Rayyan Rahman"],"meeting":{"room":"440","raw":"440 Conference Rm","days":[],"start":null,"end":null,"freq":null},"status":"active","tags":["stem","leadership"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":["building","discussion","teamwork","leadership"],"learn":["coding","teamwork","leadership"]},{"name":"Seahawks Against Gun Violence (SAGV)","category":"Clubs & Activities","summary":"SAGV is a student-group aimed at raising awareness about gun violence through discussions of legislation and social media campaigns.","sponsors":[{"name":"Kimberly Moore"}],"leaders":[],"meeting":{"room":"218","raw":"Room 218","days":[],"start":null,"end":null,"freq":null},"status":"active","tags":["civics"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":["discussion"],"learn":[]},{"name":"Science Olympiad","category":"Clubs & Activities","summary":"Science Olympiad is a team-based competition featuring 23 events pertaining to different fields of science (biology, physics, chemistry, engineering, etc.). Students compete in each event with one or two partners. We compete in one to two competitions each year.","sponsors":[{"name":"Jonathan Leitch"}],"leaders":["Vivian Pham Mark Antony Bchara Mithra Venkatesan Ana-Maria Manea Katherine Warner Isla Nicolaidis"],"meeting":{"days":[],"raw":"","start":null,"end":null,"room":null,"freq":null},"status":"active","tags":["stem","academic","competition"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":["competition","teamwork","research"],"learn":["science","engineering"]},{"name":"Seahawk Cyber Club","category":"Clubs & Activities","summary":"The main thing we do in this club is the Cyber Patriot Competition where club members split up into teams and compete. Cyber Patriot is a national youth competition where people try to fix problems that a VM image you're provided has. We also do stuff like PicoCTF, which is a capture-the-flag cybersecurity game. In general, we do things with Cyber Security and we have lots of fun.","sponsors":[{"name":"Billy Watts"}],"leaders":["Rayyan Rahman Cory Dake"],"meeting":{"days":["Wed"],"room":"138","freq":"Weekly","raw":"Rm 138 Every Wednesday","start":null,"end":null},"status":"active","tags":["stem","competition"],"commitment":"weekly","when":"unscheduled","selective":false,"acts":["competition","teamwork","building"],"learn":["coding"]},{"name":"Seahawks Honor Society","category":"Clubs & Activities","summary":"Provide peer tutoring to support academic success, encourage enrollment in advanced courses (Honors and IB), and prepare students for standardized tests.","sponsors":[],"leaders":["Matthew Mucher"],"meeting":{"days":[],"raw":"","start":null,"end":null,"room":null,"freq":null},"status":"needs-sponsor","tags":["academic"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":["tutoring"],"learn":[]},{"name":"Seahawk Talent","category":"Clubs & Activities","summary":"Seahawk Talent is a student-led club that helps students build skills in modeling, acting, runway, commercials, public speaking, photography, video, styling, personal branding, and professional presentation. Students will take part in hands-on workshops, practice activities, mock auditions, portfolio development, and other talent-industry learning experiences. No previous experience is required.","sponsors":[{"name":"Alan Klingensmith"}],"leaders":["Gavin Klingensmith"],"meeting":{"days":[],"raw":"","start":null,"end":null,"room":null,"freq":null},"status":"pending","tags":["arts","media","career"],"commitment":"unknown","when":"unscheduled","selective":true,"acts":["performance","speaking","creative"],"learn":["speaking","media","art"]},{"name":"Seahawks Who Code","category":"Clubs & Activities","summary":"WE'RE BUILDING THE WORLD'S LARGEST PIPELINE OF FUTURE COMPUTER SCIENCE/IT ENGINEERS.","sponsors":[{"name":"Adam Temple"}],"leaders":["Dylan Basnight"],"meeting":{"days":["Wed","Fri"],"start":895,"end":990,"room":"450","freq":"Weekly","raw":"Wednesdays and Fridays 2:55-4:30pm Room 450"},"status":"active","tags":["stem","career"],"commitment":"multi","when":"after","selective":false,"acts":["building"],"learn":["coding"]},{"name":"Seahucks Ultimate Frisbee Club","category":"Clubs & Activities","summary":"Our club is made up of students that are interested in talking about and admiring the game of Ultimate Frisbee.","sponsors":[{"name":"David Soles","email_b64":"ZGVzb2xlc0BmY3BzLmVkdQ=="}],"leaders":["Jackson Snell Matthew Hazlin"],"meeting":{"days":[],"raw":"","start":null,"end":null,"room":null,"freq":null},"status":"active","tags":["recreation"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":["discussion","social"],"learn":[]},{"name":"SLHS Cancer Kids First","category":"Clubs & Activities","summary":"We are dedicated to raising awareness about cancer, and encouraging students to help children with cancer by carrying out various activities aimed at fostering a sense of empathy, positivity, and community.","sponsors":[{"name":"Marie Turner"}],"leaders":["Merriyam Qaiser"],"meeting":{"days":[],"raw":"","start":null,"end":null,"room":null,"freq":null},"status":"active","tags":["service","wellness"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":["volunteering"],"learn":["service"]},{"name":"South Lakes Mock Trial Club","category":"Clubs & Activities","summary":"Are you passionate about law, debate, and leadership? Seahawks G.A.V.E.L. is the perfect club for future lawyers and leaders! Participate in exciting mock trials, argue fun cases featuring cartoon characters, and learn how to think and speak like a real attorney. Develop your courtroom skills, boost your confidence, and have fun tackling legal challenges with your peers. Whether you're dreaming of law school or just want to improve your public speaking, Seahawks G.A.V.E.L. is the place to be!","sponsors":[{"name":"Veera Andrade"}],"leaders":["Merriyam Qaiser"],"meeting":{"days":["Wed"],"start":900,"end":980,"room":"202","raw":"202 Wednesday 3:00pm - 4:20pm","freq":null},"status":"active","tags":["debate","career"],"commitment":"weekly","when":"after","selective":false,"acts":["speaking","teamwork","discussion"],"learn":["speaking","leadership"]},{"name":"Sports Analytics Club","category":"Clubs & Activities","summary":"Partnered with the national Sports Analytics Club Program {https://sacpinc.org/}, we complete data analysis for various sports projects. For example, helping athletes obtain induction into the Hall of Fame.","sponsors":[{"name":"Evan Millar"}],"leaders":[],"meeting":{"raw":"TBD","days":[],"start":null,"end":null,"room":null,"freq":null},"status":"active","tags":["stem"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":["research"],"learn":["research","math"]},{"name":"Sports Economics","category":"Clubs & Activities","summary":"A student-led club focused on exploring the relationship between sports and economics. Members will analyze how money impacts sports with topics such as marketing, salaries, team management, and exhibition games.","sponsors":[{"name":"Colin Hoffman"}],"leaders":["Noah Asfaw Jackson Smouha"],"meeting":{"room":"227","raw":"227","days":[],"start":null,"end":null,"freq":null},"status":"active","tags":["business"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":["discussion","research"],"learn":["business","finance"]},{"name":"Step Team","category":"Clubs & Activities","summary":"Step Team is a group of people performing step-dancing, a form of percussive dancing. We use claps, spoken words, and footsteps to create the rhythms and occasionally step to music.","sponsors":[],"leaders":[],"meeting":{"days":[],"raw":"","start":null,"end":null,"room":null,"freq":null},"status":"inactive","tags":["arts"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":["performance","teamwork"],"learn":["music"]},{"name":"Tabletop Roleplaying Club","category":"Clubs & Activities","summary":"Come join a group of enthusiastic and close-knit friends as they explore unknown worlds through the magic of tabletop roleplaying. Learn and create characters, weaponry, and tragic backstories using the framework provided by well-known systems such as Dungeons & Dragons, Pathfinder, etc.","sponsors":[{"name":"Mackenzie Schmidt","email_b64":"bXNzY2htaWR0QGZjcHMuZWR1"}],"leaders":["Leah Phillips"],"meeting":{"days":["Mon"],"start":900,"end":1020,"room":"416","freq":"Weekly","raw":"Every Monday 3-5pm (latest) Room 416"},"status":"active","tags":["recreation"],"commitment":"weekly","when":"after","selective":false,"acts":["social","creative"],"learn":[]},{"name":"Teachers for Today","category":"Clubs & Activities","summary":"This club will offer opportunities for students who think they may want to be teachers to tutor, discuss teaching strategies, and learn more about how they might pursue a career in education. Since we were not able to offer the Teachers for Tomorrow course this year, this fills the gap for those students who want to take the course.","sponsors":[{"name":"Jill Pellerin","email_b64":"amVwZWxsZXJpbkBmY3BzLmVkdQ=="}],"leaders":["Yolanda Goyone Cassandra de La Cruz Suriah Fornah Amanda Halac"],"meeting":{"days":["Mon"],"start":900,"end":960,"room":"415","raw":"Second Monday of the Month 3-4pm Room 415","freq":null},"status":"active","tags":["career","academic"],"commitment":"weekly","when":"after","selective":false,"acts":["tutoring","discussion"],"learn":[]},{"name":"UNICEF","category":"Clubs & Activities","summary":"UNICEF Unite is a grassroots organization whose goal is to advocate for children all around the world. Our club involves advocating for children's rights, expanding knowledge on issues faced by people around the world, and building a community of diverse and passionate people. UNICEF Unite brings together people who come from a wide range of backgrounds, genders, and ideologies, who are excited to work together to make change within our community and beyond.","sponsors":[{"name":"Michael Gueltig","email_b64":"bWxndWVsdGlnQGZjcHMuZWR1"},{"name":"Dawn Garcia","email_b64":"ZG1nYXJjaWFAZmNwcy5lZHU="}],"leaders":["Isabella Zermeno Kellen Schobert"],"meeting":{"days":[],"raw":"","start":null,"end":null,"room":null,"freq":null},"status":"active","tags":["civics","service"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":["discussion"],"learn":["service"]},{"name":"Varsity Math Team","category":"Clubs & Activities","summary":"Students work outside the box, challenging math problems. There are 6 problems and 30 minutes to answer them. You must be in at least Algebra 2 or higher to attend. Graphing calculators allowed.","sponsors":[],"leaders":["Zoya Ghantiwala"],"meeting":{"days":["Tue"],"freq":"Weekly","raw":"Posted in every math classroom; typically first Tuesday of each month","start":null,"end":null,"room":null},"status":"needs-sponsor","tags":["stem","academic","competition"],"commitment":"weekly","when":"unscheduled","selective":false,"acts":["competition"],"learn":["math"]},{"name":"Wellness Worldwide","category":"Clubs & Activities","summary":"We aim to raise awareness about global health. We have lessons for club members to learn about the different global health issues and members vote for the charities we support.","sponsors":[{"name":"Eliza Barcus"}],"leaders":["Jasmine Butcher Aidan Doerr"],"meeting":{"room":"367","raw":"Room 367","days":[],"start":null,"end":null,"freq":null},"status":"active","tags":["wellness","service"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":["discussion","volunteering"],"learn":[]},{"name":"Winners Breakfast Club (peer mentoring)","category":"Clubs & Activities","summary":"To help students effectively manage their schoolwork and achieve better grades on a more consistent basis. We will work before school with their peers in a welcoming environment. And a healthy breakfast is served.","sponsors":[{"name":"Jason Hescock Terry Redican Irelynn Legler"}],"leaders":["Riggins Legler Josh Dagbe Koa Falls"],"meeting":{"days":["Tue"],"start":405,"end":465,"room":"146","freq":"Weekly","raw":"Tuesdays 6:45-7:45 am Every Tuesday Room 146"},"status":"active","tags":["academic"],"commitment":"weekly","when":"before","selective":false,"acts":["tutoring","social"],"learn":[]},{"name":"Women in Service Club","category":"Clubs & Activities","summary":"The purpose of our club is to create a strong group of community-oriented women who are passionate about giving back.","sponsors":[{"name":"Lisa Trigiano"}],"leaders":["Olivia Woosley Vesna Nardelli"],"meeting":{"days":["Wed"],"room":"400","freq":"Weekly","raw":"Wednesdays in Rm 400 After school","start":null,"end":null},"status":"active","tags":["service"],"commitment":"weekly","when":"unscheduled","selective":false,"acts":["volunteering"],"learn":["service"]},{"name":"Women in STEM","category":"Clubs & Activities","summary":"To inspire young people to pursue STEM-related careers and to explore a shared interest and discuss women in STEM.","sponsors":[{"name":"David Wirth","email_b64":"ZG13aXJ0aEBmY3BzLmVkdQ=="}],"leaders":["Vivian Smozynski Riley Anderson Amelie Gradishar Emily Inman Astrid Jaxtheimer"],"meeting":{"days":["Mon","Wed"],"room":"150","freq":"Biweekly","raw":"Room 150 Afterschool biweekly Mondays and Wednesdays First meeting 3/5","start":null,"end":null},"status":"active","tags":["stem","career"],"commitment":"multi","when":"unscheduled","selective":false,"acts":["discussion"],"learn":["science"]},{"name":"Young Democrats","category":"Clubs & Activities","summary":"We cover current events, hold workshops, invite guest speakers, and volunteer to mobilize the democratic base in Northern Virginia and our South Lakes community.","sponsors":[{"name":"Ekim Tektas"}],"leaders":["Zoe Rosst Sydney Rice"],"meeting":{"days":["Mon"],"room":"416","freq":"Every other week","raw":"Every other Monday beginning January 8th Room 416","start":null,"end":null},"status":"active","tags":["civics"],"commitment":"twicemonth","when":"unscheduled","selective":false,"acts":["discussion","volunteering"],"learn":[]},{"name":"Young Democrats Socialist Club","category":"Clubs & Activities","summary":"A group that advocates for economic and social justice, discusses issues of racial and economic justice, as well as, community issues and activist and labor history.","sponsors":[],"leaders":[],"meeting":{"days":[],"raw":"","start":null,"end":null,"room":null,"freq":null},"status":"needs-sponsor","tags":["civics"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":["discussion"],"learn":[]},{"name":"Yuniverse (Young Mentors Club)","category":"Clubs & Activities","summary":"We learn about business, entrepreneurship, and careers through engaging and experiential activities around the school and the community.","sponsors":[{"name":"Jonathan McNamara"}],"leaders":["Audrey Compon Joshua Dagbe Riggins Legler"],"meeting":{"raw":"TBD","days":[],"start":null,"end":null,"room":null,"freq":null},"status":"active","tags":["business","career"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":["discussion"],"learn":["business"]},{"name":"Young Republicans","category":"Clubs & Activities","summary":"The Young Republican's Club engages students in the political issues of the day and helps them get involved with the political process.","sponsors":[{"name":"Bridget Pell"}],"leaders":[],"meeting":{"days":[],"raw":"","start":null,"end":null,"room":null,"freq":null},"status":"active","tags":["civics"],"commitment":"unknown","when":"unscheduled","selective":false,"acts":["discussion"],"learn":[]}];
+
+/* ---------------- identity of each club ---------------- */
+const SWATCH = ["#14507E","#2A6B57","#5A5F8C","#7A5230","#3E6B7A","#6B4A5E","#4A6B2A","#2F5A7E"];
+CLUBS.forEach((c,i)=>{ c.id = "c"+i; c.color = SWATCH[(c.name.length*7 + i*3) % SWATCH.length]; });
+const BY_ID = Object.fromEntries(CLUBS.map(c=>[c.id,c]));
+
+const TAG_LABEL = {academic:"Academics & tutoring",stem:"Science & technology",arts:"Arts & performance",
+  media:"Media & publications",culture:"Culture & identity",service:"Service & volunteering",
+  leadership:"Leadership",competition:"Competition",business:"Business & entrepreneurship",
+  debate:"Debate & public speaking",civics:"Politics & advocacy",wellness:"Health & wellness",
+  recreation:"Recreation & hobbies",environment:"Environment & nature",career:"Career exploration"};
+const ACT_LABEL = {competition:"Competing",building:"Building things",research:"Research",
+  discussion:"Discussion",speaking:"Public speaking",volunteering:"Volunteering",creative:"Creative work",
+  teamwork:"Working with a team",leadership:"Leading",performance:"Performing",tutoring:"Tutoring and mentoring",
+  social:"Socializing",independent:"Independent work"};
+const LEARN_LABEL = {coding:"Coding and technology",science:"Science",math:"Math",engineering:"Engineering",
+  research:"Research",writing:"Writing",speaking:"Public speaking",leadership:"Leadership",art:"Art and design",
+  music:"Music and performance",business:"Business",finance:"Finance",culture:"Culture",languages:"Languages",
+  service:"Community service",media:"Media",teamwork:"Teamwork"};
+const DAYS = ["Mon","Tue","Wed","Thu","Fri"];
+const DAY_FULL = {Mon:"Monday",Tue:"Tuesday",Wed:"Wednesday",Thu:"Thursday",Fri:"Friday",Sat:"Saturday"};
+const CATS = [...new Set(CLUBS.map(c=>c.category))];
+
+/* ---------------- helpers ---------------- */
+const $ = (s,r)=> (r||document).querySelector(s);
+const esc = s => String(s==null?"":s).replace(/[&<>"']/g, m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+const fmtTime = m => { if(m==null) return ""; let h=Math.floor(m/60), mm=m%60; const ap=h<12?"AM":"PM"; h=h%12||12;
+  return h + (mm? ":"+String(mm).padStart(2,"0") : "") + " " + ap; };
+const timeRange = mt => mt.start==null ? "" : (mt.openEnd ? "Starts "+fmtTime(mt.start) : fmtTime(mt.start)+"\u2013"+fmtTime(mt.end));
+
+function meetingLine(c){
+  const m=c.meeting, out=[];
+  if(m.days.length) out.push(m.days.length>2 ? m.days.length+" days a week" : m.days.map(d=>DAY_FULL[d]+"s").join(" and "));
+  if(m.start!=null) out.push(timeRange(m));
+  if(m.freq && !(m.freq==="Weekly" && m.days.length)) out.push(m.freq);
+  if(m.room) out.push("Room "+m.room);
+  if(!out.length) return "Meeting time not posted";
+  return out.join(" \u00b7 ");
 }
-function showTab(name) {
-  document.querySelectorAll('.tab-panel').forEach(el => el.classList.remove('active'));
-  document.getElementById('tab-' + name).classList.add('active');
-  document.querySelectorAll('.preview-nav-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === name));
-  window.scrollTo({top:0, behavior:'instant'});
+function sponsorNames(c){ return c.sponsors.map(s=>s.name).join(", "); }
+
+/* ---------------- stored state ---------------- */
+const KEY="slhs-club-hub-v1";
+const DEFAULTS={name:"",joined:[],interested:[],match:null,threads:null,seeded:false};
+let S = load();
+function load(){
+  try{ const raw=localStorage.getItem(KEY); if(raw) return Object.assign({},DEFAULTS,JSON.parse(raw)); }
+  catch(e){}
+  return Object.assign({},DEFAULTS);
+}
+function save(){ try{ localStorage.setItem(KEY,JSON.stringify(S)); }catch(e){} }
+const isJoined = id=>S.joined.includes(id);
+const isInterested = id=>S.interested.includes(id);
+function setMembership(id,state){
+  S.joined=S.joined.filter(x=>x!==id); S.interested=S.interested.filter(x=>x!==id);
+  if(state==="joined") S.joined.push(id);
+  if(state==="interested") S.interested.push(id);
+  save();
+}
+function initials(){ const n=(S.name||"").trim(); if(!n) return "S";
+  return n.split(/\s+/).slice(0,2).map(w=>w[0].toUpperCase()).join(""); }
+
+/* ---------------- sample message threads ---------------- */
+function seedThreads(){
+  if(S.threads) return;
+  const pick = n => { const c = CLUBS.find(x=>x.name===n); return c? c.id : null; };
+  const now = Date.now(), hr=3600e3, day=24*hr;
+  S.threads = [
+    { id:"t1", clubId:pick("Speech & Debate"), role:"Faculty sponsor", unread:true,
+      msgs:[
+        {from:"them",t:now-5*hr,text:"Thursday's meeting moves to the library because room 216 is being used for testing. Same time, 3:00."},
+        {from:"them",t:now-5*hr+60e3,text:"If you are new, you do not need to prepare anything. Come and watch a round first."}
+      ]},
+    { id:"t2", clubId:pick("Robotics"), role:"Student leader", unread:false,
+      msgs:[
+        {from:"me",t:now-2*day,text:"Do I need building experience to join, or is the media and finance side open too?"},
+        {from:"them",t:now-2*day+40*60e3,text:"No experience needed. We split into build, programming, media and finance, so pick whichever sounds interesting and try it for a few weeks."},
+        {from:"me",t:now-2*day+70*60e3,text:"Great, I'll come Thursday."}
+      ]},
+    { id:"t3", clubId:pick("National Honor Society"), role:"Faculty sponsor", unread:false,
+      msgs:[
+        {from:"them",t:now-6*day,text:"Applications open in the spring for current sophomores and juniors. Watch Schoology for the form and the service hour requirements."}
+      ]}
+  ].filter(t=>t.clubId);
+  save();
 }
 
-// Real South Lakes club data (from src/lib/data/seed/clubs.json)
-const CLUBS = [
-  {name:'Robotics (FTC)', cat:'STEM & Technology', color:'#E8603C', loc:'Room 150', sponsor:'Cecilia Garin, Alexander P. Turner', next:'Thu, 3:05 PM', desc:'Competition-based club preparing for the FTC robotics competition each fall and winter.', competitive:true},
-  {name:'Model United Nations', cat:'Academic', color:'#C23B3B', loc:'Room 212', sponsor:'Meghan Cycyk', next:'Mon after school', desc:'A simulation of the UN General Assembly — members act as ambassadors and debate global issues.', competitive:true},
-  {name:'Seahawks Who Code', cat:'STEM & Technology', color:'#2E7D4F', loc:'Room 450', sponsor:'Adam Temple', next:'Wed, 2:55 PM', desc:"Building a pipeline of future computer science and IT engineers through collaborative coding.", competitive:false},
-  {name:'Get2Green', cat:'Community Service', color:'#1F8A8A', loc:'Room 600', sponsor:'Laura Bachman, Amol Patel', next:'Mon, 3:05 PM', desc:'Increases environmental stewardship at South Lakes through recycling and the Outdoor Learning Space.', competitive:false},
-  {name:'Chess Club', cat:'Hobby & Special Interest', color:'#8A4B9E', loc:'Trailer near tennis courts', sponsor:'Adam Wong, Monica Kambatty', next:'Thu, 3:00 PM', desc:'Casual and competitive chess for players of all experience levels.', competitive:false},
-  {name:'Broadcast Journalism Club', cat:'Media & Publications', color:'#7C5CD4', loc:'Room 411', sponsor:'Evis Vasili', next:'Tue, 3:00 PM', desc:'Hands-on filming and editing experience with professional equipment.', competitive:false},
-  {name:'Asian Culture Club', cat:'Culture & Identity', color:'#C99A2E', loc:'Hedgecock Room', sponsor:'Sarah Hedgecock', next:'Wed, 3:00 PM', desc:'Explores Asian customs, traditions, festivals, films, and cuisines.', competitive:false},
-  {name:'DECA', cat:'Career & Technical', color:'#4A55C7', loc:'Room 463', sponsor:'Jen Dixon, Alena Andrews', next:'Wed (monthly)', desc:'Prepares emerging leaders in marketing, finance, hospitality, and management.', competitive:true},
-  {name:'Gender & Sexuality Alliance (GSA)', cat:'Culture & Identity', color:'#0EA5B5', loc:'Room 402', sponsor:'Sydelle Keisler, Emily Bridges', next:'Time TBD', desc:'A support group and social space for LGBTQ+ students and allies.', competitive:false},
-  {name:'Speech & Debate', cat:'Academic', color:'#1E9E6B', loc:'Library', sponsor:'Matthew Wolfson', next:'Thu, 3:00 PM', desc:'VHSL-certified team teaching public speaking and Lincoln-Douglas debate.', competitive:true},
-];
+/* ---------------- routing ---------------- */
+const NAV = [["#/clubs","Clubs"],["#/match","Seahawk Match"],["#/schedule","Schedule"],["#/my","My Clubs"],["#/messages","Messages"]];
+const NAV_SHORT = {"Seahawk Match":"Match"};
 
-function clubCard(c) {
-  return `
-    <div class="group rounded-lg border border-surface-border bg-white shadow-soft overflow-hidden flex flex-col hover:shadow-card hover:-translate-y-0.5 transition-all">
-      <div class="h-1.5 w-full" style="background:${c.color}"></div>
-      <div class="p-5 flex flex-col gap-3 flex-1">
-        <div class="flex flex-wrap gap-2">
-          <span class="text-xs font-medium px-2.5 py-1 rounded-full bg-surface-raised border border-surface-border text-ink-700">${c.cat}</span>
-          ${c.competitive ? '<span class="text-xs font-medium px-2.5 py-1 rounded-full bg-navy-900 text-white">Competitive</span>' : ''}
-        </div>
-        <h3 class="font-display font-semibold text-ink-900 group-hover:text-action-600">${c.name}</h3>
-        <p class="text-sm text-ink-500 leading-relaxed">${c.desc}</p>
-        <div class="flex flex-wrap gap-x-4 gap-y-1 text-xs text-ink-500">
-          <span>📅 Next: ${c.next}</span>
-          <span>📍 ${c.loc}</span>
-        </div>
-        <p class="text-xs text-ink-400">Sponsor: ${c.sponsor}</p>
-        <div class="mt-auto flex items-center justify-between pt-2">
-          <div class="flex gap-2">
-            <button class="text-xs font-semibold px-3 py-1.5 rounded-sm border border-surface-borderStrong" onclick="toggleMark(this,'⏱ Interested','✓ Interested')">⏱ Interested</button>
-            <button class="h-8 w-8 rounded-sm border border-surface-borderStrong flex items-center justify-center" onclick="toggleMark(this,'🔖','✅')">🔖</button>
-          </div>
-          <a class="text-xs font-semibold text-action-600 cursor-pointer" onclick="showTab('detail')">View Club →</a>
-        </div>
-      </div>
-    </div>`;
+function unreadCount(){ return (S.threads||[]).filter(t=>t.unread).length; }
+
+function renderNav(){
+  const path = location.hash || "#/";
+  const mk = (short)=> NAV.map(([h,l])=>{
+    const on = path===h || path.startsWith(h+"/") || (h==="#/clubs" && path.startsWith("#/club/"));
+    const n = short ? (NAV_SHORT[l]||l) : l;
+    const badge = (h==="#/messages" && unreadCount()) ? '<span class="nav-badge">'+unreadCount()+'</span>' : "";
+    return '<a href="'+h+'" class="'+(on?"on":"")+'">'+esc(n)+badge+'</a>';
+  }).join("");
+  $("#mainnav").innerHTML = mk(false);
+  $("#botnav").innerHTML = mk(true);
+  $("#avatarBtn").textContent = initials();
 }
 
-document.getElementById('featured-grid').innerHTML = CLUBS.slice(0,6).map(clubCard).join('');
-document.getElementById('directory-grid').innerHTML = CLUBS.map(clubCard).join('');
-
-const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday'];
-const SCHEDULE = {
-  Monday: [{n:'Model United Nations', c:'#C23B3B', t:'Time TBD', loc:'Room 212'}, {n:'Get2Green', c:'#1F8A8A', t:'3:05–4:00 PM', loc:'Room 600'}],
-  Tuesday: [{n:'Broadcast Journalism Club', c:'#7C5CD4', t:'3:00–4:00 PM', loc:'Room 411'}],
-  Wednesday: [{n:'Seahawks Who Code', c:'#2E7D4F', t:'2:55–4:30 PM', loc:'Room 450'}, {n:'Asian Culture Club', c:'#C99A2E', t:'3:00–4:30 PM', loc:'Hedgecock Room'}, {n:'DECA', c:'#4A55C7', t:'Time varies', loc:'Room 463'}],
-  Thursday: [{n:'Robotics (FTC)', c:'#E8603C', t:'3:05–5:00 PM', loc:'Room 150'}, {n:'Chess Club', c:'#8A4B9E', t:'3:00–4:00 PM', loc:'Near tennis courts'}, {n:'Speech & Debate', c:'#1E9E6B', t:'3:00–4:30 PM', loc:'Library'}],
-  Friday: [{n:'Robotics (FTC)', c:'#E8603C', t:'3:05–5:00 PM', loc:'Room 150'}, {n:'Seahawks Who Code', c:'#2E7D4F', t:'2:55–4:30 PM', loc:'Room 450'}],
+const ROUTES = {
+  "":viewHome, "clubs":viewClubs, "club":viewClub, "match":viewMatch,
+  "schedule":viewSchedule, "my":viewMy, "messages":viewMessages,
+  "terms":viewTerms, "privacy":viewPrivacy
 };
-document.getElementById('schedule-grid').innerHTML = DAYS.map(day => `
-  <div class="rounded-lg border border-surface-border bg-white flex flex-col">
-    <div class="border-b border-surface-border px-3 py-2.5"><span class="text-xs font-semibold uppercase text-ink-500">${day}</span></div>
-    <div class="p-3 flex flex-col gap-2">
-      ${(SCHEDULE[day]||[]).length === 0 ? '<p class="text-xs text-ink-300">No meetings</p>' : SCHEDULE[day].map(m => `
-        <div class="rounded-sm bg-surface-raised px-2.5 py-2 border-l-4" style="border-color:${m.c}">
-          <p class="text-xs font-semibold text-ink-900">${m.n}</p>
-          <p class="text-[11px] text-ink-500 mt-0.5">${m.t} · ${m.loc}</p>
-        </div>
-      `).join('')}
-    </div>
-  </div>
-`).join('');
+
+let pending = null;
+function router(){
+  if(pending){ clearTimeout(pending); pending=null; }
+  const raw = (location.hash||"#/").replace(/^#\/?/,"");
+  const parts = raw.split("?")[0].split("/");
+  const fn = ROUTES[parts[0]] || viewHome;
+  renderNav();
+  const v = $("#view");
+  v.innerHTML = "";
+  fn(v, decodeURIComponent(parts[1]||""));
+  window.scrollTo(0,0);
+}
+addEventListener("hashchange", router);
+
+/* ---------------- shared pieces ---------------- */
+function statusChip(c){
+  if(c.status==="needs-sponsor") return '<span class="chip chip-warn">Needs a sponsor</span>';
+  if(c.status==="inactive") return '<span class="chip">Inactive this year</span>';
+  if(c.status==="pending") return '<span class="chip chip-warn">Pending approval</span>';
+  return "";
+}
+function memberChip(id){
+  if(isJoined(id)) return '<span class="chip chip-green">Joined</span>';
+  if(isInterested(id)) return '<span class="chip chip-blue">Interested</span>';
+  return "";
+}
+function clubRow(c,opts){
+  opts = opts||{};
+  return '<a class="clubrow" href="#/club/'+c.id+'">'
+    + '<div class="clubrow-top"><span class="clubrow-name">'+esc(c.name)+'</span>'
+    + '<span class="tagline">'+esc(c.category)+'</span></div>'
+    + (c.summary? '<div class="clubrow-sum">'+esc(c.summary)+'</div>' : '<div class="clubrow-sum dim">No description posted.</div>')
+    + '<div class="clubrow-foot"><span class="meta">'+esc(meetingLine(c))+'</span>'
+    + '<span class="rowact">'+(opts.extra||"")+memberChip(c.id)+statusChip(c)+'</span></div></a>';
+}
+function skeletonRows(n){
+  let h="";
+  for(let i=0;i<n;i++) h += '<div class="skrow"><div class="sk" style="height:15px;width:'+(26+(i*13)%34)+'%"></div>'
+    + '<div class="sk" style="height:12px;width:'+(62+(i*17)%28)+'%"></div>'
+    + '<div class="sk" style="height:12px;width:34%"></div></div>';
+  return '<div class="clublist">'+h+'</div>';
+}
+function afterLoad(ms,fn){ pending = setTimeout(()=>{ pending=null; fn(); }, ms); }
+
+/* next occurrence of a weekday */
+function nextDate(dayAbbr, startMin){
+  const idx = {Sun:0,Mon:1,Tue:2,Wed:3,Thu:4,Fri:5,Sat:6}[dayAbbr];
+  const now = new Date();
+  const d = new Date(now.getFullYear(),now.getMonth(),now.getDate());
+  let delta = (idx - d.getDay() + 7) % 7;
+  if(delta===0 && startMin!=null && (now.getHours()*60+now.getMinutes()) > startMin) delta = 7;
+  d.setDate(d.getDate()+delta);
+  if(startMin!=null) d.setMinutes(startMin);
+  return d;
+}
+function relDay(d){
+  const now=new Date(), a=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+  const diff = Math.round((new Date(d.getFullYear(),d.getMonth(),d.getDate()) - a)/864e5);
+  if(diff===0) return "Today"; if(diff===1) return "Tomorrow";
+  return d.toLocaleDateString(undefined,{weekday:"short", month:"short", day:"numeric"});
+}
+function upcoming(ids){
+  const list = (ids? ids.map(i=>BY_ID[i]).filter(Boolean) : CLUBS).filter(c=>c.meeting.days.length && c.status==="active");
+  const out=[];
+  list.forEach(c=> c.meeting.days.forEach(d=>{
+    if(d==="Sat") return;
+    out.push({club:c, day:d, date:nextDate(d,c.meeting.start), start:c.meeting.start});
+  }));
+  out.sort((a,b)=>a.date-b.date);
+  return out;
+}
+
+/* ---------------- home ---------------- */
+function viewHome(v){
+  const catLinks = CATS.map(c=>'<a href="#/clubs?cat='+encodeURIComponent(c)+'">'+esc(c)+'</a>').join("");
+  v.innerHTML =
+  '<section class="intro">'
+    + '<h1>Clubs and activities at South Lakes</h1>'
+    + '<p class="lede">'+CLUBS.length+' clubs are listed for 2026&ndash;27. Search for one, or answer a few questions and let Seahawk Match narrow it down.</p>'
+    + '<div class="searchrow"><input class="field" id="homeSearch" type="search" placeholder="Search clubs, sponsors or topics" aria-label="Search clubs">'
+    + '<button class="btn btn-pri" id="homeGo">Search</button></div>'
+    + '<div class="quicklinks"><b>Browse:</b>'+catLinks+'</div>'
+  + '</section>'
+  + '<div class="cols"><div>'
+    + '<div class="sec-head"><h2>Meeting soon</h2><a class="small" href="#/schedule">Full schedule</a></div>'
+    + '<div id="homeUp">'+skeletonRows(3)+'</div>'
+    + '<div class="sec-head" style="margin-top:30px"><h2 id="recHead">Clubs with meeting details posted</h2><a class="small" href="#/clubs">All clubs</a></div>'
+    + '<div id="homeRec">'+skeletonRows(4)+'</div>'
+  + '</div><aside class="aside">'
+    + '<div class="panel pad"><h3>Not sure where to start?</h3>'
+      + '<p class="small muted">Seahawk Match asks about your interests, your free days and how much time you have, then scores every club against your answers.</p>'
+      + '<a class="btn btn-pri btn-sm" href="#/match">'+(S.match?"Review your matches":"Start Seahawk Match")+'</a></div>'
+    + '<div class="panel pad" id="homeMine"></div>'
+    + '<div class="panel pad"><h3>About this directory</h3>'
+      + '<p class="small muted">Club details come from the school activities sheet, last updated September 10, 2026. Meeting times change, so check Schoology or message the sponsor before your first visit.</p>'
+      + '<p class="small muted" style="margin:0">Want to start something that is not here? <a href="https://southlakeshs.fcps.edu/student-life-activities/clubs-activities-honor-societies" target="_blank" rel="noopener">See the club application steps</a>.</p></div>'
+  + '</aside></div>';
+
+  const go = ()=>{ const q=$("#homeSearch").value.trim(); location.hash = "#/clubs"+(q?"?q="+encodeURIComponent(q):""); };
+  $("#homeGo").onclick = go;
+  $("#homeSearch").onkeydown = e=>{ if(e.key==="Enter") go(); };
+
+  // my clubs panel
+  const mine = S.joined.length + S.interested.length;
+  $("#homeMine").innerHTML = mine
+    ? '<h3>Your clubs</h3><ul class="upnext">'+ upcoming(S.joined.concat(S.interested)).slice(0,3).map(e=>
+        '<li><span class="dot" style="background:'+e.club.color+'"></span><a href="#/club/'+e.club.id+'">'+esc(e.club.name)+'</a>'
+        + '<span class="when">'+relDay(e.date)+(e.start!=null?" "+fmtTime(e.start):"")+'</span></li>').join("")
+      + '</ul>'+(upcoming(S.joined.concat(S.interested)).length? "" : '<p class="small dim" style="margin:8px 0 0">None of your clubs has a posted meeting day yet.</p>')
+      + '<p class="small" style="margin:10px 0 0"><a href="#/my">Open My Clubs</a></p>'
+    : '<h3>Your clubs</h3><p class="small muted" style="margin:0">Nothing saved yet. Join a club or mark it as interested and it will show up here with its next meeting.</p>';
+
+  afterLoad(420, ()=>{
+    const up = upcoming(null).slice(0,5);
+    $("#homeUp").innerHTML = '<ul class="upnext">'+ up.map(e=>
+      '<li><span class="dot" style="background:'+e.club.color+'"></span>'
+      + '<span><a href="#/club/'+e.club.id+'">'+esc(e.club.name)+'</a>'
+      + '<span class="meta" style="display:block">'+esc([e.club.meeting.start!=null?timeRange(e.club.meeting):"Time not posted", e.club.meeting.room?"Room "+e.club.meeting.room:""].filter(Boolean).join(" \u00b7 "))+'</span></span>'
+      + '<span class="when">'+relDay(e.date)+'</span></li>').join("") + '</ul>';
+
+    let rec, head;
+    if(S.match && S.match.results && S.match.results.length){
+      rec = S.match.results.slice(0,4).map(r=>({club:BY_ID[r.id], score:r.score})).filter(r=>r.club);
+      head = "Your top matches";
+      $("#recHead").textContent = head;
+      $("#homeRec").innerHTML = '<div class="clublist">'+rec.map(r=>clubRow(r.club,{extra:'<span class="chip chip-blue">'+r.score+'% match</span>'})).join("")+'</div>';
+    } else {
+      const seen={}; rec=[];
+      CLUBS.filter(c=>c.status==="active" && c.meeting.days.length && c.meeting.start!=null)
+        .forEach(c=>{ if(!seen[c.category] || rec.length<6){ seen[c.category]=1; rec.push(c);} });
+      $("#homeRec").innerHTML = '<div class="clublist">'+rec.slice(0,6).map(c=>clubRow(c)).join("")+'</div>';
+    }
+  });
+}
+
+/* ---------------- directory ---------------- */
+const F = {q:"", cats:new Set(), days:new Set(), tags:new Set(), when:"", commit:"", openOnly:false, sort:"name"};
+
+function viewClubs(v){
+  const qs = new URLSearchParams((location.hash.split("?")[1])||"");
+  if(qs.get("q")!==null){ F.q = qs.get("q")||""; }
+  if(qs.get("cat")){ F.cats = new Set([qs.get("cat")]); }
+  if(qs.get("tag")){ F.tags = new Set([qs.get("tag")]); }
+
+  v.innerHTML = '<h1>Club directory</h1>'
+    + '<p class="muted" style="max-width:62ch">Every club listed on the 2026&ndash;27 activities sheet. Filter by what it does, when it meets and whether it is still taking members.</p>'
+    + '<div class="dircols" style="margin-top:22px"><div class="filters" id="filters"></div>'
+    + '<div><div class="resbar"><div><input class="field" id="dq" type="search" style="width:min(340px,100%)" placeholder="Search clubs, sponsors or topics" aria-label="Search clubs"></div>'
+    + '<div class="small muted" style="display:flex;gap:10px;align-items:center"><span id="count"></span>'
+    + '<label for="sort" class="dim">Sort</label><select class="field" id="sort"><option value="name">A to Z</option><option value="soon">Meets soonest</option><option value="cat">Category</option></select></div></div>'
+    + '<div id="results">'+skeletonRows(6)+'</div></div></div>';
+
+  $("#dq").value = F.q;
+  $("#sort").value = F.sort;
+  $("#dq").oninput = e=>{ F.q=e.target.value; paint(); };
+  $("#sort").onchange = e=>{ F.sort=e.target.value; paint(); };
+  drawFilters();
+  afterLoad(380, paint);
+
+  function counts(list, key){
+    const m={}; list.forEach(c=>{ const vals = key==="cat"?[c.category]:c.tags; vals.forEach(x=>m[x]=(m[x]||0)+1); });
+    return m;
+  }
+  function drawFilters(){
+    const ct = counts(CLUBS,"cat"), tt = counts(CLUBS,"tag");
+    const box = (title, opts) => '<div class="fgroup"><h4>'+title+'</h4>'+opts+'</div>';
+    const cb = (set,val,label,n) => '<label class="fopt"><input type="checkbox" data-set="'+set+'" value="'+esc(val)+'"'
+      + ((set==="cats"?F.cats:set==="days"?F.days:F.tags).has(val)?" checked":"")+'>'
+      + '<span>'+esc(label)+'</span>'+(n!=null?'<span class="n">'+n+'</span>':"")+'</label>';
+    const radio = (name,val,label,cur) => '<label class="fopt"><input type="radio" name="'+name+'" value="'+val+'"'+(cur===val?" checked":"")+'><span>'+esc(label)+'</span></label>';
+
+    $("#filters").innerHTML =
+      box("What it does", Object.keys(TAG_LABEL).filter(t=>tt[t]).sort((a,b)=>tt[b]-tt[a]).map(t=>cb("tags",t,TAG_LABEL[t],tt[t])).join(""))
+    + box("Category", CATS.map(c=>cb("cats",c,c,ct[c])).join(""))
+    + box("Meeting day", DAYS.map(d=>cb("days",d,DAY_FULL[d])).join(""))
+    + box("Time of day", radio("when","","Any",F.when)+radio("when","before","Before school",F.when)+radio("when","after","After school",F.when))
+    + box("Commitment", radio("commit","","Any",F.commit)+radio("commit","high","Several days a week",F.commit)+radio("commit","medium","About once a week",F.commit)+radio("commit","low","Once or twice a month",F.commit))
+    + '<div class="fgroup"><label class="fopt"><input type="checkbox" id="openOnly"'+(F.openOnly?" checked":"")+'><span>Hide clubs without a sponsor or marked inactive</span></label>'
+    + '<button class="linkbtn small" id="clearF" style="margin-top:10px">Clear all filters</button></div>';
+
+    $("#filters").querySelectorAll('input[data-set]').forEach(el=>el.onchange=()=>{
+      const set = el.dataset.set==="cats"?F.cats:el.dataset.set==="days"?F.days:F.tags;
+      el.checked ? set.add(el.value) : set.delete(el.value); paint();
+    });
+    $("#filters").querySelectorAll('input[name="when"]').forEach(el=>el.onchange=()=>{F.when=el.value;paint();});
+    $("#filters").querySelectorAll('input[name="commit"]').forEach(el=>el.onchange=()=>{F.commit=el.value;paint();});
+    $("#openOnly").onchange = e=>{F.openOnly=e.target.checked;paint();};
+    $("#clearF").onclick = ()=>{ F.q="";F.cats.clear();F.days.clear();F.tags.clear();F.when="";F.commit="";F.openOnly=false;
+      $("#dq").value=""; drawFilters(); paint(); };
+  }
+
+  function paint(){
+    let list = CLUBS.slice();
+    const q = F.q.trim().toLowerCase();
+    if(q) list = list.filter(c=> (c.name+" "+c.summary+" "+c.category+" "+sponsorNames(c)+" "+c.tags.map(t=>TAG_LABEL[t]).join(" ")).toLowerCase().includes(q));
+    if(F.cats.size) list = list.filter(c=>F.cats.has(c.category));
+    if(F.tags.size) list = list.filter(c=>c.tags.some(t=>F.tags.has(t)));
+    if(F.days.size) list = list.filter(c=>c.meeting.days.some(d=>F.days.has(d)));
+    if(F.when) list = list.filter(c=>c.when===F.when);
+    if(F.commit) list = list.filter(c=>c.commitment===F.commit);
+    if(F.openOnly) list = list.filter(c=>c.status==="active"||c.status==="pending");
+    if(F.sort==="cat") list.sort((a,b)=> a.category.localeCompare(b.category) || a.name.localeCompare(b.name));
+    else if(F.sort==="soon") list.sort((a,b)=>{
+      const av=a.meeting.days.length?nextDate(a.meeting.days[0],a.meeting.start):1e15;
+      const bv=b.meeting.days.length?nextDate(b.meeting.days[0],b.meeting.start):1e15;
+      return av-bv || a.name.localeCompare(b.name);
+    });
+    else list.sort((a,b)=>a.name.localeCompare(b.name));
+
+    $("#count").textContent = list.length + (list.length===1?" club":" clubs");
+    $("#results").innerHTML = list.length
+      ? '<div class="clublist">'+list.map(c=>clubRow(c)).join("")+'</div>'
+      : '<div class="empty"><h3>No clubs match those filters</h3><p style="margin:0">Try removing a filter, or search for a topic like "service", "debate" or "robotics".</p></div>';
+  }
+}
+
+/* ---------------- club detail ---------------- */
+function viewClub(v,id){
+  const c = BY_ID[id];
+  if(!c){ v.innerHTML = '<div class="empty"><h3>That club is not in the directory</h3><p><a href="#/clubs">Back to all clubs</a></p></div>'; return; }
+  const m=c.meeting;
+  const sponsorList = c.sponsors.length
+    ? '<ul class="people">'+c.sponsors.map(s=>{ const em = s.email_b64 ? decodeURIComponent(escape(atob(s.email_b64))) : (s.email||""); return '<li>'+esc(s.name)+(em?' <a href="mailto:'+esc(em)+'">'+esc(em)+'</a>':"")+'</li>'; }).join("")+'</ul>'
+    : '<p class="small dim" style="margin:0">'+(c.status==="needs-sponsor"?"No sponsor yet. This club cannot meet until a staff member signs on.":"Not listed.")+'</p>';
+
+  v.innerHTML = '<a class="crumb" href="#/clubs">&larr; All clubs</a>'
+  + '<div class="detail-head"><div class="rule" style="background:'+c.color+'"></div>'
+    + '<h1>'+esc(c.name)+'</h1>'
+    + '<div class="meta"><span>'+esc(c.category)+'</span><span>'+esc(meetingLine(c))+'</span></div>'
+    + '<div class="actions" id="acts"></div>'
+    + (c.selective? '<p class="small muted" style="margin:12px 0 0;max-width:62ch">This one is not open enrollment. Check the description for the application, audition or course requirement.</p>':"")
+  + '</div>'
+  + '<div class="cols"><div>'
+    + '<h3>About</h3><p style="max-width:68ch">'+(c.summary? esc(c.summary) : '<span class="dim">No description was submitted for this club.</span>')+'</p>'
+    + '<h3 style="margin-top:24px">Meeting details</h3>'
+    + '<p class="muted" style="max-width:68ch">'+(m.raw? esc(m.raw) : "Nothing posted yet. Message the sponsor to ask when the first meeting is.")+'</p>'
+    + (c.leaders.length? '<h3 style="margin-top:24px">Student leaders</h3><ul class="people" style="max-width:420px">'+c.leaders.map(l=>'<li>'+esc(l)+'</li>').join("")+'</ul>' : "")
+  + '</div><aside class="aside">'
+    + '<div class="panel pad"><h3>Sponsors</h3>'+sponsorList+'</div>'
+    + '<div class="panel pad"><h3>Details</h3><dl class="factlist">'
+      + '<dt>Meets</dt><dd>'+(m.days.length? esc(m.days.map(d=>DAY_FULL[d]).join(", ")) : '<span class="dim">Not posted</span>')+'</dd>'
+      + '<dt>Time</dt><dd>'+(m.start!=null? esc(timeRange(m)) : '<span class="dim">Not posted</span>')+'</dd>'
+      + '<dt>Location</dt><dd>'+(m.room? "Room "+esc(m.room) : '<span class="dim">Not posted</span>')+'</dd>'
+      + '<dt>How often</dt><dd>'+(m.freq? esc(m.freq) : '<span class="dim">Not posted</span>')+'</dd>'
+      + '<dt>Topics</dt><dd>'+(c.tags.length? c.tags.map(t=>'<a href="#/clubs?tag='+t+'">'+esc(TAG_LABEL[t])+'</a>').join(", ")
+        : '<span class="dim">Not enough posted about this club to categorise it</span>')+'</dd>'
+      + (c.web? '<dt>Website</dt><dd><a href="'+esc(c.web)+'" target="_blank" rel="noopener">Club site</a></dd>':"")
+    + '</dl></div>'
+  + '</aside></div>';
+
+  drawActs();
+  function drawActs(){
+    const j=isJoined(c.id), i=isInterested(c.id);
+    $("#acts").innerHTML =
+      '<button class="btn '+(j?"btn-on":"btn-pri")+'" id="bJoin">'+(j?"Joined":"Join club")+'</button>'
+    + '<button class="btn '+(i?"btn-on":"")+'" id="bInt">'+(i?"Interested":"Save as interested")+'</button>'
+    + (c.sponsors.length||c.leaders.length? '<button class="btn" id="bMsg">Message the club</button>':"")
+    + (j||i? '<button class="linkbtn small" id="bClear" style="margin-left:4px">Remove</button>':"");
+    $("#bJoin").onclick = ()=>{ setMembership(c.id, j?"none":"joined"); drawActs(); renderNav(); };
+    $("#bInt").onclick = ()=>{ setMembership(c.id, i?"none":"interested"); drawActs(); renderNav(); };
+    if($("#bClear")) $("#bClear").onclick = ()=>{ setMembership(c.id,"none"); drawActs(); renderNav(); };
+    if($("#bMsg")) $("#bMsg").onclick = ()=>{ openThreadFor(c.id); };
+  }
+}
+
+/* ---------------- Seahawk Match ---------------- */
+const GOALS = [
+  ["learn","Learning something new"],["skills","Developing new skills"],["academic","Exploring an academic interest"],
+  ["career","Exploring a possible career"],["resume","Building my resume"],["college","College application involvement"],
+  ["leadership","Leadership experience"],["service","Community service"],["competition","Competition experience"],
+  ["meet","Meeting new people"],["friends","Making friends"],["build","Building projects"],
+  ["create","Creating something"],["speaking","Improving public speaking"],["team","Working with a team"],
+  ["fun","Having fun and relaxing"],["stretch","Trying something outside my comfort zone"]
+];
+const LOADS = [["monthly","About once a month"],["twicemonth","Twice a month"],["weekly","Once a week"],["multi","Several days a week"]];
+const LOAD_ORDER = {monthly:0,twicemonth:1,weekly:2,multi:3};
+
+function goalSupport(c,g){
+  const has = (arr,x)=>arr.indexOf(x)>=0;
+  switch(g){
+    case "learn": return c.learn.length?1:(c.tags.length?0.4:0);
+    case "skills": return c.learn.length?1:0;
+    case "academic": return (has(c.tags,"academic")||has(c.tags,"stem"))?1:0;
+    case "career": return (has(c.tags,"career")||has(c.tags,"business"))?1:0;
+    case "resume": case "college":
+      return (has(c.tags,"service")||has(c.tags,"leadership")||has(c.tags,"competition")
+        ||has(c.acts,"leadership")||has(c.acts,"volunteering")||has(c.acts,"competition"))?1:0;
+    case "leadership": return (has(c.tags,"leadership")||has(c.acts,"leadership"))?1:0;
+    case "service": return (has(c.tags,"service")||has(c.acts,"volunteering"))?1:0;
+    case "competition": return (has(c.tags,"competition")||has(c.acts,"competition"))?1:0;
+    case "meet": case "friends": return has(c.acts,"social")?1:(has(c.acts,"teamwork")?0.5:0);
+    case "build": return has(c.acts,"building")?1:0;
+    case "create": return has(c.acts,"creative")?1:0;
+    case "speaking": return has(c.acts,"speaking")?1:(has(c.acts,"performance")?0.5:0);
+    case "team": return has(c.acts,"teamwork")?1:0;
+    case "fun": return (has(c.tags,"recreation")||has(c.acts,"social"))?1:0;
+    case "stretch": return (has(c.acts,"performance")||has(c.acts,"speaking")||has(c.acts,"competition"))?1:0;
+  }
+  return 0;
+}
+
+function scoreClub(c,A){
+  const overlap = (sel,have)=> sel.filter(x=>have.indexOf(x)>=0);
+  const f={}, hit={}, mult=[];
+
+  const iHit = overlap(A.interests,c.tags); hit.interests=iHit;
+  f.Interests = A.interests.length ? iHit.length/A.interests.length : 0.5;
+
+  const lHit = overlap(A.learn,c.learn); hit.learn=lHit;
+  f.Learning = A.learn.length ? lHit.length/A.learn.length : 0.5;
+
+  const aHit = overlap(A.acts,c.acts); hit.acts=aHit;
+  f.Activities = A.acts.length ? aHit.length/A.acts.length : 0.5;
+
+  const gScores = A.goals.map(g=>[g,goalSupport(c,g)]);
+  hit.goals = gScores.filter(x=>x[1]>=1).map(x=>x[0]);
+  hit.goalsMissed = gScores.filter(x=>x[1]<=0).map(x=>x[0]);
+  f.Goals = A.goals.length ? gScores.reduce((s,x)=>s+x[1],0)/A.goals.length : 0.5;
+
+  let dayOk=true, timeOk=true;
+  if(!c.meeting.days.length){ f.Availability = 0.45; hit.avail="unknown"; }
+  else{
+    dayOk = !A.days.length || c.meeting.days.some(d=>A.days.indexOf(d)>=0);
+    timeOk = !A.when || c.when==="unscheduled" || c.when===A.when;
+    f.Availability = dayOk ? (timeOk?1:0.25) : 0.05;
+    hit.avail = dayOk ? (timeOk?"fits":"wrongtime") : "wrongday";
+    if(!dayOk) mult.push(0.75);
+    if(!timeOk) mult.push(0.9);
+  }
+
+  if(!A.load || c.commitment==="unknown"){ f.Commitment = c.commitment==="unknown"?0.45:0.5; hit.commit="unknown"; }
+  else{
+    const d = Math.abs(LOAD_ORDER[c.commitment]-LOAD_ORDER[A.load]);
+    f.Commitment = Math.max(0.1, 1 - d*0.3);
+    hit.commit = d===0?"exact":d===1?"close":"far";
+    if(d>=2) mult.push(0.9);
+  }
+
+  if(c.status==="needs-sponsor") mult.push(0.75);
+  if(c.status==="pending") mult.push(0.92);
+
+  const W = {Interests:30,Learning:15,Activities:15,Goals:15,Availability:15,Commitment:10};
+  let total = Object.keys(W).reduce((s,k)=>s+W[k]*f[k],0);
+  mult.forEach(m=>total*=m);
+  const detail = ((c.meeting.days.length?1:0)+(c.meeting.start!=null?1:0)+(c.meeting.room?1:0)+(c.summary?1:0))/4;
+  total *= 0.96 + 0.04*detail;
+  const parts={}; Object.keys(W).forEach(k=>parts[k]=Math.round(f[k]*100));
+  return {score:Math.round(Math.max(1,Math.min(100,total))), parts, hit};
+}
+
+function joinList(a){ return a.length<2 ? (a[0]||"") : a.slice(0,-1).join(", ")+" and "+a[a.length-1]; }
+function matchWhy(c,r,A){
+  const good=[], bad=[];
+  const L = k=>TAG_LABEL[k], AL = k=>ACT_LABEL[k], LL = k=>LEARN_LABEL[k];
+  const gname = k=>(GOALS.find(g=>g[0]===k)||["",""])[1].toLowerCase();
+
+  if(r.hit.interests.length) good.push("Its description covers "+joinList(r.hit.interests.map(L).map(s=>s.toLowerCase()))+".");
+  else if(A.interests.length) bad.push("Nothing in its description matches the interests you picked.");
+
+  if(r.hit.learn.length) good.push("Works on "+joinList(r.hit.learn.map(LL).map(s=>s.toLowerCase()))+".");
+  else if(A.learn.length) bad.push("Does not list anything you wanted to learn.");
+
+  if(r.hit.acts.length) good.push("Involves "+joinList(r.hit.acts.map(AL).map(s=>s.toLowerCase()))+".");
+  else if(A.acts.length) bad.push("None of the activity styles you chose show up in its description.");
+
+  if(r.hit.goals.length) good.push("Offers "+joinList(r.hit.goals.slice(0,3).map(gname))+".");
+  if(r.hit.goalsMissed.length && r.hit.goalsMissed.length===A.goals.length) bad.push("Does not appear to offer what you said you wanted out of a club.");
+  else if(r.hit.goalsMissed.length) bad.push("No sign of "+joinList(r.hit.goalsMissed.slice(0,2).map(gname))+".");
+
+  const days = c.meeting.days.map(d=>DAY_FULL[d]);
+  if(r.hit.avail==="fits" && days.length) good.push("Meets "+joinList(days)+(A.days.length?", which you are free":"")+".");
+  if(r.hit.avail==="wrongday") bad.push("Meets "+joinList(days)+", and you did not mark those days free.");
+  if(r.hit.avail==="wrongtime") bad.push("Meets "+(c.when==="before"?"before school":"after school")+", not when you said you can go.");
+  if(r.hit.avail==="unknown") bad.push("No meeting day posted yet.");
+
+  if(r.hit.commit==="exact" && A.load) good.push("Meets "+(LOADS.find(l=>l[0]===A.load)[1].toLowerCase())+", the amount you picked.");
+  if(r.hit.commit==="far") bad.push("Meets "+(LOADS.find(l=>l[0]===c.commitment)||["",""])[1].toLowerCase()+", more or less often than you wanted.");
+  if(c.status==="needs-sponsor") bad.push("No sponsor listed, so it may not meet this year.");
+  return {good:good.slice(0,4), bad:bad.slice(0,2)};
+}
+
+function viewMatch(v){
+  if(S.match && S.match.v===2 && S.match.results){ return matchResults(v); }
+  const tagOpts = Object.keys(TAG_LABEL);
+  v.innerHTML = '<div class="narrow"><h1>Seahawk Match</h1>'
+    + '<p class="muted">Seven questions. Every club is scored on what its description actually says it does, so a club only earns points for something it really offers.</p>'
+    + '<form id="mform" style="margin-top:6px">'
+    + qBlock("What are you interested in?","Select all that apply.", tagOpts.map(t=>opt("interests",t,TAG_LABEL[t])).join(""))
+    + qBlock("What would you like to learn or get better at?","Select all that apply.", Object.keys(LEARN_LABEL).map(t=>opt("learn",t,LEARN_LABEL[t])).join(""))
+    + qBlock("What kind of activity do you enjoy?","Select all that apply.", Object.keys(ACT_LABEL).map(t=>opt("acts",t,ACT_LABEL[t])).join(""))
+    + qBlock("What do you want out of a club?","Select all that apply.", GOALS.map(g=>opt("goals",g[0],g[1])).join(""))
+    + qBlock("Which days are you free?","Leave blank if any day works.", DAYS.map(d=>opt("days",d,DAY_FULL[d])).join(""))
+    + qBlock("When can you meet?","", [["","Either"],["before","Before school"],["after","After school"]].map(x=>opt("when",x[0],x[1],true)).join(""))
+    + qBlock("How often do you want to meet?","", [["","No preference"]].concat(LOADS).map(x=>opt("load",x[0],x[1],true)).join(""))
+    + '<div style="padding:22px 0"><button class="btn btn-pri" type="submit">See my matches</button></div>'
+    + '</form></div>';
+
+  function qBlock(t,s,body){ return '<fieldset class="q" style="border:0;padding:20px 0;margin:0"><legend class="qh">'+esc(t)+'</legend>'
+    + (s?'<div class="qs">'+esc(s)+'</div>':"")+'<div class="opts">'+body+'</div></fieldset>'; }
+  function opt(group,val,label,single){
+    return '<label class="opt'+((single&&val==="")?" on":"")+'"><input type="'+(single?"radio":"checkbox")+'" name="'+group+'" value="'+esc(val)+'"'+((single&&val==="")?" checked":"")+'>'+esc(label)+'</label>';
+  }
+  v.querySelectorAll(".opt input").forEach(el=>el.onchange=()=>{
+    if(el.type==="radio") v.querySelectorAll('input[name="'+el.name+'"]').forEach(x=>x.closest(".opt").classList.toggle("on",x.checked));
+    else el.closest(".opt").classList.toggle("on",el.checked);
+  });
+  $("#mform").onsubmit = e=>{
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    runMatch(v,{interests:fd.getAll("interests"), learn:fd.getAll("learn"), acts:fd.getAll("acts"),
+      goals:fd.getAll("goals"), days:fd.getAll("days"), when:fd.get("when")||"", load:fd.get("load")||""});
+  };
+}
+
+function runMatch(v,A){
+  v.innerHTML = '<div class="narrow"><h1>Scoring clubs</h1><p class="muted">Comparing your answers against '+CLUBS.length+' clubs.</p>'
+    + '<div class="progressbar" style="margin-top:16px"><i id="pb" style="width:6%"></i></div>'
+    + '<p class="small dim" id="pbl" style="margin-top:10px">Reading club descriptions</p></div>';
+  const steps=[[30,"Matching interests and topics"],[55,"Checking activity styles and goals"],[80,"Checking days, times and commitment"],[100,"Ranking results"]];
+  let i=0;
+  const tick=()=>{
+    if(i>=steps.length){
+      const res = CLUBS.filter(c=>c.status!=="inactive").map(c=>{
+        const r = scoreClub(c,A); r.id=c.id; r.why = matchWhy(c,r,A); return r;
+      }).sort((a,b)=>b.score-a.score);
+      const strong = res.filter(r=>r.score>=45).slice(0,10);
+      const shown = strong.length>=5 ? strong : res.slice(0,5);
+      S.match = {v:2, answers:A, results:shown, at:Date.now()}; save();
+      matchResults($("#view"));
+      return;
+    }
+    const s=steps[i++];
+    const pb=$("#pb"); if(pb){ pb.style.width=s[0]+"%"; $("#pbl").textContent=s[1]; }
+    pending=setTimeout(tick,300);
+  };
+  pending=setTimeout(tick,280);
+}
+
+function matchResults(v){
+  const A = S.match.answers, R = S.match.results;
+  const bits=[];
+  if(A.interests.length) bits.push(A.interests.map(t=>TAG_LABEL[t]).join(", "));
+  if(A.learn.length) bits.push("wants to learn "+A.learn.map(t=>LEARN_LABEL[t].toLowerCase()).join(", "));
+  if(A.days.length) bits.push("free "+A.days.map(d=>DAY_FULL[d]).join(", "));
+  if(A.load) bits.push((LOADS.find(l=>l[0]===A.load)||["",""])[1].toLowerCase());
+  v.innerHTML = '<div class="row-between"><div><h1>Your matches</h1>'
+    + '<p class="muted" style="max-width:64ch">'+(bits.length? esc(bits.join("; "))+"." : "No preferences selected.")+'</p></div>'
+    + '<button class="btn" id="redo">Change my answers</button></div>'
+    + '<div style="margin-top:14px">'+R.map(r=>{
+        const c=BY_ID[r.id]; if(!c) return "";
+        return '<div class="mres"><div class="mres-top"><div style="min-width:0">'
+          + '<a href="#/club/'+c.id+'" style="font-weight:600;font-size:15.5px;color:var(--ink)">'+esc(c.name)+'</a>'
+          + '<div class="meta" style="margin:3px 0 8px">'+esc(meetingLine(c))+'</div>'
+          + '<ul class="why">'+r.why.good.map(t=>'<li>'+esc(t)+'</li>').join("")
+            + r.why.bad.map(t=>'<li class="con">'+esc(t)+'</li>').join("")+'</ul>'
+          + '</div>'
+          + '<div style="text-align:right;flex:none;width:200px">'
+            + '<div class="scorebig">'+r.score+'<span style="font-size:15px;font-weight:600">%</span></div>'
+            + '<div class="xs dim">match</div>'
+            + '<div class="bars">'+Object.keys(r.parts).map(k=>
+                '<span class="dim">'+k+'</span><span class="bar"><i style="width:'+r.parts[k]+'%"></i></span><span class="v">'+r.parts[k]+'</span>').join("")
+            + '</div></div></div></div>';
+      }).join("")+'</div>'
+    + '<p class="small dim" style="margin-top:18px;max-width:64ch">Weighting: interests 30, learning 15, activity style 15, goals 15, availability 15, commitment 10. A club scores nothing in a category its own description does not support, and meeting on a day you cannot attend cuts the whole score.</p>';
+  $("#redo").onclick = ()=>{ S.match=null; save(); viewMatch($("#view")); };
+}
+
+/* ---------------- schedule ---------------- */
+let schedScope = "mine", schedChosen = false;
+function viewSchedule(v){
+  const joined = S.joined.map(i=>BY_ID[i]).filter(Boolean);
+  const interested = S.interested.map(i=>BY_ID[i]).filter(Boolean);
+  if(!schedChosen) schedScope = joined.length ? "mine" : (interested.length ? "interested" : "all");
+
+  const src = schedScope==="mine" ? joined
+            : schedScope==="interested" ? interested
+            : CLUBS.filter(c=>c.status==="active");
+
+  const before = src.filter(c=>c.when==="before" && c.meeting.days.length);
+  const after  = src.filter(c=>c.when==="after"  && c.meeting.days.length);
+  const untimed= src.filter(c=>c.meeting.days.length && c.meeting.start==null);
+  const noDay  = src.filter(c=>!c.meeting.days.length);
+
+  const endOf = c => c.meeting.openEnd ? c.meeting.start : c.meeting.end;
+  const span = (list, floor, ceil) => {
+    const s = list.length ? Math.min(floor, Math.min.apply(null,list.map(c=>c.meeting.start))) : floor;
+    const e = list.length ? Math.max(ceil,  Math.max.apply(null,list.map(endOf)))              : ceil;
+    return fmtTime(s)+" \u2013 "+fmtTime(e);
+  };
+  const beforeRange = span(before, 6*60+30, 8*60+10);
+  const afterRange  = span(after, 14*60+55, 18*60);
+
+  v.innerHTML = '<div class="row-between"><div><h1>Weekly schedule</h1>'
+    + '<p class="muted" style="max-width:64ch">Club meetings by weekday, split into the before-school and after-school windows. Select a meeting for the full details.</p></div>'
+    + '<div class="seg">'
+      + '<button data-s="mine" class="'+(schedScope==="mine"?"on":"")+'">My clubs<span class="segn">'+joined.length+'</span></button>'
+      + '<button data-s="interested" class="'+(schedScope==="interested"?"on":"")+'">Interested<span class="segn">'+interested.length+'</span></button>'
+      + '<button data-s="all" class="'+(schedScope==="all"?"on":"")+'">All clubs</button>'
+    + '</div></div>'
+    + '<div id="conf"></div>'
+    + band("Before school", beforeRange, before, [])
+    + band("After school", afterRange, after, untimed)
+    + (src.length ? '<p class="small dim" style="margin-top:18px">'+noDay.length+' '
+        + (schedScope==="all"?"clubs have":"of these clubs have")+' not posted a meeting day yet.</p>'
+      : '<div class="empty" style="margin-top:18px;max-width:640px"><h3>'
+        + (schedScope==="mine"?"You have not joined a club yet":"Nothing saved as interested")+'</h3>'
+        + '<p style="margin:0">Open a club and '+(schedScope==="mine"?"join it":"save it as interested")
+        + ', or switch to All clubs to see the full week.</p></div>');
+
+  v.querySelectorAll(".seg button").forEach(b=>b.onclick=()=>{ schedScope=b.dataset.s; schedChosen=true; viewSchedule($("#view")); });
+
+  // overlap warnings across clubs the student has joined
+  const clashes=[];
+  const jt = joined.filter(c=>c.meeting.days.length && c.meeting.start!=null);
+  for(let i=0;i<jt.length;i++) for(let j=i+1;j<jt.length;j++){
+    const a=jt[i], b=jt[j];
+    const d = a.meeting.days.filter(x=>b.meeting.days.indexOf(x)>=0);
+    if(d.length && a.meeting.start<b.meeting.end && b.meeting.start<a.meeting.end) clashes.push({a,b,days:d});
+  }
+  $("#conf").innerHTML = clashes.length
+    ? '<div class="notice" style="margin-top:16px">'+clashes.map(x=>esc(x.a.name)+" and "+esc(x.b.name)
+        +" overlap on "+x.days.map(d=>DAY_FULL[d]).join(" and ")+".").join("<br>")+'</div>' : "";
+
+  v.querySelectorAll(".evt").forEach(el=>el.onclick=()=>showMeeting(el.dataset.id));
+
+  function band(title, rangeText, timed, untimedList){
+    const has = timed.length || untimedList.length;
+    return '<section class="sched-band">'
+      + '<div class="band-head"><h2>'+title+'</h2><span class="small dim">'+rangeText+'</span></div>'
+      + (has ? '<div class="weekgrid">'+DAYS.map(d=>dayColumn(d,timed,untimedList)).join("")+'</div>'
+             : '<div class="bandempty">No '+title.toLowerCase()+' meetings in this view.</div>')
+      + '</section>';
+  }
+  function dayColumn(d, timed, untimedList){
+    const evs = timed.filter(c=>c.meeting.days.indexOf(d)>=0).sort((a,b)=>a.meeting.start-b.meeting.start);
+    const un  = untimedList.filter(c=>c.meeting.days.indexOf(d)>=0);
+    let html = '<h4>'+DAY_FULL[d]+'<span class="n">'+(evs.length+un.length||"")+'</span></h4>';
+    if(!evs.length && !un.length) html += '<p class="xs dim" style="margin:0">Nothing listed</p>';
+    evs.forEach(c=>{
+      const clash = schedScope!=="all" && evs.some(o=>o!==c && o.meeting.start<c.meeting.end && c.meeting.start<o.meeting.end);
+      html += '<button class="evt'+(clash?" clash":"")+(isJoined(c.id)?" mine":"")+'" data-id="'+c.id+'">'
+        + '<span class="nm"><span class="dot" style="background:'+c.color+'"></span>'+esc(c.name)+'</span>'
+        + '<span class="tm">'+esc(timeRange(c.meeting))+'</span>'
+        + '<span class="rm">'+(c.meeting.room? "Room "+esc(c.meeting.room) : '<span class="dim">Room not posted</span>')+'</span>'
+        + (clash? '<span class="xs warnk">Overlaps another meeting</span>' : "")
+        + '</button>';
+    });
+    if(un.length){
+      html += '<div class="untimed"><h5>Time not posted</h5>'+un.map(c=>
+        '<button class="evt flat" data-id="'+c.id+'"><span class="nm"><span class="dot" style="background:'+c.color+'"></span>'+esc(c.name)+'</span>'
+        + (c.meeting.room? '<span class="rm">Room '+esc(c.meeting.room)+'</span>' : "")+'</button>').join("")+'</div>';
+    }
+    return '<div class="daycol">'+html+'</div>';
+  }
+}
+
+function showMeeting(id){
+  const c = BY_ID[id]; if(!c) return;
+  const m = c.meeting;
+  $("#dlgTitle").textContent = c.name;
+  $("#dlgBody").innerHTML = '<dl class="factlist">'
+    + '<dt>Meets</dt><dd>'+(m.days.length? esc(m.days.map(d=>DAY_FULL[d]).join(", ")) : '<span class="dim">Not posted</span>')+'</dd>'
+    + '<dt>Time</dt><dd>'+(m.start!=null? esc(timeRange(m)) : '<span class="dim">Not posted</span>')+'</dd>'
+    + '<dt>Location</dt><dd>'+(m.room? "Room "+esc(m.room) : '<span class="dim">Not posted</span>')+'</dd>'
+    + (m.freq? '<dt>How often</dt><dd>'+esc(m.freq)+'</dd>' : "")
+    + (c.sponsors.length? '<dt>Sponsor</dt><dd>'+esc(c.sponsors.map(s=>s.name).join(", "))+'</dd>' : "")
+    + '</dl>'
+    + (m.raw? '<p class="small muted" style="margin-top:12px">'+esc(m.raw)+'</p>' : "")
+    + '<p style="margin-top:12px"><a href="#/club/'+c.id+'" id="dlgGo">Open club page</a></p>';
+  const d=$("#dlg"); d.showModal();
+  $("#dlgClose").onclick=()=>d.close();
+  const go=$("#dlgGo"); if(go) go.onclick=()=>d.close();
+}
+
+/* ---------------- my clubs ---------------- */
+function viewMy(v){
+  const joined = S.joined.map(i=>BY_ID[i]).filter(Boolean);
+  const interested = S.interested.map(i=>BY_ID[i]).filter(Boolean);
+  if(!joined.length && !interested.length){
+    v.innerHTML = '<h1>My Clubs</h1><div class="empty" style="margin-top:18px;max-width:640px">'
+      + '<h3>Nothing saved yet</h3>'
+      + '<p>Join a club to put its meetings on your schedule, or save one as interested while you decide.</p>'
+      + '<p style="margin:0"><a class="btn btn-pri btn-sm" href="#/clubs">Browse the directory</a> <a class="btn btn-sm" href="#/match">Try Seahawk Match</a></p></div>';
+    return;
+  }
+  const up = upcoming(S.joined.concat(S.interested)).slice(0,6);
+  const needsAction = joined.concat(interested).filter(c=>c.selective || c.status==="needs-sponsor" || !c.meeting.days.length);
+
+  v.innerHTML = '<h1>My Clubs</h1>'
+  + '<div class="cols" style="margin-top:20px"><div>'
+    + '<div class="sec-head"><h2>Next meetings</h2><a class="small" href="#/schedule">Week view</a></div>'
+    + (up.length? '<ul class="upnext">'+up.map(e=>
+        '<li><span class="dot" style="background:'+e.club.color+'"></span>'
+        + '<span><a href="#/club/'+e.club.id+'">'+esc(e.club.name)+'</a>'
+        + '<span class="meta" style="display:block">'+esc([e.club.meeting.start!=null?timeRange(e.club.meeting):"Time not posted", e.club.meeting.room?"Room "+e.club.meeting.room:""].filter(Boolean).join(" \u00b7 "))+'</span></span>'
+        + '<span class="when">'+relDay(e.date)+'</span></li>').join("")+'</ul>'
+      : '<p class="small dim">None of your clubs has posted a meeting day. Message a sponsor to ask.</p>')
+    + '<div class="sec-head" style="margin-top:30px"><h2>Joined</h2><span class="small dim">'+joined.length+'</span></div>'
+    + (joined.length? '<div class="clublist">'+joined.map(c=>clubRow(c)).join("")+'</div>' : '<p class="small dim">You have not joined a club yet.</p>')
+    + '<div class="sec-head" style="margin-top:30px"><h2>Interested</h2><span class="small dim">'+interested.length+'</span></div>'
+    + (interested.length? '<div class="clublist">'+interested.map(c=>clubRow(c)).join("")+'</div>' : '<p class="small dim">Nothing saved as interested.</p>')
+  + '</div><aside class="aside">'
+    + '<div class="panel pad"><h3>Needs a next step</h3>'
+      + (needsAction.length? '<ul class="people">'+needsAction.slice(0,6).map(c=>'<li><a href="#/club/'+c.id+'">'+esc(c.name)+'</a><br><span class="xs dim">'
+          + (c.status==="needs-sponsor"?"No sponsor listed yet":c.selective?"Application, audition or course required":"Meeting day not posted")+'</span></li>').join("")+'</ul>'
+        : '<p class="small muted" style="margin:0">Nothing pending. Every club you saved has its details posted.</p>')
+    + '</div>'
+    + '<div class="panel pad"><h3>Announcements</h3><p class="small muted" style="margin:0">No announcements from your clubs. Sponsors can post here once a club is set up in the hub.</p></div>'
+  + '</aside></div>';
+}
+
+/* ---------------- messages ---------------- */
+let activeThread = null;
+function openThreadFor(clubId){
+  seedThreads();
+  let t = S.threads.find(x=>x.clubId===clubId);
+  if(!t){
+    const c = BY_ID[clubId];
+    t = {id:"t"+Date.now(), clubId, role: c.sponsors.length? "Faculty sponsor":"Student leader", unread:false, msgs:[]};
+    S.threads.unshift(t); save();
+  }
+  activeThread = t.id;
+  const already = (location.hash||"") === "#/messages";
+  location.hash = "#/messages";
+  if(already) router();
+}
+
+function viewMessages(v){
+  seedThreads();
+  const threads = S.threads;
+  if(!threads.length){
+    v.innerHTML = '<h1>Messages</h1><div class="empty" style="margin-top:18px;max-width:640px"><h3>No conversations yet</h3>'
+      + '<p style="margin:0">Open a club and choose "Message the club" to ask about a first meeting, what to bring, or whether there is still room.</p></div>';
+    return;
+  }
+  if(!activeThread || !threads.some(t=>t.id===activeThread)) activeThread = threads[0].id;
+
+  v.innerHTML = '<div class="row-between" style="margin-bottom:14px"><h1>Messages</h1></div>'
+    + '<p class="notice" style="max-width:720px;margin-bottom:14px">Prototype only. Messages are stored in this browser and are not delivered to staff or students.</p>'
+    + '<div class="msgcols'+(window.innerWidth<=900?"":" viewing")+'" id="mc">'
+    + '<div class="threads" id="tl"></div>'
+    + '<div class="convo" id="cv"></div></div>';
+  paintThreads(); paintConvo();
+
+  function paintThreads(){
+    $("#tl").innerHTML = threads.map(t=>{
+      const c=BY_ID[t.clubId]; if(!c) return "";
+      const last = t.msgs[t.msgs.length-1];
+      return '<button class="thread'+(t.id===activeThread?" on":"")+(t.unread?" unread":"")+'" data-t="'+t.id+'">'
+        + '<div class="thread-top"><span class="thread-name">'+esc(c.name)+'</span>'
+        + '<span class="xs dim">'+(last?shortTime(last.t):"")+'</span></div>'
+        + '<div class="xs dim">'+esc(t.role)+'</div>'
+        + '<div class="thread-prev">'+(last? esc((last.from==="me"?"You: ":"")+last.text) : '<span class="dim">No messages yet</span>')+'</div></button>';
+    }).join("");
+    $("#tl").querySelectorAll(".thread").forEach(b=>b.onclick=()=>{
+      activeThread=b.dataset.t;
+      const t=threads.find(x=>x.id===activeThread); if(t&&t.unread){ t.unread=false; save(); renderNav(); }
+      $("#mc").classList.add("viewing"); paintThreads(); paintConvo();
+    });
+  }
+  function paintConvo(){
+    const t = threads.find(x=>x.id===activeThread), c = BY_ID[t.clubId];
+    $("#cv").innerHTML = '<div class="convo-head"><div style="min-width:0">'
+      + '<div style="font-weight:600">'+esc(c.name)+'</div><div class="xs dim">'+esc(t.role)+'</div></div>'
+      + '<div style="display:flex;gap:8px"><a class="btn btn-sm" href="#/club/'+c.id+'">Club page</a>'
+      + '<button class="btn btn-sm" id="back" style="display:none">Back</button></div></div>'
+      + '<div class="bubbles" id="bb">'+(t.msgs.length? t.msgs.map(m=>
+          '<div class="bub '+(m.from==="me"?"me":"")+'"><div class="who">'+(m.from==="me"?"You":esc(t.role))+' \u00b7 '+shortTime(m.t)+'</div>'
+          + '<div class="txt">'+esc(m.text)+'</div></div>').join("")
+        : '<p class="small dim">No messages yet. Ask when the next meeting is or what to bring.</p>')+'</div>'
+      + '<div class="composer"><textarea id="ta" rows="1" placeholder="Write a message" aria-label="Message"></textarea>'
+      + '<button class="btn btn-pri" id="send">Send</button></div>';
+    const bb=$("#bb"); bb.scrollTop = bb.scrollHeight;
+    if(window.innerWidth<=900){ const b=$("#back"); b.style.display=""; b.onclick=()=>$("#mc").classList.remove("viewing"); }
+    const ta=$("#ta");
+    ta.oninput=()=>{ ta.style.height="auto"; ta.style.height=Math.min(120,ta.scrollHeight)+"px"; };
+    const send=()=>{ const txt=ta.value.trim(); if(!txt) return;
+      t.msgs.push({from:"me",t:Date.now(),text:txt}); save(); paintThreads(); paintConvo(); };
+    $("#send").onclick=send;
+    $("#ta").onkeydown=e=>{ if(e.key==="Enter"&&(e.metaKey||e.ctrlKey)){ e.preventDefault(); send(); } };
+  }
+  function shortTime(ts){
+    const d=new Date(ts), now=new Date();
+    if(d.toDateString()===now.toDateString()) return d.toLocaleTimeString([], {hour:"numeric",minute:"2-digit"});
+    const diff=(now-d)/864e5;
+    if(diff<7) return d.toLocaleDateString([], {weekday:"short"});
+    return d.toLocaleDateString([], {month:"short",day:"numeric"});
+  }
+}
+
+/* ---------------- legal ---------------- */
+function viewTerms(v){
+  v.innerHTML = '<div class="narrow legal"><h1>Terms of use</h1>'
+  + '<p>Draft language for a student prototype. It has not been reviewed or approved by Fairfax County Public Schools, and it is not a binding agreement.</p>'
+  + '<h2>What this site is</h2><p>Seahawk Club Hub is an unofficial student project that reorganizes the published South Lakes activities sheet into a searchable directory, schedule and matching tool. It is not operated by the school or the district.</p>'
+  + '<h2>Accuracy</h2><p>Club descriptions, sponsors, rooms and meeting times are copied from the activities sheet dated September 10, 2026. Details change during the year. Confirm with the sponsor or Schoology before showing up somewhere.</p>'
+  + '<h2>Using the site</h2><ul><li>Use your real identity when you message a sponsor or student leader.</li>'
+  + '<li>Do not post anything you would not say in a classroom. School conduct rules apply here too.</li>'
+  + '<li>Do not use club or sponsor contact information for advertising or bulk mail.</li>'
+  + '<li>Joining a club here saves it to your own list. It does not enroll you, and it does not replace an application, audition or course requirement.</li></ul>'
+  + '<h2>Availability</h2><p>This is a prototype. Saved data lives in your browser, features may change without notice, and the site can go offline at any time.</p>'
+  + '<h2>Before a real launch</h2><p>A deployed version would need review by the school administration and the district, an agreement covering student accounts and messaging, and a process for sponsors to correct their own club listings.</p>'
+  + '<p class="small dim" style="margin-top:26px">Questions about club information itself go to the activities office.</p></div>';
+}
+function viewPrivacy(v){
+  v.innerHTML = '<div class="narrow legal"><h1>Privacy</h1>'
+  + '<p>Draft language for a student prototype. It has not been reviewed or approved by Fairfax County Public Schools.</p>'
+  + '<h2>What the prototype stores</h2><p>Everything you do here stays in your own browser: the clubs you join or save, your Seahawk Match answers, your display name, and any messages you write. Nothing is sent to a server, and clearing your browser data removes all of it.</p>'
+  + '<h2>What a real version would need</h2><ul>'
+  + '<li><b>Account details</b> so your clubs and schedule follow you between devices. A school sign-in would supply your name and grade and nothing more.</li>'
+  + '<li><b>Club membership</b> so sponsors can see who is on their roster and send meeting updates.</li>'
+  + '<li><b>Messages</b> between students and sponsors, kept so a conversation makes sense when you come back to it.</li></ul>'
+  + '<h2>Who would see what</h2><ul>'
+  + '<li>A sponsor sees the students who joined their own club. They do not see your other clubs, your match answers or your schedule.</li>'
+  + '<li>Other students do not see your club list unless you choose to share it.</li>'
+  + '<li>Match answers are used to rank clubs for you and are not shown to sponsors.</li></ul>'
+  + '<h2>Messaging</h2><p>Messages between a student and a club are private to those participants. School staff can review them when a safety or conduct concern is reported, the same as any other school communication. No advertising or outside analytics would be attached to them.</p>'
+  + '<h2>Your controls</h2><ul><li>Leave a club and you come off its roster.</li><li>Clear your match answers at any time from the Seahawk Match page.</li>'
+  + '<li>Delete your account and the club lists, match answers and messages go with it.</li>'
+  + '<li>In this prototype, the account menu has a reset that clears everything stored locally.</li></ul>'
+  + '<h2>Before a real launch</h2><p>Student accounts, messaging and rosters would require district review and approval, including the records rules that apply to student data, before any of this ran outside a browser.</p></div>';
+}
+
+/* ---------------- account menu ---------------- */
+const menu = $("#acctMenu"), avatarBtn = $("#avatarBtn");
+function drawMenu(){
+  menu.innerHTML = '<h4>Display name</h4><div style="padding:0 10px"><input id="nameIn" placeholder="Your name" value="'+esc(S.name)+'"></div>'
+    + '<hr><a href="#/my">My Clubs</a><a href="#/match">Seahawk Match</a>'
+    + '<hr><button id="themeBtn"></button><button id="resetBtn">Reset saved data</button>'
+    + '<hr><a href="#/privacy">Privacy</a><a href="#/terms">Terms</a>';
+  const t = document.documentElement.getAttribute("data-theme");
+  $("#themeBtn").textContent = t==="dark" ? "Use light theme" : t==="light" ? "Match system theme" : "Use dark theme";
+  $("#themeBtn").onclick = ()=>{
+    const cur=document.documentElement.getAttribute("data-theme");
+    const next = cur==="dark" ? "light" : cur==="light" ? null : "dark";
+    if(next) document.documentElement.setAttribute("data-theme",next);
+    else document.documentElement.removeAttribute("data-theme");
+    try{ next? localStorage.setItem(KEY+"-theme",next) : localStorage.removeItem(KEY+"-theme"); }catch(e){}
+    drawMenu();
+  };
+  $("#nameIn").oninput = e=>{ S.name=e.target.value; save(); renderNav(); };
+  $("#resetBtn").onclick = ()=>{
+    S = Object.assign({},DEFAULTS); save(); activeThread=null; closeMenu(); renderNav();
+    showDialog("Saved data cleared","Your clubs, match answers and messages have been removed from this browser.");
+    router();
+  };
+}
+function openMenu(){ drawMenu(); menu.hidden=false; avatarBtn.setAttribute("aria-expanded","true"); }
+function closeMenu(){ menu.hidden=true; avatarBtn.setAttribute("aria-expanded","false"); }
+avatarBtn.onclick = e=>{ e.stopPropagation(); menu.hidden ? openMenu() : closeMenu(); };
+document.addEventListener("click", e=>{ if(!menu.hidden && !menu.contains(e.target)) closeMenu(); });
+document.addEventListener("keydown", e=>{ if(e.key==="Escape") closeMenu(); });
+menu.addEventListener("click", e=>{ if(e.target.tagName==="A") closeMenu(); });
+
+function showDialog(title,body){
+  $("#dlgTitle").textContent=title; $("#dlgBody").innerHTML='<p>'+esc(body)+'</p>';
+  const d=$("#dlg"); d.showModal(); $("#dlgClose").onclick=()=>d.close();
+}
+
+/* ---------------- boot ---------------- */
+try{ const th=localStorage.getItem(KEY+"-theme"); if(th) document.documentElement.setAttribute("data-theme",th); }catch(e){}
+seedThreads();
+router();
 </script>
 </body>
 </html>
