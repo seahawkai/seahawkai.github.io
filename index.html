@@ -477,7 +477,7 @@ pre { margin: 0; font-family: ui-monospace, "SF Mono", Menlo, monospace; }
       <div data-m="wrap" style="position:relative;max-width:1240px;margin:0 auto">
         <x-import component-from-global-scope="SeahawkAIDesignSystem_2e2732.Kicker" tone="ondark" hint-size="auto,18px">Itinerary · 2026–2027</x-import>
         <h1 style="margin:16px 0 0;font-family:var(--font-serif);font-size:clamp(38px,5vw,64px);font-weight:600;line-height:1.06;letter-spacing:var(--track-display)">Seventeen Mondays.</h1>
-        <p style="margin:18px 0 0;max-width:56ch;font-size:19px;line-height:1.7;color:var(--on-dark-soft)">Every other Monday, 3:05 PM, in the lecture hall. Every meeting runs a few short sessions, so nobody sits through an hour of one thing. Dates skip school holidays, so a few land three weeks apart. Topics are subject to change.</p>
+        <p style="margin:18px 0 0;max-width:56ch;font-size:19px;line-height:1.7;color:var(--on-dark-soft)">Every other Monday, 3:05 PM, in the lecture hall. Every meeting runs a few short sessions, so nobody sits through an hour of one thing. Dates skip school holidays, so a few land three weeks apart. Hands-on AI work in meetings happens in Playlab; projects get built at home. Topics are subject to change.</p>
         <div style="margin-top:34px;display:flex;flex-wrap:wrap;gap:26px;align-items:center">
           <div style="flex:1;min-width:260px">
             <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:600;color:var(--on-dark-soft);margin-bottom:8px"><span>Season progress</span><span>{{ doneCount }} of {{ meetingTotal }} held</span></div>
@@ -809,7 +809,8 @@ const TRACKS = {
   news: { key: "news", pillLabel: "News", pillTone: "mint" },
   presidential: { key: "presidential", pillLabel: "★ Presidential Challenge", pillTone: "brass" },
   competition: { key: "competition", pillLabel: "★ Competition", pillTone: "brass" },
-  project: { key: "project", pillLabel: "◆ Project", pillTone: "mint" }
+  project: { key: "project", pillLabel: "◆ Project", pillTone: "mint" },
+  industry: { key: "industry", pillLabel: "Industry", pillTone: "accent" }
 };
 
 const T = {
@@ -831,74 +832,77 @@ const MEETINGS = [
   ]],
   ["2026-10-19", "", [
     ["learn", "Club Goals", "New faces from the club fair. What we're building this year, and how a meeting actually runs.", "", ""],
-    ["build", "Prompting", "How to ask for what you actually want: role, context, constraints, examples.", "", ""],
-    ["build", "AI Chatbot Tools: Skills, Connectors, Plugins", "What skills, connectors and plugins do, and when each one is worth setting up.", "", ""]
+    ["build", "Prompting", "How to ask for what you actually want: role, context, constraints, examples. Practiced live in Playlab.", "", ""],
+    ["learn", "Google AI Suite and NotebookLM", "A dozen Google tools that talk to each other, and how NotebookLM turns a pile of sources into something you'd actually study from.", T.gemini, "📓"],
+    ["project", "Pick Your Project", "Decide what you're building this year. One idea, then described in Playlab until it's clear.", "", ""]
   ]],
   ["2026-11-02", "", [
     ["learn", "How AI Works", "Tokens, training, context windows — in plain words, no math.", "", ""],
-    ["learn", "Comparing AI Tools", "Which one to reach for: chat, notebook, image, code, research.", "", ""],
-    ["project", "Pick Your Project", "Decide what you're building this year. One idea, written down.", "", ""],
-    ["project", "Plan the Build", "Scope it, list what it needs, and pick the tool you'll actually build it in.", "", ""]
+    ["learn", "AI Chatbot Tools: Artifacts, Skills, Connectors, Plugins", "What each one does, when it's worth setting up, and which ones you can use at home.", "", ""],
+    ["project", "Write the Build Prompt", "In Playlab, turn your idea into one detailed prompt: every screen, every feature, every rule. Paste it into your builder at home.", "", ""]
   ]],
   ["2026-11-16", "", [
-    ["build", "Artifacts", "Working pages, tools and mini-apps generated straight out of a chat.", "", ""],
-    ["learn", "Comparing Models", "Claude, Gemini, ChatGPT and Grok on the same task. You judge the output.", "", ""],
-    ["learn", "Google AI Suite", "A dozen Google tools that talk to each other, and where they're ahead.", T.gemini, ""],
+    ["learn", "Comparing Models and Tools", "Claude Opus 5 and ChatGPT 5.4 side by side in Playlab, same prompt. Then which tool to reach for: chat, notebook, research, code.", "", ""],
     ["presidential", "Presidential AI Challenge Kickoff", "The categories, the rules, and the January 20 deadline.", "", ""],
-    ["project", "First Working Version", "Get something real running today, even if it's ugly.", "", ""]
+    ["project", "Report Back and Fix", "Bring what your prompt built at home. Write the next one: what broke, what's missing, what to change.", "", ""]
   ]],
   ["2026-11-30", "", [
-    ["build", "Gemini Notebook", "A pile of sources into a notebook you'd actually study from.", T.gemini, "📓"],
+    ["learn", "AI Ethics and Dilemmas", "Bias, copyright, deepfakes, jobs, surveillance. Every hard question in one sitting.", "", ""],
     ["presidential", "Presidential AI Challenge Teams and Ideas", "Teams formed, roles assigned, one-line pitch written before you leave.", "", ""],
-    ["project", "Map What's Next", "Take stock: what's built, what's broken, and what the next few Mondays actually go toward.", "", ""]
+    ["project", "Design in Words", "Colors, type and layout written into your prompt, so the look comes out right when you build it at home.", "", ""]
   ]],
   ["2026-12-14", "", [
-    ["build", "Make Your Own Design Template", "Colors, type and layout, decided once and reused all year.", T.claude, ""],
-    ["learn", "AI Ethics and Dilemmas", "Bias, copyright, deepfakes, jobs, surveillance. Every hard question in one sitting.", "", ""],
+    ["learn", "Deep Research", "Agents that read fifty sources and hand back a cited report. How to use it at home, and how to check what it hands back.", "", ""],
     ["presidential", "Presidential AI Challenge Work Session", "Heads down on your entry. Officers float between teams.", "", ""],
-    ["project", "Give It a Face", "Apply the design template you just made to your own project.", "", ""]
+    ["project", "Upgrade or Start Fresh", "A new round of prompts to upgrade what you've built, or the first prompt for a second project.", "", ""]
   ]],
   ["2027-01-04", "", [
-    ["learn", "Claude Design", "Designing real pages with a brand system instead of starting from a blank box.", T.claude, ""],
+    ["industry", "AI in Education", "Tutors, graders, and the cheating question. Where the line between using it and cheating actually sits. Sides assigned at the door.", "", "⚖️"],
     ["presidential", "Presidential AI Challenge Final Push", "Last session before the January 20 deadline. Submit before you leave.", "", ""],
-    ["project", "Polish in Claude Design", "Bring your project into Claude Design and make it look finished.", "", ""]
+    ["project", "Add a Feature", "Pick one thing your project can't do yet and write the prompt that adds it.", "", ""]
   ]],
   ["2027-01-25", "", [
-    ["build", "Using Your Design: Posters and Flyers", "Turn your design template into posters and flyers you can print.", "", ""],
-    ["competition", "Member Show and Tell", "Five minutes each, screens shared. Bring what you actually finished.", "", ""]
+    ["industry", "AI in Medicine", "Diagnosis, drug discovery, and who's responsible when a model is wrong about a patient.", "", ""],
+    ["learn", "Agents and Automation", "Tools that take actions for you instead of just answering questions.", "", ""],
+    ["competition", "Member Show and Tell", "Five minutes each, screens shared. Bring what you built at home.", "", ""],
+    ["project", "Feedback Round", "Trade prompts with a partner, find the gaps, then rewrite yours.", "", ""]
   ]],
   ["2027-02-08", "", [
-    ["learn", "Claude Cowork", "No agenda. Bring what you're working on and use Claude Cowork next to people who can help.", T.claude, ""],
-    ["learn", "Debate: AI in School", "Where the line between using it and cheating actually sits. Sides assigned at the door.", "", "⚖️"]
+    ["industry", "AI in Law and Justice", "Contracts, courtrooms, and policing. Then the debate: who answers when it's wrong. Pick a side before you sit down.", "", "⚖️"],
+    ["learn", "Checking AI's Work", "Hallucinations, made-up sources, and confident mistakes. Catch the model in Playlab, then learn how to verify.", "", ""],
+    ["project", "Fix What Broke", "Bring the errors from home and work out the prompt that fixes them.", "", ""]
   ]],
   ["2027-02-22", "", [
-    ["build", "Make an App", "Build a working app by describing what it should do, then fixing what it gets wrong.", "", ""],
-    ["learn", "Deep Research", "Agents that read fifty sources and hand back a cited report.", "", ""]
+    ["industry", "AI in Business and Finance", "Trading, hiring, customer service, and which jobs change first.", "", ""],
+    ["learn", "Prompting, Part Two", "System prompts, examples, and breaking a big job into steps. Built and tested in Playlab.", "", ""],
+    ["project", "Upgrade or Start Fresh", "Keep improving what you have, or write the first prompt for a new idea.", "", ""]
   ]],
   ["2027-03-08", "", [
-    ["build", "Game Design", "A browser game start to finish: the loop, the art, the sound.", "", "🎮"],
-    ["competition", "Playtest Night", "Everyone plays everyone else's game and says what worked and what didn't.", "", ""]
+    ["industry", "AI in Art, Music, and Film", "Who owns a style, what happens to working artists, and whether it counts as art. Sides assigned at the door.", "", "⚖️"],
+    ["competition", "Playtest Night", "Everyone opens everyone else's project and says what worked and what didn't.", "", ""],
+    ["project", "Playtest Fixes", "Turn tonight's feedback into your next prompt.", "", ""]
   ]],
   ["2027-03-29", "", [
-    ["build", "Image Generation", "Prompting for pictures: style, composition, and fixing what comes back wrong. Best image wins.", "", ""],
-    ["learn", "Agents and Automation", "Tools that take actions for you instead of just answering questions.", "", ""]
+    ["industry", "AI in Journalism and Media", "Deepfakes, AI-written news, and how to tell what's real.", "", ""],
+    ["learn", "Claude Cowork and Computer Agents", "AI that works inside your files and apps: what it can do, what to watch out for, and how to try it at home.", T.claude, ""],
+    ["project", "Add a Feature", "One new thing your project can't do yet, written as a prompt.", "", ""]
   ]],
   ["2027-04-12", "", [
+    ["industry", "AI and Government: US vs. China", "Two countries, two strategies, and what open weights changed.", "", ""],
     ["competition", "Member Spotlight", "One member, ten minutes: the thing they made and how they made it.", "", ""],
-    ["learn", "US vs. China AI", "Two countries, two strategies, and what open weights changed.", "", ""],
-    ["build", "Music Generation", "Write a track from a text description. Genre, mood, length, vocals. Best song wins.", "", ""]
+    ["project", "Upgrade or Start Fresh", "Another round on your project, or a new one.", "", ""]
   ]],
   ["2027-04-26", "", [
-    ["learn", "Debate: Who Answers When It's Wrong", "Accountability, bias, and whose work trained it. Pick a side before you sit down.", "", "⚖️"],
-    ["learn", "AI in Every Industry", "Medicine, law, finance, sports — where a model is already trusted with real work.", "", ""],
-    ["build", "Video Generation", "Storyboard it, generate the shots, cut them together. Best animation wins.", "", ""]
+    ["industry", "AI and Jobs", "Which jobs change, which disappear, and which don't exist yet, across every industry we've covered.", "", ""],
+    ["learn", "AI, College, and Careers", "Applications, majors, and where this helps you or hurts you.", "", ""],
+    ["project", "Portfolio Page Prompt", "Write the prompt for one page that shows everything you made this year. Build it at home.", "", ""]
   ]],
   ["2027-05-10", "", [
-    ["learn", "AI, College, and Careers", "Applications, majors, and where this helps you or hurts you.", "", ""],
-    ["build", "Publish Your Project", "Put your project online with a real link you can share.", "", ""]
+    ["industry", "AI in Science and Research", "Protein folding, climate models, and AI that runs its own experiments.", "", ""],
+    ["build", "Publish Your Project", "Put what you built at home online with a real link you can share.", "", ""],
+    ["project", "Final Fixes", "Last round of prompts before Demo Day.", "", ""]
   ]],
   ["2027-05-24", "", [
-    ["build", "Build Your Portfolio Page", "One page for everything you made this year.", "", ""],
     ["build", "Demo Day Prep", "Two minutes, no slides, honest feedback. Run it twice.", "", ""]
   ]],
   ["2027-06-07", "End of Year Party", [
@@ -1188,8 +1192,8 @@ class Component extends DCLogic {
     const next = all.filter((m) => m.isNext === "1")[0] || all[all.length - 1];
     const showFilters = false; // filter chips retired for now — Up next carries the itinerary header
 
-    const FILTER_KEYS = ["all", "presidential", "project", "competition"];
-    const FILTER_LABELS = { all: "All 17 meetings", presidential: "Presidential Challenge", project: "Project work", competition: "Competitions" };
+    const FILTER_KEYS = ["all", "presidential", "project", "industry", "competition"];
+    const FILTER_LABELS = { all: "All 17 meetings", presidential: "Presidential Challenge", project: "Project work", industry: "Industries", competition: "Competitions" };
     const trackFilters = FILTER_KEYS.map((k) => ({
       key: k,
       label: FILTER_LABELS[k],
