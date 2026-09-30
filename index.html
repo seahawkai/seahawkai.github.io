@@ -477,7 +477,7 @@ pre { margin: 0; font-family: ui-monospace, "SF Mono", Menlo, monospace; }
       <div data-m="wrap" style="position:relative;max-width:1240px;margin:0 auto">
         <x-import component-from-global-scope="SeahawkAIDesignSystem_2e2732.Kicker" tone="ondark" hint-size="auto,18px">Itinerary · 2026–2027</x-import>
         <h1 style="margin:16px 0 0;font-family:var(--font-serif);font-size:clamp(38px,5vw,64px);font-weight:600;line-height:1.06;letter-spacing:var(--track-display)">Seventeen Mondays.</h1>
-        <p style="margin:18px 0 0;max-width:56ch;font-size:19px;line-height:1.7;color:var(--on-dark-soft)">Every other Monday, 3:05 PM, in the lecture hall. Every meeting runs a few short sessions, so nobody sits through an hour of one thing. Dates skip school holidays, so a few land three weeks apart. Hands-on AI work in meetings happens in Playlab; projects get built at home. Topics are subject to change.</p>
+        <p style="margin:18px 0 0;max-width:56ch;font-size:19px;line-height:1.7;color:var(--on-dark-soft)">Every other Monday, 3:05 PM, in the lecture hall. Every meeting runs a few short sessions, so nobody sits through an hour of one thing. Dates skip school holidays, so a few land three weeks apart. Topics are subject to change.</p>
         <div style="margin-top:34px;display:flex;flex-wrap:wrap;gap:26px;align-items:center">
           <div style="flex:1;min-width:260px">
             <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:600;color:var(--on-dark-soft);margin-bottom:8px"><span>Season progress</span><span>{{ doneCount }} of {{ meetingTotal }} held</span></div>
@@ -1192,8 +1192,8 @@ class Component extends DCLogic {
     const next = all.filter((m) => m.isNext === "1")[0] || all[all.length - 1];
     const showFilters = false; // filter chips retired for now — Up next carries the itinerary header
 
-    const FILTER_KEYS = ["all", "project", "ethics", "competition"];
-    const FILTER_LABELS = { all: "All 17 meetings", project: "Project work", ethics: "Ethics", competition: "Competitions" };
+    const FILTER_KEYS = ["all", "presidential", "project", "competition"];
+    const FILTER_LABELS = { all: "All 17 meetings", presidential: "Presidential Challenge", project: "Project work", competition: "Competitions" };
     const trackFilters = FILTER_KEYS.map((k) => ({
       key: k,
       label: FILTER_LABELS[k],
