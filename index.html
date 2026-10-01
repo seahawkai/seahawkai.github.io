@@ -284,7 +284,7 @@ pre { margin: 0; font-family: ui-monospace, "SF Mono", Menlo, monospace; }
           <div data-reveal="" data-lift="" style="transition-delay:0ms;background:var(--ivory);border-radius:var(--radius-card);padding:32px 28px 36px;box-shadow:var(--shadow-card);border-top:3px solid var(--green-accent);display:flex;flex-direction:column">
             <div style="font-family:var(--font-serif);font-size:34px;color:var(--green-light);line-height:1">01</div>
             <h3 style="margin:14px 0 10px;font-size:21px;font-weight:600;color:var(--green-primary)">Recent news</h3>
-            <p style="margin:0 0 20px;font-size:15px;line-height:1.65;color:var(--ink-soft)">Every other meeting opens with what actually happened: new models and which one is currently strongest, new gadgets and hardware, and whatever drama or world news the industry set off.</p>
+            <p style="margin:0 0 20px;font-size:15px;line-height:1.65;color:var(--ink-soft)">Every meeting opens with what actually happened: new models and which one is currently strongest, new gadgets and hardware, and whatever drama or world news the industry set off.</p>
             <div style="margin-top:auto;display:flex;align-items:center;gap:10px">
               <span style="font-size:13px;font-weight:600;color:var(--ink-soft)">Roughly 10 minutes</span>
             </div>
@@ -476,8 +476,12 @@ pre { margin: 0; font-family: ui-monospace, "SF Mono", Menlo, monospace; }
       </div>
       <div data-m="wrap" style="position:relative;max-width:1240px;margin:0 auto">
         <x-import component-from-global-scope="SeahawkAIDesignSystem_2e2732.Kicker" tone="ondark" hint-size="auto,18px">Itinerary · 2026–2027</x-import>
-        <h1 style="margin:16px 0 0;font-family:var(--font-serif);font-size:clamp(38px,5vw,64px);font-weight:600;line-height:1.06;letter-spacing:var(--track-display)">Seventeen Mondays.</h1>
+        <h1 style="margin:16px 0 0;font-family:var(--font-serif);font-size:clamp(38px,5vw,64px);font-weight:600;line-height:1.06;letter-spacing:var(--track-display)">Sixteen Mondays.</h1>
         <p style="margin:18px 0 0;max-width:56ch;font-size:19px;line-height:1.7;color:var(--on-dark-soft)">Every other Monday, 3:05 PM, in the lecture hall. Every meeting runs a few short sessions, so nobody sits through an hour of one thing. Dates skip school holidays, so a few land three weeks apart. Topics are subject to change.</p>
+        <div style="margin-top:22px;display:inline-flex;align-items:center;gap:12px;flex-wrap:wrap;max-width:100%;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.16);border-radius:50px;padding:10px 20px 10px 12px;font-size:15px;line-height:1.5;color:#fff">
+          <x-import component-from-global-scope="SeahawkAIDesignSystem_2e2732.Pill" tone="mint" hint-size="auto,26px">Every meeting</x-import>
+          <span>We open with AI news: new models, new hardware, and whatever happened in AI that week.</span>
+        </div>
         <div style="margin-top:34px;display:flex;flex-wrap:wrap;gap:26px;align-items:center">
           <div style="flex:1;min-width:260px">
             <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:600;color:var(--on-dark-soft);margin-bottom:8px"><span>Season progress</span><span>{{ doneCount }} of {{ meetingTotal }} held</span></div>
@@ -824,82 +828,76 @@ const T = {
 
 const MOTIFS = ["feather", "sprig", "wing", "branch", "olive", "flight"];
 
-const NEWS = ["news", "Recent News", "", "", ""];
-
 const MEETINGS = [
-  ["2026-09-14", "", [
-    ["learn", "Meet the Club", "Introduction to the club and how meetings work.", "", ""]
-  ]],
   ["2026-10-19", "", [
+    ["learn", "Meet the Club", "Introduction to the club and how meetings work.", "", ""],
     ["learn", "Prompting", "How to write clear prompts: role, context, constraints, and examples. Practiced in Playlab.", "", ""],
-    ["ethics", "AI Ethics and Dilemmas", "Bias, copyright, deepfakes, jobs, and surveillance.", "", ""],
-    ["project", "Prompt It in Playlab", "Pick a project idea and write your first prompt for it in Playlab.", "", ""]
+    ["ethics", "AI Ethics and Dilemmas", "Bias, copyright, deepfakes, jobs, and surveillance.", "", ""]
   ]],
   ["2026-11-02", "", [
     ["learn", "Google AI Suite and NotebookLM", "Google's AI tools, and how to use NotebookLM to study from your own sources.", T.gemini, ""],
     ["ethics", "Who Is Responsible When AI Is Wrong", "Debate on accountability when an AI system makes a mistake.", "", ""],
-    ["project", "Write the Build Prompt", "Write a complete prompt for your project in Playlab. Build it at home.", "", ""]
+    ["project", "Prompt It in Playlab", "Pick a project idea and write your first prompt for it in Playlab.", "", ""]
   ]],
   ["2026-11-16", "", [
     ["learn", "AI Chatbot Tools: Artifacts, Skills, Connectors, Plugins", "What each feature does and when to use it.", "", ""],
     ["ethics", "AI in Education", "Debate on where using AI ends and cheating begins.", "", ""],
-    ["project", "Fix What Broke", "Write prompts to fix what didn't work when you built it at home.", "", ""]
+    ["project", "Write the Build Prompt", "Write a complete prompt for your project in Playlab. Build it at home.", "", ""]
   ]],
   ["2026-11-30", "", [
     ["learn", "Comparing Models and Tools", "Claude Opus 5 and ChatGPT 5.4 on the same prompt in Playlab, and which tool to use for which job.", "", ""],
     ["ethics", "AI in Medicine", "AI in diagnosis and drug discovery, and who is responsible for mistakes.", "", ""],
-    ["project", "Design in Words", "Add colors, fonts, and layout to your prompt.", "", ""]
+    ["project", "Fix What Broke", "Write prompts to fix what didn't work when you built it at home.", "", ""]
   ]],
   ["2026-12-14", "", [
     ["learn", "Agents and Automation", "Tools that take actions for you instead of only answering questions.", "", ""],
     ["ethics", "AI in Law and Justice", "AI in contracts, courts, and policing.", "", ""],
-    ["project", "Add a Feature", "Write a prompt that adds one new feature to your project.", "", ""]
+    ["project", "Design in Words", "Add colors, fonts, and layout to your prompt.", "", ""]
   ]],
   ["2027-01-04", "", [
     ["learn", "Deep Research", "AI that reads many sources and writes a cited report, and how to check its work.", "", ""],
     ["ethics", "AI in Business and Finance", "AI in trading, hiring, and customer service.", "", ""],
-    ["project", "Upgrade or Start Fresh", "Improve your current project or start a new one.", "", ""]
+    ["project", "Add a Feature", "Write a prompt that adds one new feature to your project.", "", ""]
   ]],
   ["2027-01-25", "", [
     ["learn", "Checking AI's Work", "How to spot made-up facts and sources, and how to verify answers.", "", ""],
     ["ethics", "AI in Art, Music, and Film", "Debate on AI-made art, who owns a style, and the effect on artists.", "", ""],
-    ["project", "Feedback Round", "Swap prompts with a partner and revise yours.", "", ""]
+    ["project", "Upgrade or Start Fresh", "Improve your current project or start a new one.", "", ""]
   ]],
   ["2027-02-08", "", [
     ["learn", "Prompting, Part Two", "System prompts, examples, and splitting big tasks into steps.", "", ""],
     ["ethics", "AI in Journalism and Media", "Deepfakes, AI-written news, and telling what's real.", "", ""],
-    ["project", "Fix What Broke", "Write prompts to fix problems from your latest build.", "", ""]
+    ["project", "Feedback Round", "Swap prompts with a partner and revise yours.", "", ""]
   ]],
   ["2027-02-22", "", [
     ["learn", "Claude Cowork and Computer Agents", "AI that works in your files and apps, and what to watch out for.", T.claude, ""],
     ["ethics", "AI and Government: US vs. China", "How the two countries approach AI, and the role of open models.", "", ""],
-    ["project", "Add a Feature", "Write a prompt that adds one new feature to your project.", "", ""]
+    ["project", "Fix What Broke", "Write prompts to fix problems from your latest build.", "", ""]
   ]],
   ["2027-03-08", "", [
     ["competition", "Member Show and Tell", "Members show what they built at home.", "", ""],
     ["ethics", "AI in Science and Research", "AI in protein research, climate modeling, and lab work.", "", ""],
-    ["project", "Upgrade or Start Fresh", "Improve your current project or start a new one.", "", ""]
+    ["project", "Add a Feature", "Write a prompt that adds one new feature to your project.", "", ""]
   ]],
   ["2027-03-29", "", [
     ["learn", "AI, College, and Careers", "How AI affects college applications, majors, and careers.", "", ""],
     ["ethics", "AI and Jobs", "Which jobs are changing and which new ones are appearing.", "", ""],
-    ["project", "Portfolio Page Prompt", "Write a prompt for a page that shows your projects.", "", ""]
+    ["project", "Upgrade or Start Fresh", "Improve your current project or start a new one.", "", ""]
   ]],
   ["2027-04-12", "", [
     ["competition", "Playtest Night", "Members try each other's projects and give feedback.", "", ""],
     ["ethics", "AI and Privacy", "What data AI tools collect and how it is used.", "", ""],
-    ["project", "Playtest Fixes", "Turn feedback from Playtest Night into new prompts.", "", ""]
+    ["project", "Portfolio Page Prompt", "Write a prompt for a page that shows your projects.", "", ""]
   ]],
   ["2027-04-26", "", [
-    NEWS,
     ["learn", "AI for Studying", "How to use AI to study, take notes, and prepare for tests.", "", ""],
     ["ethics", "AI and the Environment", "The energy and water it takes to run AI.", "", ""],
-    ["project", "Add a Feature", "Write a prompt that adds one new feature to your project.", "", ""]
+    ["project", "Playtest Fixes", "Turn feedback from Playtest Night into new prompts.", "", ""]
   ]],
   ["2027-05-10", "", [
     ["learn", "Publish Your Project", "How to put your project online with a shareable link.", "", ""],
     ["ethics", "Should AI Be Regulated?", "Debate on laws and rules for AI.", "", ""],
-    ["project", "Upgrade or Start Fresh", "Improve your current project or start a new one.", "", ""]
+    ["project", "Add a Feature", "Write a prompt that adds one new feature to your project.", "", ""]
   ]],
   ["2027-05-24", "", [
     ["learn", "Demo Day Prep", "Practice a two-minute presentation of your project.", "", ""],
@@ -1105,7 +1103,7 @@ class Component extends DCLogic {
       const past = dt < now;
       const isNext = !past && !nextFound;
       if (isNext) nextFound = true;
-      const blocksRaw = (i >= 2 && i % 2 === 0 && m[1] !== "End of Year Party" ? [NEWS] : []).concat(m[2] || []);
+      const blocksRaw = m[2] || [];
       const hasComp = blocksRaw.some((bk) => bk[0] === "competition" || bk[0] === "presidential");
       const isParty = m[1] === "End of Year Party";
       const dark = i % 2 === 0 || isParty;
@@ -1194,7 +1192,7 @@ class Component extends DCLogic {
     const showFilters = false; // filter chips retired for now — Up next carries the itinerary header
 
     const FILTER_KEYS = ["all", "presidential", "project", "competition"];
-    const FILTER_LABELS = { all: "All 17 meetings", presidential: "Presidential Challenge", project: "Project work", competition: "Competitions" };
+    const FILTER_LABELS = { all: "All 16 meetings", presidential: "Presidential Challenge", project: "Project work", competition: "Competitions" };
     const trackFilters = FILTER_KEYS.map((k) => ({
       key: k,
       label: FILTER_LABELS[k],
