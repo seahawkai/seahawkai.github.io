@@ -452,6 +452,8 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
 .msg.student .msg-avatar{background:var(--teal-500);color:#fff}
 .msg-bubble{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.09);border-radius:16px;padding:13px 16px;font-size:14px;line-height:1.55;color:#EDEFF6}
 .msg.student .msg-bubble{background:rgba(127,203,185,.14);border-color:rgba(127,203,185,.22)}
+.msg.system{align-self:center;max-width:82%}
+.msg.system .msg-bubble{background:rgba(255,255,255,.04);border:1px dashed rgba(255,255,255,.16);color:#AEB4C2;font-size:12.5px;font-style:italic;text-align:center;padding:9px 14px}
 .msg-meta{font-size:10.5px;color:#8892A0;margin-top:5px;display:flex;gap:8px}
 .msg-tag{display:inline-block;font-size:10px;padding:1px 7px;border-radius:999px;background:rgba(226,51,80,.18);color:#F9BAC4;margin-left:6px}
 .point-list{display:flex;flex-direction:column;gap:10px}
@@ -973,6 +975,7 @@ function defaultStore(){
     drillStats:{}, // id -> {attempts, best}
     dojo:{level:1, best:1},
     tournaments:[],
+    lastDebateConfig:null, // the most recent cfgSnapshot, kept for "Use Last Setup"/"Exact Rematch" regardless of history/privacy settings
     settings:{
       theme:'system', reducedMotion:false, fontScale:'md',
       defaultDifficulty:'intermediate', defaultFormat:'freestyle', hintsEnabled:true,
@@ -1039,9 +1042,13 @@ function touchStreak(){
   saveStore();
 }
 function updateSkills(deltaMap){
-  // deltaMap: {skillId: newObservedScore 0-100} — blended as weighted moving average
+  // deltaMap: {skillId: newObservedScore 0-100, or null when that skill genuinely wasn't
+  // evaluated this round (e.g. no cross-examination happened)} — blended as weighted moving
+  // average. A null/undefined entry must be skipped, not treated as an observed 0 — otherwise
+  // a round with no cross-ex would silently drag the long-term cross-ex rating toward zero.
   Object.keys(deltaMap).forEach(function(k){
     if(Store.skills[k]==null) return;
+    if(deltaMap[k]==null) return;
     var observed = clamp(deltaMap[k],0,100);
     Store.skills[k] = Math.round(Store.skills[k]*0.72 + observed*0.28);
   });
@@ -1304,6 +1311,56 @@ var TextToSpeechService = (function(){
 })();
 
 /* ======================================================================
+   CONVERSATIONAL INTENT LAYER
+   Before anything the student types or says is treated as debate content,
+   classify what they're actually doing. Only 'substantive' input is ever
+   scored, stored as a claim, or allowed to advance the round — a request
+   to repeat/clarify, a cry for help, a stray keystroke, or a wish to stop
+   gets a direct, honest response instead of being forced into a rebuttal.
+   This runs as fast local pattern-matching (no AI call, no latency) —
+   the failure modes it targets (a lone character, "bye", "what was my
+   point?") are unambiguous enough not to need one, and keeping it
+   deterministic means it's easy to test and never silently misfires if
+   the AI capability is unavailable.
+   ====================================================================== */
+var IntentService = (function(){
+  var END_RE = /^(?:ok(?:ay)?[, ]*|well[, ]*|so[, ]*|um+[, ]*|alright[, ]*)*\s*(?:bye|goodbye|good ?bye|i'?m done|im done|i am done|i'?m finished|that'?s (?:it|all)(?: for me)?|end (?:the )?debate|i want to (?:stop|end)(?:\s+this)?(?:\s+debate)?|let'?s stop|stop the debate|i quit|i'?m out|can we stop|i don'?t want to continue(?:\s+anymore)?|i'?d like to stop)\s*[.!?]*\s*$/i;
+  var REPEAT_RE = /\b(?:repeat (?:that|it|what i said|my (?:point|argument))|say that again|what was my (?:point|argument)|what did i say|can you repeat)\b/i;
+  var CLARIFY_RE = /\b(?:what do you mean|what does that mean|can you explain|what are you arguing|i don'?t understand|could you clarify|what'?s your (?:point|argument)|explain that)\b/i;
+  var HELP_RE = /\b(?:i don'?t know what to say|give me a hint|i'?m confused|i'?m stuck|help me(?: out)?|what should i say|i need help)\b/i;
+  var META_RE = /^(?:wait|hold on|hang on|one sec(?:ond)?|give me a (?:sec|second|moment)|sorry|oops|that'?s not what i meant|the (?:mic|microphone) (?:messed|screwed)(?: that| it)? up|mic (?:glitch|error|messed up))[.!?,]*$/i;
+  function wc(s){ return ((s||'').trim().match(/\S+/g)||[]).length; }
+  // Intents (except 'empty' and 'accidental', which are about having too little to go on):
+  //   'end'           — the student appears to want to stop the debate
+  //   'repeat'        — asking what they themselves already said
+  //   'clarification' — asking what the OPPONENT meant / is arguing
+  //   'help'          — stuck, asking for a hint
+  //   'meta'          — talking about the conversation itself, not debating
+  //   'substantive'   — an actual debate contribution — the only kind that's scored
+  function classify(raw){
+    var text = (raw||'').trim();
+    if(!text) return 'empty';
+    var words = wc(text);
+    if(END_RE.test(text)) return 'end';
+    if(words<=14){
+      if(REPEAT_RE.test(text)) return 'repeat';
+      if(CLARIFY_RE.test(text)) return 'clarification';
+      if(HELP_RE.test(text)) return 'help';
+    }
+    if(words<=6 && META_RE.test(text)) return 'meta';
+    if(words<=1){
+      // A single "word" that's barely a word at all — a stray keystroke or a speech-recognition
+      // fragment — isn't a debate turn. A real one-word answer ("no", "yes", "agreed") still is;
+      // only bare single letters / punctuation read as an accident.
+      var alpha = text.replace(/[^a-zA-Z]/g,'');
+      if(alpha.length<=1) return 'accidental';
+    }
+    return 'substantive';
+  }
+  return {classify:classify};
+})();
+
+/* ======================================================================
    SPEECH / DELIVERY ANALYSIS
    ====================================================================== */
 function analyzeDelivery(text, elapsedSec){
@@ -1409,7 +1466,9 @@ var AIService = (function(){
   function safetyBlock(){
     return 'IMPORTANT: This is educational role-play on a debate-training platform. Stay strictly focused on the assigned debate topic and argument quality. '+
       'If you reference statistics, studies, or specific sources, clearly frame them as illustrative/typical examples ("researchers commonly estimate...", "a widely cited figure suggests...") rather than inventing a specific fake study name, author, or exact statistic presented as verified real fact. '+
-      'Attack the argument, never the person. Keep the tone rigorous but respectful.';
+      'Attack the argument, never the person. Keep the tone rigorous but respectful. '+
+      'Never repeat a prior turn\'s phrasing, opening line, or central point verbatim or near-verbatim — look at "Your (the opponent\'s) own earlier claims" below and say something NEW: advance to the next-strongest unresolved issue rather than restating one you already made. '+
+      'A real debater doesn\'t treat every single sentence as wrong — when the student makes a genuinely reasonable point, you may explicitly concede it ("I\'ll grant that...") before explaining why it doesn\'t decide the debate; this makes you more credible, not weaker. Vary your sentence openings — don\'t default to the same stock phrase every turn.';
   }
 
   function sideLine(session){
@@ -1495,7 +1554,10 @@ var AIService = (function(){
   }
 
   function condensedTranscript(session, maxChars){
-    var lines = session.transcript.map(function(t){
+    // Meta exchanges (clarification requests, "repeat that", stray fragments, the end-of-debate
+    // moment) are not debate content and are not the opponent's speech either — never show them
+    // to the judge as if they were an argument from either side.
+    var lines = session.transcript.filter(function(t){ return !t.isMeta && t.speaker!=='system'; }).map(function(t){
       var who = t.speaker==='student' ? 'STUDENT' : 'OPPONENT';
       var body = t.noResponse ? '[NO RESPONSE — time expired with nothing said]' : t.text;
       return '['+t.phaseLabel+'] '+who+': '+body;
@@ -1522,7 +1584,8 @@ var AIService = (function(){
     var j = JUDGES.find(function(x){return x.id===session.rules.judge;}) || JUDGES[0];
     var studentTurns = session.transcript.filter(function(t){return t.speaker==='student';});
     var emptyTurns = studentTurns.filter(function(t){return t.noResponse;}).length;
-    var engagementNote = 'STUDENT ENGAGEMENT NOTE: '+studentTurns.length+' student turn(s) total, '+totalWords+' words of actual student content, '+emptyTurns+' turn(s) where time expired with no response at all.';
+    var engagementNote = 'STUDENT ENGAGEMENT NOTE: '+studentTurns.length+' student turn(s) total, '+totalWords+' words of actual student content, '+emptyTurns+' turn(s) where time expired with no response at all.'+
+      (session.meta.endedEarly ? ' The student chose to END THE DEBATE EARLY before the format finished — weigh this: do not score it as if a complete, finished round took place, and say plainly in "reason" that the round ended before it was complete.' : '');
     var prompt = 'You are an impartial debate judge ("'+j.name+'": '+j.desc+') evaluating a completed round on "Counterpoint," a debate-training platform. '+
       'Score the STUDENT\'s performance only (not the AI opponent). Be a fair, rigorous, encouraging coach — specific and actionable, never vague ("your reasoning could be improved" is not allowed; explain exactly what was said, why it was weak, and what would have been stronger). '+
       'ACCURACY IS THE TOP PRIORITY: never invent a "strongest moment," quote, rebuttal, or specific praise that isn\'t actually in the transcript below. If a turn is marked [NO RESPONSE — time expired with nothing said], do not treat it as an argument to analyze — say plainly that nothing was said, and do not award credit (e.g. for "good time management") for time that simply ran out unused. If the student\'s overall input is thin, say so honestly and score it low rather than defaulting to a generous or neutral score.\n\n'+
@@ -1537,7 +1600,7 @@ var AIService = (function(){
       '"whatYouShouldHaveSaid":[{"said":"a short quote or summary of what the student actually said","whyWeak":"...","betterStrategy":"...","example":"a concrete improved example line"}],'+
       '"fallacySummary":[{"type":"...","quote":"...","explanation":"...","repair":"how to fix it"}],'+
       '"evidenceAnalysis":"...","timeManagementNote":"...","whatChangedTheDebate":"..."}\n'+
-      'Scores are 0-100 integers reflecting ONLY what is evidenced in the transcript above. If the format had no cross-examination phase, still estimate crossExamination near organization/logic average rather than 0. Provide exactly 2-3 items in whatYouShouldHaveSaid, focused on the most important missed opportunities.';
+      'Scores are 0-100 integers reflecting ONLY what is evidenced in the transcript above. If no cross-examination actually happened in this transcript, still put some integer in "scores.crossExamination" for schema validity, but it will be IGNORED and overridden by the app whenever no cross-examination occurred — never let a guessed cross-examination number influence your reasoning text, "reason", or verdict. The same goes for evidence: if no evidence was actually offered, say so in evidenceAnalysis rather than praising or critiquing evidence that was never given. Provide exactly 2-3 items in whatYouShouldHaveSaid, focused on the most important missed opportunities.';
     if(session.rules.judge==='panel'){
       prompt = prompt.replace('"judgeVerdicts":[{"judge":"'+j.name+'","winner":"student|ai|draw","reason":"..."}]',
         '"judgeVerdicts":[{"judge":"Debate Coach","winner":"student|ai|draw","reason":"..."},{"judge":"Teacher","winner":"student|ai|draw","reason":"..."},{"judge":"Layperson","winner":"student|ai|draw","reason":"..."}]');
@@ -1549,8 +1612,109 @@ var AIService = (function(){
     return localJudge(session);
   }
 
-  return {opponentTurn:opponentTurn, crossExamQuestion:crossExamQuestion, answerCrossExam:answerCrossExam, judge:judge, condensedTranscript:condensedTranscript, personaBlock:personaBlock, safetyBlock:safetyBlock, sideLine:sideLine, courtroomBlock:courtroomBlock};
+  async function judgeTwoPlayer(session){
+    // Same honesty guard as the single-player judge: don't let the AI invent a confident verdict,
+    // best-argument quotes, or skill scores for a round where almost nothing was actually said by
+    // either side.
+    var p1Words = wordsByPlayer(session,'p1'), p2Words = wordsByPlayer(session,'p2');
+    if(p1Words + p2Words < MIN_TOTAL_WORDS){
+      return localJudgeTwoPlayer(session);
+    }
+    var sample = SampleCap || await SampleCapPromise;
+    var prompt = 'You are an impartial, neutral debate judge evaluating a same-device, two-human debate round inside "Counterpoint," a debate-training platform. '+
+      'There is NO AI debater in this round — both sides were argued by real people. Judge them exactly as fairly against each other as you would two strangers; never favor either name, and never let turn order or verbosity alone decide the winner. '+
+      'ACCURACY IS THE TOP PRIORITY: never invent a quote, argument, or specific praise that isn\'t actually in the transcript below. If a turn is marked [NO RESPONSE — time expired with nothing said], do not treat it as an argument — say plainly nothing was said there. If either side\'s overall input is thin, say so honestly rather than defaulting to a generous score.\n\n'+
+      'FORMAT: '+session.formatObj.name+'. MOTION: "'+session.topic.title+'".\n'+
+      session.p1.name+' argued '+(session.p1.side==='for'?'FOR':'AGAINST')+'. '+session.p2.name+' argued '+(session.p2.side==='for'?'FOR':'AGAINST')+'.\n\n'+
+      'FULL TRANSCRIPT:\n'+condensedTwoPlayerTranscript(session, 9000)+'\n\n'+
+      'Reply with ONLY a JSON object in exactly this shape:\n'+
+      '{"winner":"p1|p2|draw","reason":"1-2 sentences naming specifics from the transcript",'+
+      '"scores":{"p1":{"argument":0,"rebuttal":0,"logic":0,"evidence":0,"persuasion":0,"organization":0},"p2":{"argument":0,"rebuttal":0,"logic":0,"evidence":0,"persuasion":0,"organization":0}},'+
+      '"bestArgumentP1":"...","bestArgumentP2":"...","strongestRebuttal":"a short quote/summary and who said it","unansweredArgument":"a point either side made that the other never responded to, or empty string if none","whereItTurned":"the moment that most decided the round, or empty string if the round was too short to have one"}\n'+
+      'Scores are 0-100 integers reflecting ONLY what is evidenced in the transcript above. Use empty strings for any field that genuinely doesn\'t apply rather than inventing content to fill it.';
+    if(sample){
+      try{ var res = await sample.json(prompt, {modelTier:'complex', cache:false}); res.source='ai'; return res; }
+      catch(e){ noticeOfflineAI(); }
+    } else { noticeOfflineAI(); }
+    return localJudgeTwoPlayer(session);
+  }
+
+  function localJudgeTwoPlayer(session){
+    var p1Words = wordsByPlayer(session,'p1'), p2Words = wordsByPlayer(session,'p2');
+    if(p1Words + p2Words < MIN_TOTAL_WORDS){
+      return {winner:'draw', reason:'Not enough was actually said by either side to judge this round.', scores:null,
+        bestArgumentP1:'', bestArgumentP2:'', strongestRebuttal:'', unansweredArgument:'', whereItTurned:'', insufficientContent:true, source:'local'};
+    }
+    var p1Turns = session.transcript.filter(function(t){return t.playerKey==='p1' && !t.noResponse;});
+    var p2Turns = session.transcript.filter(function(t){return t.playerKey==='p2' && !t.noResponse;});
+    function scoreFor(turns, words){
+      var base = Math.min(82, 46 + Math.round(words/6) + turns.length*3);
+      return {argument:base, rebuttal:base-2, logic:base-1, evidence:Math.max(30,base-10), persuasion:base-3, organization:base-2};
+    }
+    var s1 = scoreFor(p1Turns, p1Words), s2 = scoreFor(p2Turns, p2Words);
+    var avg1 = Math.round((s1.argument+s1.rebuttal+s1.logic+s1.evidence+s1.persuasion+s1.organization)/6);
+    var avg2 = Math.round((s2.argument+s2.rebuttal+s2.logic+s2.evidence+s2.persuasion+s2.organization)/6);
+    var winner = avg1>avg2+3 ? 'p1' : (avg2>avg1+3 ? 'p2' : 'draw');
+    var longest1 = p1Turns.slice().sort(function(a,b){return wordCountOf(b.text)-wordCountOf(a.text);})[0];
+    var longest2 = p2Turns.slice().sort(function(a,b){return wordCountOf(b.text)-wordCountOf(a.text);})[0];
+    return {
+      winner:winner, reason:'Offline estimate based on participation and volume only — '+(winner==='draw'?'both sides engaged about equally.':(winner==='p1'?session.p1.name:session.p2.name)+' engaged more substantively across the round.'),
+      scores:{p1:s1, p2:s2},
+      bestArgumentP1: longest1 ? longest1.text.slice(0,220) : '', bestArgumentP2: longest2 ? longest2.text.slice(0,220) : '',
+      strongestRebuttal:'', unansweredArgument:'', whereItTurned:'', source:'local'
+    };
+  }
+
+  async function practiceReply(topic, history, studentText){
+    // Practice AI is a loose coaching conversation, not a scored debate — never attach a score,
+    // a stat, or a fabricated "strongest moment" to anything said here.
+    var sample = SampleCap || await SampleCapPromise;
+    var topicLine = topic ? ('The student picked a loose focus topic: "'+topic.title+'" — but this is an open coaching conversation, not a formal debate; follow wherever the student actually wants to take it, don\'t force the topic.')
+      : 'No specific topic was chosen — this is a general, open debate-coaching conversation; follow wherever the student wants to take it.';
+    var histLines = history.slice(-10).map(function(m){return (m.speaker==='you'?'STUDENT':'COACH')+': '+m.text;}).join('\n');
+    var prompt = 'You are a friendly, encouraging AI debate coach inside "Counterpoint," having an open, informal practice conversation with a student. '+
+      'This is explicitly NOT a formal, scored debate round — just flexible training talk, closer to a real coaching conversation than a competition. '+safetyBlock()+'\n\n'+
+      topicLine+'\n\nCONVERSATION SO FAR:\n'+(histLines||'(nothing yet)')+'\n\nSTUDENT JUST SAID:\n"'+studentText+'"\n\n'+
+      'Respond as a supportive coach would: ask a probing question, offer one quick concrete tip, gently press on weak reasoning, or suggest a stronger phrasing — whatever most helps the student practice right now. Keep it conversational and short (1-4 sentences). No bullet lists, no numeric scores, no invented statistics or studies.'+
+      '\nReply with ONLY JSON: {"reply":"..."}';
+    if(sample){
+      try{ var res = await sample.json(prompt, {modelTier:'quick', cache:false}); return res.reply; }
+      catch(e){ noticeOfflineAI(); }
+    } else { noticeOfflineAI(); }
+    return localPracticeReply(studentText);
+  }
+  function localPracticeReply(studentText){
+    if(wordCountOf(studentText) < 4){
+      return choice(["Can you say a bit more about that? Give me the full thought.","I want to make sure I follow — what's the core claim there?","Go on — what's the reasoning behind that?"]);
+    }
+    return choice([
+      "That's a reasonable starting point — what's the strongest objection someone could raise against it?",
+      "I like where that's headed. Can you back that up with a concrete example?",
+      "Fair point. How would you respond if someone argued the opposite just as confidently?",
+      "Good instinct. What would it take to convince a skeptical judge this actually matters?",
+      "Solid. Try tightening that into one sentence — what's the single strongest version of that claim?"
+    ]);
+  }
+
+  return {opponentTurn:opponentTurn, crossExamQuestion:crossExamQuestion, answerCrossExam:answerCrossExam, judge:judge, judgeTwoPlayer:judgeTwoPlayer, practiceReply:practiceReply, condensedTranscript:condensedTranscript, personaBlock:personaBlock, safetyBlock:safetyBlock, sideLine:sideLine, courtroomBlock:courtroomBlock};
 })();
+function wordsByPlayer(session, key){
+  return session.transcript.filter(function(t){return t.playerKey===key;}).reduce(function(s,t){return s+wordCountOf(t.text);},0);
+}
+function condensedTwoPlayerTranscript(session, maxChars){
+  var lines = session.transcript.map(function(t){
+    var who = t.playerKey==='p1' ? session.p1.name : session.p2.name;
+    var body = t.noResponse ? '[NO RESPONSE — time expired with nothing said]' : t.text;
+    return '['+t.phaseLabel+'] '+who+': '+body;
+  });
+  var joined = lines.join('\n');
+  if(joined.length > maxChars){
+    var head = lines.slice(0,2).join('\n');
+    var tail = lines.slice(-10).join('\n');
+    joined = head+'\n...[earlier middle rounds omitted for length]...\n'+tail;
+  }
+  return joined;
+}
 
 /* ---- Local (offline) fallback engine — deterministic-ish, context-aware ---- */
 function pickMemoryQuote(memory){
@@ -1589,15 +1753,23 @@ function localOpponentTurn(session, studentText, phase){
       detectedFallacies:[], droppedByStudent:[], strategyNote:'local heuristic move (student passed)', source:'local'
     });
   }
-  var opener = choice(LOCAL_OPENERS[arch.id] || LOCAL_OPENERS.logician);
   var h = localArgumentHeuristics(studentText);
   var quote = pickMemoryQuote(session.memory);
   var points = [];
-  points.push((isCourt?courtroomOpen():'')+opener+' '+counter+'.');
-  if(h.evidenceHits===0){
-    points.push(isCourt ? 'Objection in substance, Your Honor — that claim is asserted without any supporting evidence.' : 'You\'ve offered this without any supporting evidence — why should I accept it on your word alone?');
+  // A well-structured, evidenced point sometimes deserves a real concession rather than reflexive
+  // disagreement — a debater who never concedes anything reads as scripted, not strong.
+  var worthConceding = h.structHits>=2 && h.evidenceHits>=1 && Math.random()<0.35;
+  if(worthConceding){
+    points.push((isCourt?courtroomOpen():'')+choice(["I'll grant that point — it's fair.","That's a reasonable point, and I won't pretend otherwise.","Fair — I'll concede that much."])+' But '+counter.charAt(0).toLowerCase()+counter.slice(1)+'.');
+  } else {
+    var opener = choice(LOCAL_OPENERS[arch.id] || LOCAL_OPENERS.logician);
+    points.push((isCourt?courtroomOpen():'')+opener+' '+counter+'.');
   }
-  if(quote){
+  if(h.evidenceHits===0 && Math.random()<0.75){
+    points.push(isCourt ? 'Objection in substance, Your Honor — that claim is asserted without any supporting evidence.' :
+      choice(["You've offered this without any supporting evidence — why should I accept it on your word alone?","That's asserted, not supported — what's it actually based on?","I'd want something more concrete behind that before I accept it."]));
+  }
+  if(quote && Math.random()<0.6){
     points.push('Earlier '+(isCourt?'opposing counsel':'you')+' said "'+quote.slice(0,70)+(quote.length>70?'…':'')+'" — how does that square with this?');
   }
   points = points.slice(0, phase && phase.type==='closing' ? maxPoints+1 : maxPoints);
@@ -1635,7 +1807,7 @@ function localAnswerCrossExam(session, question){
   return Promise.resolve({answer:answer, wasEvasive:evasive, conceded:[], source:'local'});
 }
 function localJudge(session){
-  var studentTurns = session.transcript.filter(function(t){return t.speaker==='student';});
+  var studentTurns = session.transcript.filter(function(t){return t.speaker==='student' && !t.isMeta;});
   var aiTurns = session.transcript.filter(function(t){return t.speaker==='ai';});
   var substantive = substantiveStudentTurns(session.transcript);
   var totalWords = totalStudentWords(session.transcript);
@@ -1644,7 +1816,7 @@ function localJudge(session){
 
   if(totalWords < MIN_TOTAL_WORDS){
     var lowScores = {argument:14,rebuttal:14,logic:20,evidence:14,persuasion:14,
-      crossExamination: session.crossExam.answers.length ? 18 : 60, organization:14, adaptability:25};
+      crossExamination: session.crossExam.answers.length ? 18 : null, organization:14, adaptability:25};
     var whyLow = studentTurns.length
       ? (emptyTurns ? emptyTurns+' of your '+studentTurns.length+' turn(s) had no response at all, and ' : '')+'what was said was too brief to form a real case'
       : 'no turns were recorded this round';
@@ -1685,7 +1857,7 @@ function localJudge(session){
     logic: clamp(78 - fallacyCount*7, 25, 95),
     evidence: h.evScore,
     persuasion: h.persScore,
-    crossExamination: clamp(55 + (session.crossExam.answers.length*4), 20, 92),
+    crossExamination: session.crossExam.answers.length ? clamp(55 + (session.crossExam.answers.length*4), 20, 92) : null,
     organization: clamp(50 + h.structHits*6, 20, 95),
     adaptability: 58
   };
@@ -1741,6 +1913,16 @@ function createSession(cfg){
     status: 'live',
     usedAI: false
   };
+  // Remembered regardless of the history/privacy settings below — this is just "what did I pick
+  // last time" for the Start Debate screen's Use Last Setup / Exact Rematch shortcuts, not a
+  // debate record.
+  Store.lastDebateConfig = {
+    mode: cfg.mode||'debate', courtFormat: !!cfg.courtFormat, formatId: cfg.formatId, topic: cfg.topic,
+    side: cfg.side, sideWasRandom: !!cfg.sideWasRandom, opponentId: cfg.opponentId, sliderOverrides: cfg.sliderOverrides||{},
+    difficulty: cfg.difficulty, adaptive: !!cfg.adaptive, timerPreset: cfg.timerPreset, judge: cfg.judge,
+    interruptions: cfg.interruptions||'off', prepEnabled: cfg.prepEnabled!==false, learningMode: cfg.learningMode!==false
+  };
+  saveStore();
   return session;
 }
 function currentPhase(session){ return session.phases[session.currentPhaseIndex]; }
@@ -1771,16 +1953,20 @@ async function submitStudentTurn(session, text, elapsedSec){
   var real = text && text.trim();
   var metrics = analyzeDelivery(real||'', elapsedSec||phase.allottedSec||60);
   if(real) extractMemoryFromStudentText(session, text);
+  // Speaking pace only means something when the words were actually spoken — a typed turn's
+  // "elapsed time" measures how long the student spent composing text, not talking, so WPM
+  // computed from it is meaningless and must not be reported as if it were real.
+  var viaMic = (typeof LiveArena!=='undefined' && LiveArena && LiveArena.mode==='mic');
   session.transcript.push({
     round: session.round, phaseKey: phase.key, phaseLabel: phase.label, speaker:'student',
-    text: real||'', ts: Date.now(), metrics: metrics, noResponse: !real
+    text: real||'', ts: Date.now(), metrics: metrics, noResponse: !real, viaMic: viaMic
   });
   return metrics;
 }
 
 async function triggerAiTurn(session, onThinking){
   var phase = currentPhase(session);
-  var lastStudent = session.transcript.filter(function(t){return t.speaker==='student';}).slice(-1)[0];
+  var lastStudent = session.transcript.filter(function(t){return t.speaker==='student' && !t.isMeta;}).slice(-1)[0];
   var studentText = !lastStudent ? '(The student has not spoken yet — open the debate on their behalf by staking out your position.)'
     : (lastStudent.noResponse ? '(The student did not respond — their time expired with nothing said. Do not invent or respond to an argument they never made; briefly note that they passed on this turn, then advance your own case.)' : lastStudent.text);
   if(onThinking) onThinking(true);
@@ -1814,7 +2000,8 @@ async function crossAiAsks(session){
 async function crossStudentAnswers(session, text, elapsedSec){
   var real = text && text.trim();
   var metrics = analyzeDelivery(real||'', elapsedSec||30);
-  session.transcript.push({round:session.round, phaseKey:currentPhase(session).key, phaseLabel:'Cross-Examination', speaker:'student', text:real||'', ts:Date.now(), metrics:metrics, noResponse:!real});
+  var viaMic = (typeof LiveArena!=='undefined' && LiveArena && LiveArena.mode==='mic');
+  session.transcript.push({round:session.round, phaseKey:currentPhase(session).key, phaseLabel:'Cross-Examination', speaker:'student', text:real||'', ts:Date.now(), metrics:metrics, noResponse:!real, viaMic:viaMic});
   if(real) extractMemoryFromStudentText(session, text);
   var evasive = !real || text.trim().split(/\s+/).length < 6 || HEDGE_MARKERS.test(text);
   if(evasive) session.crossExam.evasions++;
@@ -1849,20 +2036,24 @@ var MIN_TURN_WORDS = 4;   // fewer real words than this and a turn doesn't count
 var MIN_TOTAL_WORDS = 12; // below this total across the whole debate, there isn't enough to judge fairly
 function wordCountOf(text){ return ((text||'').trim().match(/\S+/g)||[]).length; }
 function substantiveStudentTurns(transcript){
-  return transcript.filter(function(t){ return t.speaker==='student' && !t.noResponse && wordCountOf(t.text)>=MIN_TURN_WORDS; });
+  return transcript.filter(function(t){ return t.speaker==='student' && !t.isMeta && !t.noResponse && wordCountOf(t.text)>=MIN_TURN_WORDS; });
 }
 function totalStudentWords(transcript){
-  return transcript.filter(function(t){return t.speaker==='student';}).reduce(function(s,t){return s+wordCountOf(t.text);},0);
+  // Meta turns (clarification requests, "e", "bye", etc.) were never debate content —
+  // counting their words toward the total would let an exchange like "what was my point?" /
+  // "e" / "bye" look like enough real material to score, when none of it was an argument.
+  return transcript.filter(function(t){return t.speaker==='student' && !t.isMeta;}).reduce(function(s,t){return s+wordCountOf(t.text);},0);
 }
 function computeLocalScores(session){
-  var studentTurns = session.transcript.filter(function(t){return t.speaker==='student';});
+  var studentTurns = session.transcript.filter(function(t){return t.speaker==='student' && !t.isMeta;});
   var aiTurns = session.transcript.filter(function(t){return t.speaker==='ai';});
   var substantive = substantiveStudentTurns(session.transcript);
   var totalWords = totalStudentWords(session.transcript);
   if(totalWords < MIN_TOTAL_WORDS){
     return {
       argument:14, rebuttal:14, logic:20, evidence:14, persuasion:14,
-      crossExamination: session.crossExam.answers.length ? 18 : 60,
+      // null = genuinely not evaluated (no cross-ex happened), never a guessed number.
+      crossExamination: session.crossExam.answers.length ? 18 : null,
       organization:14, adaptability:25, _h:{structHits:0,evidenceHits:0,hedgeHits:0,argScore:14,evScore:14,persScore:14},
       insufficientContent:true
     };
@@ -1884,15 +2075,15 @@ function computeLocalScores(session){
     logic: clamp(80 - fallacyCount*7, 25, 96),
     evidence: h.evScore,
     persuasion: h.persScore,
-    crossExamination: totalAnswers ? clamp(Math.round(45+(directAnswers/totalAnswers)*50),20,95) : 60,
+    crossExamination: totalAnswers ? clamp(Math.round(45+(directAnswers/totalAnswers)*50),20,95) : null,
     organization: clamp(50 + h.structHits*6, 20, 95),
     adaptability: clamp(55 + (session.memory.concessions.length>0?8:0) + (h.hedgeHits<2?6:0), 20, 92),
     _h:h
   };
 }
 function computeTimeManagementScore(session){
-  var studentTurns = session.transcript.filter(function(t){return t.speaker==='student' && t.metrics;});
-  if(!studentTurns.length) return 60;
+  var studentTurns = session.transcript.filter(function(t){return t.speaker==='student' && !t.isMeta && t.metrics;});
+  if(!studentTurns.length) return null; // no real turns to measure pacing against — not a 60
   var ratios = [];
   var noResponseCount = 0;
   studentTurns.forEach(function(t){
@@ -1903,7 +2094,9 @@ function computeTimeManagementScore(session){
       ratios.push(r);
     }
   });
-  if(!ratios.length && !noResponseCount) return 68;
+  // No timed phase to measure against, and nothing timed out either (e.g. an untimed round) —
+  // there is nothing here to grade as good or bad time management.
+  if(!ratios.length && !noResponseCount) return null;
   // Running out the clock with nothing said is a time-management failure, not efficient pacing —
   // so a turn that timed out blank is scored as lost time, never averaged in as "used the full allotment well."
   var score;
@@ -1917,20 +2110,25 @@ function computeTimeManagementScore(session){
   return Math.round(score);
 }
 function avgDeliveryScore(session){
-  var studentTurns = session.transcript.filter(function(t){return t.speaker==='student' && t.metrics;});
-  if(!studentTurns.length) return 60;
+  var studentTurns = session.transcript.filter(function(t){return t.speaker==='student' && !t.isMeta && t.metrics;});
+  if(!studentTurns.length) return null; // nothing was actually said — not a plausible-looking 60
   var sum = studentTurns.reduce(function(s,t){return s+t.metrics.deliveryScore;},0);
   return Math.round(sum/studentTurns.length);
 }
 function aggregateDelivery(session){
-  var studentTurns = session.transcript.filter(function(t){return t.speaker==='student' && t.metrics;});
+  var studentTurns = session.transcript.filter(function(t){return t.speaker==='student' && !t.isMeta && t.metrics;});
   var wc=0, fc=0, restarts=0, longPauses=0, secs=0;
+  var micWc=0, micSecs=0;
   var fillerMap = {};
   studentTurns.forEach(function(t){
     wc+=t.metrics.wordCount; fc+=t.metrics.fillerCount; restarts+=t.metrics.restarts; longPauses+=t.metrics.longPauses; secs+=t.metrics.elapsedSec;
     (t.metrics.fillerHits||[]).forEach(function(f){ fillerMap[f.word]=(fillerMap[f.word]||0)+f.count; });
+    // Speaking pace (words per minute) is only a real measurement when the words were actually
+    // spoken into the microphone — a typed turn's elapsed time is composing time, not talking
+    // time, and dividing word count by it produces a number that looks real but isn't.
+    if(t.viaMic){ micWc+=t.metrics.wordCount; micSecs+=t.metrics.elapsedSec; }
   });
-  var wpm = secs>0 ? Math.round(wc/(secs/60)) : 0;
+  var wpm = micSecs>0 ? Math.round(micWc/(micSecs/60)) : null;
   return {wordCount:wc, fillerCount:fc, restarts:restarts, longPauses:longPauses, totalSec:secs, wpm:wpm, fillerBreakdown:fillerMap, turns:studentTurns.length};
 }
 
@@ -1938,18 +2136,33 @@ async function finalizeDebate(session, onProgress){
   if(onProgress) onProgress('Consulting the judge…');
   var judgeResult = await AIService.judge(session);
   var local = computeLocalScores(session);
-  var insufficientContent = !!(judgeResult.insufficientContent || local.insufficientContent);
+  var endedEarly = !!session.meta.endedEarly;
+  // Ending on "bye"/"I'm done" partway through is not the same as finishing the format — if
+  // there wasn't much real debate before that happened, don't let what remained in the
+  // transcript be scored as though the round played out normally.
+  var insufficientContent = !!(judgeResult.insufficientContent || local.insufficientContent || (endedEarly && totalStudentWords(session.transcript) < 40));
   var blended = {};
+  // Ground truth about whether cross-examination actually happened comes from the session's own
+  // tracked exchanges, never from what the AI judge guessed — so it always wins, regardless of
+  // what number (if any) came back in judgeResult.scores.crossExamination.
+  var crossApplicable = session.crossExam.answers.length > 0;
   ['argument','rebuttal','logic','evidence','persuasion','crossExamination','organization','adaptability'].forEach(function(k){
-    if(judgeResult.source==='ai' && judgeResult.scores && typeof judgeResult.scores[k]==='number'){
-      blended[k] = Math.round(local[k]*0.3 + judgeResult.scores[k]*0.7);
-    } else { blended[k] = local[k]; }
+    if(k==='crossExamination' && !crossApplicable){ blended[k] = null; return; }
+    var hasAi = judgeResult.source==='ai' && judgeResult.scores && typeof judgeResult.scores[k]==='number';
+    var hasLocal = local[k]!=null;
+    if(hasAi && hasLocal) blended[k] = Math.round(local[k]*0.3 + judgeResult.scores[k]*0.7);
+    else if(hasLocal) blended[k] = local[k];
+    else if(hasAi) blended[k] = judgeResult.scores[k];
+    else blended[k] = null;
   });
   blended.delivery = avgDeliveryScore(session);
   blended.timeManagement = computeTimeManagementScore(session);
 
   var winner = judgeResult.winner || 'draw';
-  var overall = Math.round(SKILLS.reduce(function(s,k){return s+(blended[k.id]||60);},0)/SKILLS.length);
+  // Average only over skills that actually have a measured value — a metric with nothing to
+  // measure (e.g. no cross-examination) must not pull the average toward a filler number.
+  var scored = SKILLS.map(function(k){return blended[k.id];}).filter(function(v){return v!=null;});
+  var overall = scored.length ? Math.round(scored.reduce(function(s,v){return s+v;},0)/scored.length) : 0;
 
   var prevSkills = Object.assign({}, Store.skills);
   // A round with little or no real content is not a genuine skill signal — don't let it drag down
@@ -2013,7 +2226,7 @@ async function finalizeDebate(session, onProgress){
     fallacySummary: judgeResult.fallacySummary||[], evidenceAnalysis: judgeResult.evidenceAnalysis,
     timeManagementNote: judgeResult.timeManagementNote, whatChangedTheDebate: judgeResult.whatChangedTheDebate,
     delivery: delivery, transcript: Store.settings.saveTranscripts ? session.transcript : [],
-    memory: session.memory, crossExam: session.crossExam, xpAwarded: xp, aiSource: judgeResult.source,
+    memory: session.memory, crossExam: session.crossExam, xpAwarded: xp, aiSource: judgeResult.source, endedEarly: endedEarly,
     duration: Math.round((Date.now()-session.meta.startedAt)/1000), date: new Date().toISOString(),
     comeback: comeback, insufficientContent: insufficientContent,
     cfgSnapshot: { mode: session.mode, formatId: session.format, courtFormat: session.mode==='courtroom', topic: session.topic,
@@ -2097,7 +2310,7 @@ function render(){
   renderNav();
   var mount = document.getElementById('app');
   var shell = document.getElementById('shell');
-  var isArena = (Router.view==='live' || Router.view==='reveal');
+  var isArena = (Router.view==='live' || Router.view==='reveal' || Router.view==='twlive');
   shell.classList.toggle('arena-mode', isArena);
   document.getElementById('topbar').style.display = isArena ? 'none' : '';
   mount.className = (Router.view==='dojo') ? 'narrow' : ((Router.view==='topics'||Router.view==='progress'||Router.view==='courtroom'||Router.view==='history')?'wide':'');
@@ -2105,7 +2318,10 @@ function render(){
   mount.innerHTML = '<div class="fade-up" id="view-root"></div>';
   document.getElementById('view-root').innerHTML = fn(Router.params);
   if(VIEWS['_after_'+Router.view]) VIEWS['_after_'+Router.view](Router.params);
-  window.scrollTo(0,0);
+  // Deliberately no window.scrollTo(0,0) here: render() is called after almost every ordinary
+  // selection (a topic, a slider, a toggle), and resetting the scroll position every single time
+  // throws the user back to the top of a long page they were scrolling through. Actual page-to-
+  // page navigation already scrolls to top itself, in navigate(), before it calls render().
 }
 
 /* ---------------- LANDING ---------------- */
@@ -2190,8 +2406,12 @@ VIEWS.dashboard = function(){
     : 'Complete your first debate and I\'ll start tailoring recommendations to exactly what you need to work on.';
   var recDrill = DRILLS.find(function(d){return d.skills.indexOf(weakest.id)>-1;}) || DRILLS[0];
 
-  return '<div class="row between" style="margin-bottom:22px;flex-wrap:wrap;gap:12px"><div><div class="eyebrow">'+greeting+(Store.profile.name?', '+esc(Store.profile.name):'')+'</div><h1 class="page-title">Ready for your next argument?</h1></div>'+
-    '<div class="row gap-2 wrap"><button class="btn btn-secondary" data-action="quick-freestyle">'+Icon('message')+'Freestyle Debate</button><button class="btn btn-secondary" data-action="nav" data-view="practice">'+Icon('brain')+'Quick Practice</button><button class="btn btn-primary" data-action="nav" data-view="create">'+Icon('plus')+'Start a Debate</button></div></div>'+
+  return '<div class="row between" style="margin-bottom:22px;flex-wrap:wrap;gap:16px;align-items:flex-start">'+
+    '<div><div class="eyebrow">'+greeting+(Store.profile.name?', '+esc(Store.profile.name):'')+'</div><h1 class="page-title">Ready for your next argument?</h1>'+
+      /* Demoted: these two are just quick shortcuts now, not co-equal with the primary CTA. */
+      '<div class="row gap-2 wrap" style="margin-top:6px"><button class="btn btn-ghost btn-sm" data-action="quick-freestyle">'+Icon('message','icon-sm')+'Freestyle Debate</button><button class="btn btn-ghost btn-sm" data-action="nav" data-view="practice">'+Icon('brain','icon-sm')+'Quick Practice</button></div></div>'+
+    /* Dominant CTA: the one action this page wants every visitor to take. */
+    '<button class="btn btn-primary btn-lg" style="font-size:16px;padding:16px 30px;box-shadow:0 10px 28px -10px var(--accent)" data-action="nav" data-view="create">'+Icon('plus')+'Start a Debate</button></div>'+
 
     '<div class="grid grid-3" style="margin-bottom:22px">'+statCards+'</div>'+
 
@@ -2233,6 +2453,42 @@ function resetWizard(){
     topicFilter:{category:'all', search:'', maxControversy:4}, courtCase:null
   };
 }
+// Prefills the wizard from a remembered configuration (Use Last Setup), landing on the topic step
+// so the student can keep everything else but pick something new to argue about.
+function applyConfigToWizard(cfg){
+  resetWizard();
+  Wizard.pool = cfg.courtFormat ? 'courtroom' : 'debate';
+  Wizard.formatId = cfg.formatId;
+  Wizard.opponentId = cfg.opponentId;
+  Wizard.sliders = Object.assign({}, cfg.sliderOverrides||{});
+  Wizard.difficulty = cfg.difficulty;
+  Wizard.adaptive = !!cfg.adaptive;
+  Wizard.timerPreset = cfg.timerPreset;
+  Wizard.judge = cfg.judge;
+  Wizard.interruptions = cfg.interruptions||'off';
+  Wizard.prepEnabled = cfg.prepEnabled!==false;
+  Wizard.learningMode = cfg.learningMode!==false;
+  Wizard.step = 2; // topic step — everything else carried over, just pick what to argue this time
+}
+function startExactRematch(){
+  if(!Store.lastDebateConfig) return;
+  ActiveSession = createSession(Store.lastDebateConfig);
+  navigate('prep');
+}
+function confirmStartDebateChoice(){
+  var cfg = Store.lastDebateConfig;
+  if(!cfg){ resetWizard(); navigate('create'); return; }
+  var fmt = (cfg.courtFormat ? COURT_FORMATS : FORMATS).find(function(f){return f.id===cfg.formatId;});
+  var opp = OPPONENTS.find(function(o){return o.id===cfg.opponentId;});
+  openModal('<div class="card-pad">'+
+    '<h3 class="section-title" style="margin-bottom:4px">Start Another Debate</h3>'+
+    '<p class="muted" style="font-size:13px;margin-bottom:16px">Last time: <b>'+esc(fmt?fmt.name:'')+'</b> vs <b>'+esc(opp?opp.name:'')+'</b> on "<b>'+esc(cfg.topic?cfg.topic.title:'')+'</b>."</p>'+
+    '<div class="col gap-2">'+
+      '<button class="card card-hover" style="padding:14px;text-align:left" data-action="start-use-last-setup">'+Icon('repeat','icon-sm')+'<div style="font-weight:650;margin-top:6px;font-size:13.5px">Use Last Setup</div><div class="faint" style="font-size:11.5px">Same format, opponent, difficulty & rules — just pick a new topic.</div></button>'+
+      '<button class="card card-hover" style="padding:14px;text-align:left" data-action="start-exact-rematch">'+Icon('target','icon-sm')+'<div style="font-weight:650;margin-top:6px;font-size:13.5px">Exact Rematch</div><div class="faint" style="font-size:11.5px">Same setup AND the same topic — go again right now.</div></button>'+
+      '<button class="card card-hover" style="padding:14px;text-align:left" data-action="start-customize-new">'+Icon('settings','icon-sm')+'<div style="font-weight:650;margin-top:6px;font-size:13.5px">Customize New Debate</div><div class="faint" style="font-size:11.5px">Go through setup from scratch.</div></button>'+
+    '</div></div>');
+}
 function caseToTopic(c){
   return {id:'case-'+c.id, category:'courtroom', title:c.question, blurb:c.background,
     forFrame:'(Petitioner) '+c.petArg, againstFrame:'(Respondent) '+c.respArg,
@@ -2272,7 +2528,12 @@ function renderWizard(){
   var body = '';
   var fmtPool = w.pool==='courtroom' ? COURT_FORMATS : FORMATS;
   if(w.step===1){
-    body = '<h2 class="section-title">Choose Your Arena</h2><p class="muted" style="margin:4px 0 4px">Every format actually changes the round\'s structure, pacing, and rules — not just the label.</p>'+
+    body = '<h2 class="section-title">Who are you debating?</h2>'+
+      '<div class="row gap-2" style="margin:10px 0 20px">'+
+        '<button class="choice-chip selected" style="padding:10px 18px" disabled>'+Icon('brain','icon-sm')+'AI Opponent</button>'+
+        '<button class="choice-chip" style="padding:10px 18px" data-action="start-two-player">'+Icon('users','icon-sm')+'Another Person — same device</button>'+
+      '</div>'+
+      '<h2 class="section-title">Choose Your Arena</h2><p class="muted" style="margin:4px 0 4px">Every format actually changes the round\'s structure, pacing, and rules — not just the label.</p>'+
       '<div class="opt-grid">'+fmtPool.map(function(f){
         var sel = w.formatId===f.id;
         return '<div class="card card-select fmt-card'+(sel?' selected':'')+'" data-action="wiz-format" data-id="'+f.id+'">'+
@@ -2387,7 +2648,13 @@ VIEWS.reveal = function(){
       '<span class="pill" style="background:rgba(255,255,255,.08);color:#fff;border:none">'+esc(r.format.name)+'</span>'+
       '<span class="pill" style="background:rgba(255,255,255,.08);color:#fff;border:none">vs '+esc(r.opponent.name)+'</span>'+
       diffBadge(r.difficulty)+'</div>':'')+
-    '<button class="btn btn-primary btn-lg pop-in" style="margin-top:22px;animation-delay:.4s" data-action="reveal-continue">Accept the Assignment '+Icon('arrow-right')+'</button>'+
+    '<div class="row gap-2 center wrap pop-in" style="margin-top:22px;animation-delay:.4s">'+
+      '<button class="btn btn-primary btn-lg" data-action="reveal-continue">'+(r.isChallenge?'Start Assignment':'Accept the Assignment')+' '+Icon('arrow-right')+'</button>'+
+    '</div>'+
+    '<div class="row gap-2 center wrap" style="margin-top:12px">'+
+      (r.onBack?'<button class="btn btn-ghost" data-action="reveal-back">'+Icon('chevron-left','icon-sm')+'Go Back</button>':'')+
+      (r.onReroll?'<button class="btn btn-ghost" data-action="reveal-reroll">'+Icon('shuffle','icon-sm')+(r.isChallenge?'Give Me Another Challenge':'Try Another')+'</button>':'')+
+    '</div>'+
     '</div>';
 };
 
@@ -2541,15 +2808,20 @@ function renderTurnBody(t){
   }
   return esc(t.text);
 }
+var META_KIND_LABEL = {repeat:'Repeat request', clarification:'Clarification', help:'Asked for a hint', meta:'Aside', accidental:'Incomplete', end:'Ended debate'};
 function renderTranscript(s){
   if(!s.transcript.length) return '<div class="empty-state" style="color:#8892A0"><p>The floor is yours — state your case when you\'re ready.</p></div>';
   return s.transcript.map(function(t){
+    if(t.speaker==='system'){
+      return '<div class="msg system"><div class="msg-bubble">'+esc(t.text)+'</div></div>';
+    }
     var who = t.speaker==='student' ? 'You' : s.opponent.archetype.name;
     var initials = t.speaker==='student' ? 'YOU' : who.split(' ').map(function(w){return w[0];}).join('').slice(0,2).toUpperCase();
     var fallacyTags = (t.fallacies||[]).map(function(f){return '<span class="msg-tag">'+esc(f.type)+'</span>';}).join('');
+    var metaTag = t.isMeta ? '<span class="msg-tag" style="background:rgba(255,255,255,.12);color:#C7CDD8">'+(META_KIND_LABEL[t.metaKind]||'Not scored')+'</span>' : '';
     var bubbleText = renderTurnBody(t);
     return '<div class="msg '+t.speaker+(t.noResponse?' no-response':'')+'"><div class="msg-avatar">'+initials+'</div><div><div class="msg-bubble">'+bubbleText+'</div>'+
-      '<div class="msg-meta"><span>'+esc(t.phaseLabel)+(t.isQuestion?' · Question':'')+'</span>'+(t.metrics && !t.noResponse?'<span>'+t.metrics.wpm+' wpm</span><span>'+t.metrics.fillerCount+' fillers</span>':'')+fallacyTags+'</div></div></div>';
+      '<div class="msg-meta"><span>'+esc(t.phaseLabel)+(t.isQuestion?' · Question':'')+'</span>'+(t.metrics && !t.noResponse?((t.viaMic?'<span>'+t.metrics.wpm+' wpm</span>':'')+'<span>'+t.metrics.fillerCount+' fillers</span>'):'')+fallacyTags+metaTag+'</div></div></div>';
   }).join('');
 }
 function renderMemoryPanel(s){
@@ -2691,13 +2963,88 @@ async function advanceFlow(){
   if(!more2) return finishToReport();
   return advanceFlow();
 }
+function lastTranscriptBy(session, speaker){
+  for(var i=session.transcript.length-1;i>=0;i--){
+    var t = session.transcript[i];
+    if(t.speaker===speaker && !t.noResponse && !t.isMeta) return t;
+  }
+  return null;
+}
+function pushMetaTurn(session, phase, text, metaKind){
+  session.transcript.push({round:session.round, phaseKey:phase.key, phaseLabel:phase.label, speaker:'student', text:text, ts:Date.now(), isMeta:true, metaKind:metaKind});
+}
+function pushSystemNote(session, phase, text){
+  session.transcript.push({round:session.round, phaseKey:phase.key, phaseLabel:phase.label, speaker:'system', text:text, ts:Date.now(), isMeta:true});
+}
+function confirmEndEarly(){
+  openModal('<div class="card-pad" style="text-align:center"><h3 class="section-title">End the debate here?</h3>'+
+    '<p class="muted" style="margin:8px 0 18px;font-size:13.5px">It sounds like you\'re ready to stop. You\'ll get an honest report based on what actually happened — not a full score if there wasn\'t enough debate to fairly judge it.</p>'+
+    '<div class="row gap-2" style="justify-content:center"><button class="btn btn-secondary" data-action="close-modal">Keep Going</button><button class="btn btn-danger" data-action="live-end-early-confirm">End Debate</button></div></div>');
+}
+function endDebateEarlyFlow(){
+  var s = ActiveSession; if(!s) return;
+  s.status='complete';
+  s.meta.endedEarly = true;
+  closeModal();
+  finishToReport();
+}
+// Handles every non-substantive intent except 'end' (which short-circuits earlier, in
+// submitFromDock, since it needs a confirmation modal rather than an inline reply). Never
+// calls submitStudentTurn — none of this counts as a debate turn, advances the round, or
+// gets written into debate memory as if it were an actual claim.
+async function handleNonSubstantiveInput(session, raw, intent){
+  var phase = currentPhase(session);
+  pushMetaTurn(session, phase, raw, intent);
+  var note = null;
+  if(intent==='repeat'){
+    var lastMine = lastTranscriptBy(session, 'student');
+    note = lastMine
+      ? 'Your main point was: "'+lastMine.text.slice(0,220)+(lastMine.text.length>220?'…':'')+'" Want to continue from there, or add to it?'
+      : 'You haven\'t made your argument yet this turn — go ahead whenever you\'re ready.';
+  } else if(intent==='clarification'){
+    var lastAi = lastTranscriptBy(session, 'ai');
+    note = lastAi
+      ? 'To clarify, my point was: "'+lastAi.text.slice(0,220)+(lastAi.text.length>220?'…':'')+'"'
+      : 'I haven\'t made a specific claim yet for you to ask about — go ahead and make your case, and I\'ll respond to it directly.';
+  } else if(intent==='help'){
+    if(session.rules.learningMode){
+      var hint = session.memory.droppedArguments[0] || (session.studentSide==='for' ? session.topic.forFrame : session.topic.againstFrame);
+      note = 'A place to start: respond directly to my last point, or raise — "'+String(hint||'').slice(0,160)+'" — and explain why it matters.';
+    } else {
+      note = 'Hints are off for this round — give it your best attempt based on what\'s been said so far.';
+    }
+  } else if(intent==='meta'){
+    note = 'No problem — take your time, then go ahead when you\'re ready.';
+  } else { // 'accidental'
+    toast('That looks incomplete. Keep going when you\'re ready.', 'info');
+  }
+  if(note) pushSystemNote(session, phase, note);
+  LiveArena.draft='';
+  refreshArenaDOM();
+}
 async function submitFromDock(text, elapsedOverride){
   var s = ActiveSession;
   if(!text || !text.trim()) return;
+  var raw = text.trim();
   clearInterval(LiveArena.timerHandle);
   var elapsed = elapsedOverride || Math.max(3, Math.round((Date.now()-LiveArena.phaseStartTs)/1000));
-  LiveArena.draft=''; SpeechToTextService.stop(); LiveArena.recording=false;
   var phase = currentPhase(s);
+  var intent = IntentService.classify(raw);
+  if(intent==='end'){
+    SpeechToTextService.stop(); LiveArena.recording=false; LiveArena.draft='';
+    pushMetaTurn(s, phase, raw, 'end');
+    refreshArenaDOM();
+    resetTimerForPhase();
+    confirmEndEarly();
+    return;
+  }
+  if(intent!=='substantive'){
+    SpeechToTextService.stop(); LiveArena.recording=false;
+    await handleNonSubstantiveInput(s, raw, intent);
+    resetTimerForPhase();
+    return;
+  }
+  LiveArena.draft=''; SpeechToTextService.stop(); LiveArena.recording=false;
   if(phase.type==='cross'){
     if(s.crossState.asker==='ai'){
       await crossStudentAnswers(s, text, elapsed);
@@ -2755,6 +3102,12 @@ VIEWS.report = function(params){
   var verdictLabel = r.winner==='student' ? 'You Win' : (r.winner==='ai' ? 'Opponent Wins' : 'Draw');
   var judgeRows = (r.judgeVerdicts||[]).map(function(v){ return '<div class="judge-pill"><b>'+esc(v.judge)+':</b> '+(v.winner==='student'?'FOR YOU':v.winner==='ai'?'AGAINST YOU':'DRAW')+'</div>'; }).join('');
   var scoreRows = SKILLS.map(function(sk){
+    // null = explicitly not evaluated this round (e.g. no cross-examination happened) — show that
+    // honestly instead of either a guessed number or silently substituting the long-term average,
+    // which would make it look like this round measured something it didn't.
+    if(r.scores[sk.id]===null){
+      return '<div class="score-bar-row"><span class="sb-label">'+sk.label+'</span><div class="sb-track" style="background:transparent"></div><span class="sb-num" style="font-size:12px;color:var(--text-faint);font-style:italic">Not evaluated</span><span style="width:44px"></span></div>';
+    }
     var v = r.scores[sk.id]!=null ? r.scores[sk.id] : Store.skills[sk.id];
     var prev = r.prevSkills ? r.prevSkills[sk.id] : v;
     var delta = v - prev;
@@ -2784,7 +3137,7 @@ VIEWS.report = function(params){
         '<div><div class="faint" style="font-size:11px;text-transform:uppercase;color:#9AA3B2">Duration</div><div class="mono" style="font-size:26px;font-weight:700;color:#fff">'+fmtTime(r.duration)+'</div></div>'+
       '</div>'+
     '</div>'+
-    (r.insufficientContent ? '<div class="card card-pad" style="margin-top:16px;border-color:var(--ember-500);background:var(--against-soft)"><b>Not enough was said to score this round normally.</b> Scores below are low because there wasn\'t enough real content to evaluate — that\'s expected, not a bug. Start a new debate and try actually stating your case to get a full, meaningful report.</div>' : '')+
+    (r.endedEarly ? '<div class="card card-pad" style="margin-top:16px;border-color:var(--ember-500);background:var(--against-soft)"><b>Debate Ended Early.</b> '+(r.insufficientContent ? 'There wasn\'t enough substantive debate before it ended to generate a reliable verdict or full performance score — what\'s below reflects only what was actually said.' : 'The round was ended before the format finished. The scores below reflect what was actually said up to that point.')+'</div>' : (r.insufficientContent ? '<div class="card card-pad" style="margin-top:16px;border-color:var(--ember-500);background:var(--against-soft)"><b>Not enough was said to score this round normally.</b> Scores below are low because there wasn\'t enough real content to evaluate — that\'s expected, not a bug. Start a new debate and try actually stating your case to get a full, meaningful report.</div>' : ''))+
     (improveNote ? '<div class="card card-pad" style="margin-top:16px;border-color:var(--teal-500);background:var(--for-soft)"><b>Performance improved '+improveNote.pct+'%</b> — even though the round went to your opponent, '+esc(improveNote.text)+'</div>' : '')+
 
     '<div class="grid" style="grid-template-columns:1fr 1fr;margin-top:22px">'+
@@ -2810,9 +3163,9 @@ VIEWS.report = function(params){
 
     '<div class="card card-pad" style="margin-top:16px"><div class="section-title" style="margin-bottom:12px">Speech & Delivery</div>'+
       '<div class="grid grid-4">'+
-        deliveryStat('Pace', d.wpm+' wpm')+deliveryStat('Filler Words', d.fillerCount)+deliveryStat('Long Pauses', d.longPauses)+deliveryStat('Verbal Restarts', d.restarts)+
+        deliveryStat('Pace', d.wpm!=null ? d.wpm+' wpm' : 'Not measured')+deliveryStat('Filler Words', d.fillerCount)+deliveryStat('Long Pauses', d.longPauses)+deliveryStat('Verbal Restarts', d.restarts)+
       '</div>'+
-      '<p class="faint" style="font-size:11.5px;margin-top:10px">Pace, fillers, and restarts are observable speaking patterns measured from your transcript timing — not a judgment of confidence or emotional state.</p>'+
+      '<p class="faint" style="font-size:11.5px;margin-top:10px">Fillers and restarts are detected from your words either way. Pace (words per minute) is only shown when you actually spoke into the microphone — typing speed isn\'t speaking speed, so a typed round shows "Not measured" instead of a guessed number. None of this is a judgment of confidence or emotional state.</p>'+
     '</div>'+
 
     '<div class="grid grid-2" style="margin-top:16px">'+
@@ -3034,17 +3387,86 @@ VIEWS.judge = function(){
    ====================================================================== */
 VIEWS.practice = function(){
   var dojoPct = clamp(Store.dojo.level*8,0,100);
-  return '<h1 class="page-title">Practice</h1><p class="page-sub" style="margin-bottom:18px">Short, focused reps that target one skill at a time.</p>'+
-    '<div class="card card-pad" style="margin-bottom:20px;background:linear-gradient(135deg,var(--ink-800),var(--ink-950));color:#fff;border:none">'+
-      '<div class="row between" style="flex-wrap:wrap;gap:14px"><div><div class="eyebrow" style="color:#9AA3B2">Endless Mode</div><h2 style="font-size:22px;margin:4px 0 6px">Argument Dojo</h2><p style="color:#C7CDD8;font-size:13px;max-width:420px">Increasingly difficult claims, back to back. See how far you get.</p></div>'+
-      '<div class="dojo-level-badge" style="--p:'+dojoPct+'"><div class="inner"><div style="font-weight:700;font-size:18px">'+Store.dojo.level+'</div><div class="faint" style="font-size:9px">LEVEL</div></div></div></div>'+
-      '<button class="btn btn-primary" style="margin-top:14px" data-action="nav" data-view="dojo">Enter the Dojo '+Icon('arrow-right','icon-sm')+'</button></div>'+
+  return '<h1 class="page-title">Practice</h1><p class="page-sub" style="margin-bottom:18px">Open conversation when you want to think out loud, focused reps when you want to drill one skill.</p>'+
+
+    /* Practice AI — the primary, flexible training conversation. Deliberately the biggest, most
+       prominent card on this page: a loose back-and-forth with the coach, not a timed/scored drill. */
+    '<div class="card card-pad" style="margin-bottom:22px;background:linear-gradient(135deg,var(--ink-800),var(--ink-950));color:#fff;border:none">'+
+      '<div class="row between" style="flex-wrap:wrap;gap:14px"><div style="max-width:460px"><div class="eyebrow" style="color:#9AA3B2">Primary</div><h2 style="font-size:24px;margin:4px 0 6px;font-family:var(--font-display)">Practice AI</h2>'+
+      '<p style="color:#C7CDD8;font-size:13.5px;line-height:1.55">Talk it out. No clock, no score — just a flexible conversation with an AI coach to test ideas, work through a claim, or get unstuck before a real round.</p></div>'+
+      Icon('message','icon-lg')+'</div>'+
+      '<button class="btn btn-primary btn-lg" style="margin-top:16px" data-action="practice-ai-start">Start Talking '+Icon('arrow-right','icon-sm')+'</button></div>'+
+
+    /* Skill Drills — secondary: deliberately smaller headline + tighter card grid than Practice AI above. */
+    '<div class="row between" style="margin-bottom:10px"><span class="section-title" style="font-size:14px;color:var(--text-faint)">Skill Drills</span></div>'+
+    '<div class="card card-pad" style="margin-bottom:14px;padding:16px">'+
+      '<div class="row between" style="flex-wrap:wrap;gap:12px"><div><div class="eyebrow">Endless Mode</div><div style="font-weight:650;font-family:var(--font-display);font-size:15px;margin:2px 0 3px">Argument Dojo</div><p class="faint" style="font-size:12px;max-width:380px">Increasingly difficult claims, back to back. See how far you get.</p></div>'+
+      '<div class="row gap-2" style="align-items:center"><div class="dojo-level-badge" style="--p:'+dojoPct+';transform:scale(.8)"><div class="inner"><div style="font-weight:700;font-size:16px">'+Store.dojo.level+'</div><div class="faint" style="font-size:8px">LEVEL</div></div></div>'+
+      '<button class="btn btn-secondary btn-sm" data-action="nav" data-view="dojo">Enter '+Icon('arrow-right','icon-sm')+'</button></div></div></div>'+
     '<div class="grid grid-3">'+DRILLS.map(function(d){
       return '<div class="card drill-card card-hover" data-action="start-drill" data-id="'+d.id+'"><div class="dc-icon">'+Icon(d.icon)+'</div>'+
         '<div style="font-weight:650;font-family:var(--font-display)">'+d.name+'</div><div class="faint" style="font-size:12px">'+d.tagline+'</div>'+
         '<div class="row between" style="margin-top:6px"><span class="faint" style="font-size:11px">~'+d.minutes+' min</span><span class="pill pill-outline" style="font-size:10px">'+SKILLS.find(function(s){return s.id===d.skills[0];}).label+'</span></div></div>';
     }).join('')+'</div>';
 };
+
+/* ======================================================================
+   PRACTICE AI — a flexible, unscored coaching conversation. Deliberately
+   separate from the single-player debate engine and from the one-shot
+   drills: no timer, no transcript scoring, no fabricated feedback — just
+   turn-by-turn coaching replies, honest about being a casual chat.
+   ====================================================================== */
+var PracticeAI = null;
+function startPracticeAI(){
+  PracticeAI = {topic:null, chipTopics: shuffled(TOPICS).slice(0,3), thinking:false, draft:'',
+    messages:[{speaker:'coach', text:"Hey — let's talk through some arguments. Pick a topic chip below for a focus, or just start typing and we'll go from there."}]};
+  navigate('practiceai');
+}
+function scrollPracticeLog(){
+  var log = document.getElementById('practice-ai-log'); if(log) log.scrollTop = log.scrollHeight;
+}
+async function practiceAiSend(){
+  if(!PracticeAI || PracticeAI.thinking) return;
+  var ta = document.getElementById('practice-ai-input');
+  var text = (ta ? ta.value : '').trim();
+  if(!text) return;
+  stopGenericMic();
+  PracticeAI.messages.push({speaker:'you', text:text});
+  PracticeAI.draft=''; render(); scrollPracticeLog();
+  var intent = IntentService.classify(text);
+  if(intent==='end'){
+    PracticeAI.messages.push({speaker:'coach', text:"Sounds good — nice working through that. Come back to Practice AI anytime you want to think something through out loud."});
+    render(); scrollPracticeLog();
+    return;
+  }
+  PracticeAI.thinking = true; render(); scrollPracticeLog();
+  var reply = await AIService.practiceReply(PracticeAI.topic, PracticeAI.messages.slice(0,-1), text);
+  PracticeAI.thinking = false;
+  PracticeAI.messages.push({speaker:'coach', text:reply});
+  render(); scrollPracticeLog();
+}
+VIEWS.practiceai = function(){
+  if(!PracticeAI) startPracticeAI();
+  var p = PracticeAI;
+  return '<div class="wiz-shell">'+
+    '<div class="row between" style="margin-bottom:10px"><h1 class="page-title" style="margin:0;font-size:22px">Practice AI</h1><button class="btn btn-ghost btn-sm" data-action="nav" data-view="practice">'+Icon('x','icon-sm')+'End Session</button></div>'+
+    (p.topic ? '<div class="pill pill-outline" style="margin-bottom:12px">Focus: '+esc(p.topic.title)+'</div>' :
+      '<div class="row gap-2 wrap" style="margin-bottom:12px">'+p.chipTopics.map(function(t){return '<button class="choice-chip" style="padding:6px 12px;font-size:12px" data-action="practice-ai-topic" data-id="'+t.id+'">'+esc(t.title)+'</button>';}).join('')+
+      '<button class="choice-chip" style="padding:6px 12px;font-size:12px" data-action="practice-ai-shuffle-topics" title="Different topics">'+Icon('shuffle','icon-sm')+'</button></div>')+
+    '<div class="card card-pad" style="max-height:420px;overflow-y:auto;margin-bottom:12px" id="practice-ai-log">'+
+      p.messages.map(function(m){
+        return '<div style="margin-bottom:14px"><div class="faint" style="font-size:10.5px;font-weight:700;text-transform:uppercase;margin-bottom:3px;color:'+(m.speaker==='you'?'var(--accent)':'var(--text-faint)')+'">'+(m.speaker==='you'?'You':'Coach')+'</div><div style="font-size:13.5px;line-height:1.55">'+esc(m.text)+'</div></div>';
+      }).join('')+
+      (p.thinking ? '<div class="row gap-2" style="align-items:center"><div class="speaking-orb active" style="width:26px;height:26px"></div><span class="faint" style="font-size:12px">Coach is thinking…</span></div>' : '')+
+    '</div>'+
+    '<div style="position:relative">'+
+      '<textarea class="textarea" id="practice-ai-input" placeholder="Say what\'s on your mind…" style="min-height:70px;padding-right:44px" '+(p.thinking?'disabled':'')+'></textarea>'+
+      '<div style="position:absolute;top:8px;right:8px">'+micInlineButton('practice-ai-input')+'</div>'+
+    '</div>'+
+    '<button class="btn btn-primary" style="margin-top:10px" '+(p.thinking?'disabled':'')+' data-action="practice-ai-send">Send '+Icon('send','icon-sm')+'</button>'+
+  '</div>';
+};
+VIEWS._after_practiceai = function(){ scrollPracticeLog(); };
 
 var QUIZ_BANKS = {
   fallacy: {skill:'logic', items:[
@@ -3598,7 +4020,7 @@ function startRoulette(controversyOnly){
   RevealData = { side:side, topic:topic, format:format, opponent:opponent, difficulty:difficulty, onContinue:function(){
     var cfg = {mode:'debate', courtFormat:false, formatId:format.id, topic:topic, side:side, sideWasRandom:true, opponentId:opponent.id, difficulty:difficulty, adaptive:false, timerPreset:'competitive', judge:'coach', interruptions:format.allowsInterruptions?'normal':'off', prepEnabled:true, learningMode:true};
     ActiveSession = createSession(cfg); Router.view='prep'; render();
-  }};
+  }, onBack:function(){ RevealData=null; navigate('dashboard'); }, onReroll:function(){ startRoulette(controversyOnly); } };
   Router.view='reveal'; render();
 }
 function startPressureQuick(){
@@ -3609,7 +4031,7 @@ function startPressureQuick(){
   RevealData = { side:side, topic:topic, format:format, opponent:opponent, difficulty:'advanced', onContinue:function(){
     var cfg = {mode:'debate', courtFormat:false, formatId:format.id, topic:topic, side:side, sideWasRandom:true, opponentId:'speeddebater', difficulty:'advanced', adaptive:false, timerPreset:'pressure', judge:'tournament', interruptions:'off', prepEnabled:true, learningMode:false};
     ActiveSession = createSession(cfg); Router.view='prep'; render();
-  }};
+  }, onBack:function(){ RevealData=null; navigate('dashboard'); }, onReroll:function(){ startPressureQuick(); } };
   Router.view='reveal'; render();
 }
 /* ---- Freestyle quick-start: topic (+ optional side) only, everything else defaulted ---- */
@@ -3656,7 +4078,7 @@ function startFreestyleDebate(topic, sidePref){
   }
   if(sidePref==='random'){
     var side = Math.random()<0.5?'for':'against';
-    RevealData = { side:side, topic:topic, onContinue:function(){ go(side, true); } };
+    RevealData = { side:side, topic:topic, onContinue:function(){ go(side, true); }, onBack:function(){ RevealData=null; navigate('dashboard'); } };
     Router.view='reveal'; render();
   } else {
     go(sidePref, false);
@@ -3669,9 +4091,9 @@ function challengeSideFor(topic){
 }
 function performWizardSideReveal(pureRandom){
   var side = pureRandom ? (Math.random()<0.5?'for':'against') : challengeSideFor(Wizard.topic);
-  RevealData = { side:side, topic:Wizard.topic, onContinue:function(){
+  RevealData = { side:side, topic:Wizard.topic, isChallenge:!pureRandom, onContinue:function(){
     Wizard.side = side; Wizard.sideRandom = true; Wizard.step = 4; Router.view='create'; render();
-  }};
+  }, onBack:function(){ RevealData=null; Router.view='create'; render(); }, onReroll:function(){ performWizardSideReveal(pureRandom); } };
   Router.view='reveal'; render();
 }
 
@@ -3814,6 +4236,10 @@ function confirmQuitLive(){
   openModal('<div class="card-pad" style="text-align:center"><h3 class="section-title">Abandon this debate?</h3><p class="muted" style="margin:8px 0 18px;font-size:13.5px">This round won\'t be scored or added to your history.</p>'+
     '<div class="row gap-2" style="justify-content:center"><button class="btn btn-secondary" data-action="close-modal">Stay in the Round</button><button class="btn btn-danger" data-action="live-quit-confirm">Abandon</button></div></div>');
 }
+function confirmTwQuit(){
+  openModal('<div class="card-pad" style="text-align:center"><h3 class="section-title">End this round?</h3><p class="muted" style="margin:8px 0 18px;font-size:13.5px">This will end the two-player round right now — no winner will be judged.</p>'+
+    '<div class="row gap-2" style="justify-content:center"><button class="btn btn-secondary" data-action="close-modal">Keep Going</button><button class="btn btn-danger" data-action="tw-quit-confirm">End Round</button></div></div>');
+}
 function confirmDeleteData(){
   openModal('<div class="card-pad" style="text-align:center"><h3 class="section-title">Delete all local data?</h3><p class="muted" style="margin:8px 0 18px;font-size:13.5px">This clears your profile, history, skills, and achievements from this browser. It cannot be undone.</p>'+
     '<div class="row gap-2" style="justify-content:center"><button class="btn btn-secondary" data-action="close-modal">Cancel</button><button class="btn btn-danger" data-action="setting-delete-confirm">Delete Everything</button></div></div>');
@@ -3838,7 +4264,36 @@ async function handleAction(action, ds, e, el){
       break;
     case 'mobile-nav-go': closeModal(); navigate(ds.view); break;
     case 'toggle-mobile-nav': openMobileNav(); break;
-    case 'new-debate': resetWizard(); navigate('create'); break;
+    case 'new-debate': confirmStartDebateChoice(); break;
+    case 'start-use-last-setup': closeModal(); applyConfigToWizard(Store.lastDebateConfig); navigate('create'); break;
+    case 'start-exact-rematch': closeModal(); startExactRematch(); break;
+    case 'start-customize-new': closeModal(); resetWizard(); navigate('create'); break;
+
+    /* -------- two-player same-device mode -------- */
+    case 'start-two-player': startTwoPlayerSetup(); break;
+    case 'tw-back-to-ai': resetWizard(); navigate('create'); break;
+    case 'tw-p1name': TW.p1Name = el.value; rerenderPreserveFocus(); break;
+    case 'tw-p2name': TW.p2Name = el.value; rerenderPreserveFocus(); break;
+    case 'tw-search': TW.topicFilter.search = el.value; rerenderPreserveFocus(); break;
+    case 'tw-cat': TW.topicFilter.category = el.value; render(); break;
+    case 'tw-controv': TW.topicFilter.maxControversy = parseInt(ds.level,10); render(); break;
+    case 'tw-pick-topic': TW.topic = TOPICS.find(function(x){return x.id===ds.id;}); render(); break;
+    case 'tw-random-topic': TW.topic = choice(TOPICS); render(); break;
+    case 'tw-side': TW.p1Side = ds.side; render(); break;
+    case 'tw-side-random': TW.p1Side = Math.random()<0.5?'for':'against'; render(); break;
+    case 'tw-format': TW.formatId = el.value; break;
+    case 'tw-timer': TW.timerPreset = el.value; break;
+    case 'tw-judge': TW.judge = el.value; break;
+    case 'tw-start': twStart(); break;
+    case 'tw-random-debate': twRandomDebate(); break;
+    case 'tw-pass-ready': twContinueAfterPass(); break;
+    case 'tw-submit': {
+      var twTa = document.getElementById('tw-textarea');
+      twSubmit(twTa ? twTa.value : '');
+      break;
+    }
+    case 'tw-quit': confirmTwQuit(); break;
+    case 'tw-quit-confirm': closeModal(); clearInterval(TWArena&&TWArena.timerHandle); stopGenericMic(); TW=null; TWArena=null; navigate('dashboard'); break;
     case 'close-modal': closeModal(); break;
     case 'close-modal-bg': if(e.target===el) closeModal(); break;
     case 'start-onboarding': Onb={step:1,goals:[],experience:'',practicePref:''}; navigate('onboarding'); break;
@@ -3932,6 +4387,8 @@ async function handleAction(action, ds, e, el){
 
     /* -------- reveal -------- */
     case 'reveal-continue': if(RevealData && RevealData.onContinue){ var cb=RevealData.onContinue; RevealData=null; cb(); } break;
+    case 'reveal-back': if(RevealData && RevealData.onBack){ RevealData.onBack(); } break;
+    case 'reveal-reroll': if(RevealData && RevealData.onReroll){ var rb=RevealData.onReroll; RevealData=null; rb(); } break;
 
     /* -------- prep room -------- */
     case 'prep-add-card': ActiveSession.argumentCards.push({claim:'',reasoning:'',evidence:'',impact:''}); renderPrepPartial(); break;
@@ -3945,6 +4402,7 @@ async function handleAction(action, ds, e, el){
     case 'live-quit-confirm':
       clearInterval(LiveArena.timerHandle); TextToSpeechService.stop(); SpeechToTextService.stop();
       ActiveSession=null; closeModal(); navigate('dashboard'); toast('Debate abandoned.', 'x-circle'); break;
+    case 'live-end-early-confirm': endDebateEarlyFlow(); break;
     case 'dock-mode': LiveArena.mode=ds.mode; renderDock(); break;
     case 'dock-mic-toggle': toggleMic(); break;
     case 'generic-mic-toggle': genericMicToggle(ds.target); break;
@@ -3955,6 +4413,10 @@ async function handleAction(action, ds, e, el){
     case 'report-retry': { var rr=findReport(ds.id); if(rr && rr.cfgSnapshot){ ActiveSession=createSession(rr.cfgSnapshot); Router.view='live'; render(); } break; }
 
     /* -------- practice / drills -------- */
+    case 'practice-ai-start': startPracticeAI(); break;
+    case 'practice-ai-topic': PracticeAI.topic = TOPICS.find(function(t){return t.id===ds.id;}); render(); break;
+    case 'practice-ai-shuffle-topics': PracticeAI.chipTopics = shuffled(TOPICS).slice(0,3); render(); break;
+    case 'practice-ai-send': await practiceAiSend(); break;
     case 'start-drill': {
       var did=ds.id;
       if(isQuizDrill(did)) DrillQuiz={id:did, idx:0, correct:0, answered:false, selected:null, bank:shuffled(QUIZ_BANKS[did].items)};
@@ -4000,7 +4462,7 @@ async function handleAction(action, ds, e, el){
       closeModal(); resetWizard(); Wizard.pool='courtroom'; Wizard.formatId='attorney'; Wizard.courtCase=kc; Wizard.topic=caseToTopic(kc);
       if(ds.side==='random'){
         var rs=Math.random()<0.5?'for':'against';
-        RevealData={side:rs, topic:Wizard.topic, onContinue:function(){ Wizard.side=rs; Wizard.sideRandom=true; Wizard.step=4; Router.view='create'; render(); }};
+        RevealData={side:rs, topic:Wizard.topic, onContinue:function(){ Wizard.side=rs; Wizard.sideRandom=true; Wizard.step=4; Router.view='create'; render(); }, onBack:function(){ RevealData=null; navigate('courtroom'); }};
         Router.view='reveal'; render();
       } else { Wizard.side=ds.side; Wizard.step=4; Router.view='create'; render(); }
       break;
@@ -4076,9 +4538,228 @@ async function handleAction(action, ds, e, el){
 }
 
 /* ======================================================================
+   TWO-PLAYER MODE — same-device pass-and-play debate between two people.
+   The AI never argues here; it only times the round and, once both sides
+   are done, judges the full transcript neutrally. Kept as its own small
+   state machine (TW/TWArena, "tw-*" actions, playerKey instead of speaker)
+   rather than woven into the single-player ActiveSession/advanceFlow
+   engine above, so neither mode can destabilize the other.
+   ====================================================================== */
+var TW = null, TWArena = null;
+var TW_COLOR = {p1:'var(--for-color)', p2:'var(--against-color)'};
+function startTwoPlayerSetup(){
+  TW = { p1Name:'Player 1', p2Name:'Player 2', topic:null, p1Side:null, formatId:'freestyle', timerPreset:'competitive', judge:'coach',
+    topicFilter:{category:'all', search:'', maxControversy:4}, session:null, report:null, judging:false };
+  navigate('twcreate');
+}
+function twRandomDebate(){
+  TW = { p1Name:(TW&&TW.p1Name)||'Player 1', p2Name:(TW&&TW.p2Name)||'Player 2', topic:choice(TOPICS), p1Side: Math.random()<0.5?'for':'against',
+    formatId:'freestyle', timerPreset:'competitive', judge:'coach', topicFilter:{category:'all', search:'', maxControversy:4}, session:null, report:null, judging:false };
+  twStart();
+}
+function twPlayerName(key){ return key==='p1' ? TW.session.p1.name : TW.session.p2.name; }
+function twCurrentPhase(){ return TW.session.phases[TW.session.currentPhaseIndex]; }
+function twStart(){
+  if(!TW || !TW.topic || !TW.p1Side) return;
+  var fmt = FORMATS.find(function(f){return f.id===TW.formatId;});
+  var phases = fmt.phases.map(function(p){
+    return Object.assign({}, p, {allottedSec: resolveSeconds(p.sec, TW.timerPreset), playerKey: p.speaker==='student' ? 'p1' : 'p2'});
+  });
+  TW.session = {
+    id: uid(), createdAt: new Date().toISOString(), mode:'twoplayer',
+    formatObj: fmt, format: fmt.id, topic: TW.topic,
+    p1: {name: (TW.p1Name||'').trim()||'Player 1', side: TW.p1Side},
+    p2: {name: (TW.p2Name||'').trim()||'Player 2', side: TW.p1Side==='for'?'against':'for'},
+    phases: phases, currentPhaseIndex:0, round:1, transcript:[],
+    rules: {timerPreset:TW.timerPreset, judge:TW.judge}, meta:{startedAt:Date.now()}, status:'live'
+  };
+  TWArena = {passScreen:true, draft:'', secondsLeft:0, secondsTotal:0, timerHandle:null, phaseStartTs:0};
+  navigate('twlive');
+}
+function twPaintTimer(){
+  var mount = document.getElementById('tw-timer-mount'); if(!mount) return;
+  if(!TWArena.secondsTotal){ mount.innerHTML = '<div class="pill" style="background:rgba(255,255,255,.08);color:#fff;border:none">'+Icon('clock','icon-sm')+' Untimed</div>'; return; }
+  var pct = 100*TWArena.secondsLeft/TWArena.secondsTotal;
+  var state = TWArena.secondsLeft<=10?'crit':(TWArena.secondsLeft<=Math.max(20,TWArena.secondsTotal*0.25)?'warn':'');
+  mount.innerHTML = timerRingSVG(pct, fmtTime(TWArena.secondsLeft), null, 58, state);
+}
+function twResetTimer(){
+  var phase = twCurrentPhase();
+  clearInterval(TWArena.timerHandle);
+  TWArena.phaseStartTs = Date.now();
+  TWArena.secondsTotal = phase.allottedSec; TWArena.secondsLeft = phase.allottedSec;
+  twPaintTimer();
+  if(phase.allottedSec){
+    TWArena.timerHandle = setInterval(function(){
+      TWArena.secondsLeft--;
+      if(TWArena.secondsLeft===10) beep(880,140);
+      if(TWArena.secondsLeft<=0){ clearInterval(TWArena.timerHandle); beep(440,300); toast('Time\'s up.','clock'); twSubmit(''); return; }
+      twPaintTimer();
+    },1000);
+  }
+}
+function twContinueAfterPass(){
+  TWArena.passScreen = false;
+  stopGenericMic();
+  render();
+  twResetTimer();
+}
+function twSubmit(text){
+  var s = TW.session;
+  var phase = twCurrentPhase();
+  clearInterval(TWArena.timerHandle);
+  var elapsed = Math.max(3, Math.round((Date.now()-TWArena.phaseStartTs)/1000));
+  var real = text && text.trim();
+  var intent = IntentService.classify(real||'');
+  // Same honesty rule as the single-player engine: a stray fragment or a request to repeat/
+  // clarify isn't a debate turn either, even between two humans — don't log it as one.
+  if(real && intent!=='substantive' && intent!=='empty'){
+    toast(intent==='accidental' ? 'That looks incomplete — try again.' : 'That wasn\'t logged as your turn — go ahead and make your actual case.', 'info');
+    stopGenericMic(); twResetTimer();
+    return;
+  }
+  var viaMic = GenericMic.active && GenericMic.targetId==='tw-textarea';
+  var metrics = analyzeDelivery(real||'', elapsed||phase.allottedSec||60);
+  stopGenericMic(); TWArena.draft='';
+  s.transcript.push({round:s.round, phaseKey:phase.key, phaseLabel:phase.label, playerKey:phase.playerKey, text:real||'', ts:Date.now(), metrics:metrics, noResponse:!real, viaMic:viaMic});
+  var more;
+  if(s.currentPhaseIndex >= s.phases.length-1){ s.status='complete'; more=false; } else { s.currentPhaseIndex++; s.round++; more=true; }
+  if(!more){ twFinish(); return; }
+  TWArena.passScreen = true;
+  render();
+}
+async function twFinish(){
+  TW.judging = true; render();
+  var result = await AIService.judgeTwoPlayer(TW.session);
+  TW.report = buildTwoPlayerReport(TW.session, result);
+  TW.judging = false;
+  navigate('twreport');
+}
+function aggregateDeliveryGeneric(session, key){
+  var turns = session.transcript.filter(function(t){return t.playerKey===key && t.metrics;});
+  var wc=0, fc=0, micWc=0, micSecs=0;
+  turns.forEach(function(t){ wc+=t.metrics.wordCount; fc+=t.metrics.fillerCount; if(t.viaMic){ micWc+=t.metrics.wordCount; micSecs+=t.metrics.elapsedSec; } });
+  return {wordCount:wc, fillerCount:fc, wpm: micSecs>0 ? Math.round(micWc/(micSecs/60)) : null, turns:turns.length};
+}
+function buildTwoPlayerReport(session, result){
+  return {
+    id: session.id, createdAt: session.createdAt, mode:'twoplayer', topic: session.topic.title, formatName: session.formatObj.name,
+    p1: session.p1, p2: session.p2, winner: result.winner||'draw', reason: result.reason||'',
+    scores: result.scores||{p1:null,p2:null}, bestArgumentP1: result.bestArgumentP1||'', bestArgumentP2: result.bestArgumentP2||'',
+    strongestRebuttal: result.strongestRebuttal||'', unansweredArgument: result.unansweredArgument||'', whereItTurned: result.whereItTurned||'',
+    insufficientContent: !!result.insufficientContent, duration: Math.round((Date.now()-session.meta.startedAt)/1000),
+    p1Delivery: aggregateDeliveryGeneric(session,'p1'), p2Delivery: aggregateDeliveryGeneric(session,'p2'),
+    transcript: session.transcript, date: new Date().toISOString()
+  };
+}
+function renderTwTranscript(s){
+  if(!s.transcript.length) return '<p class="faint" style="font-size:12.5px">Nothing said yet.</p>';
+  return s.transcript.map(function(t){
+    var name = t.playerKey==='p1' ? s.p1.name : s.p2.name;
+    var color = TW_COLOR[t.playerKey];
+    return '<div class="card" style="padding:10px 12px;margin-bottom:8px;border-left:3px solid '+color+'"><div class="faint" style="font-size:11px;font-weight:700;text-transform:uppercase">'+esc(name)+' · '+esc(t.phaseLabel)+'</div><div style="font-size:13.5px;margin-top:4px'+(t.noResponse?';opacity:.65;font-style:italic':'')+'">'+(t.noResponse?'No response — time expired.':esc(t.text))+'</div></div>';
+  }).join('');
+}
+VIEWS.twcreate = function(){
+  if(!TW){ Router.view='dashboard'; return VIEWS.dashboard(); }
+  var t = TW;
+  var filtered = TOPICS.filter(function(x){return topicMatches(x, t.topicFilter);});
+  return '<div class="wiz-shell">'+
+    '<div class="row between" style="margin-bottom:14px"><h1 class="page-title" style="margin:0">Two Players — Same Device</h1><button class="btn btn-ghost btn-sm" data-action="tw-back-to-ai">'+Icon('brain','icon-sm')+'Switch to AI Opponent</button></div>'+
+    '<div class="card card-pad">'+
+      '<div class="grid grid-2" style="margin-bottom:18px">'+
+        '<div class="field"><label>Player 1 Name</label><input class="input" value="'+esc(t.p1Name)+'" data-action="tw-p1name"></div>'+
+        '<div class="field"><label>Player 2 Name</label><input class="input" value="'+esc(t.p2Name)+'" data-action="tw-p2name"></div>'+
+      '</div>'+
+      '<button class="btn btn-secondary" style="margin-bottom:14px" data-action="tw-random-debate">'+Icon('dice','icon-sm')+'Random Debate (topic, side & format)</button>'+
+      '<div class="section-title" style="margin:10px 0 8px;font-size:15px">Topic</div>'+
+      renderTopicFilterBar(t.topicFilter,'tw')+
+      '<div class="row gap-2" style="margin:10px 0"><button class="btn btn-secondary btn-sm" data-action="tw-random-topic">'+Icon('shuffle','icon-sm')+'Random Topic</button></div>'+
+      '<div class="opt-grid" style="max-height:320px;overflow-y:auto;padding-right:4px">'+
+        (filtered.length ? filtered.map(function(x){return topicCardHTML(x, t.topic&&t.topic.id===x.id, 'tw-pick-topic');}).join('') : '<div class="empty-state" style="grid-column:1/-1">'+Icon('search','icon-lg')+'<p>No topics match those filters.</p></div>')+
+      '</div>'+
+      (t.topic ?
+      ('<div class="section-title" style="margin:18px 0 8px;font-size:15px">Side Assignment</div>'+
+      '<div class="row gap-2 wrap">'+
+        '<button class="choice-chip'+(t.p1Side==='for'?' selected':'')+'" data-action="tw-side" data-side="for">'+esc(t.p1Name)+' FOR / '+esc(t.p2Name)+' AGAINST</button>'+
+        '<button class="choice-chip'+(t.p1Side==='against'?' selected':'')+'" data-action="tw-side" data-side="against">'+esc(t.p1Name)+' AGAINST / '+esc(t.p2Name)+' FOR</button>'+
+        '<button class="choice-chip" data-action="tw-side-random">'+Icon('shuffle','icon-sm')+'Randomize Sides</button>'+
+      '</div>') : '')+
+      '<div class="section-title" style="margin:18px 0 8px;font-size:15px">Format</div>'+
+      '<select class="select" data-action="tw-format">'+FORMATS.map(function(f){return '<option value="'+f.id+'"'+(t.formatId===f.id?' selected':'')+'>'+f.name+'</option>';}).join('')+'</select>'+
+      '<div class="grid grid-2" style="margin-top:14px">'+
+        '<div class="field"><label>Pacing</label><select class="select" data-action="tw-timer">'+TIMER_PRESETS.map(function(p){return '<option value="'+p.id+'"'+(t.timerPreset===p.id?' selected':'')+'>'+p.name+'</option>';}).join('')+'</select></div>'+
+        '<div class="field"><label>Judge</label><select class="select" data-action="tw-judge">'+JUDGES.map(function(j){return '<option value="'+j.id+'"'+(t.judge===j.id?' selected':'')+'>'+j.name+'</option>';}).join('')+'</select></div>'+
+      '</div>'+
+      '<button class="btn btn-primary btn-lg" style="margin-top:22px" '+(t.topic&&t.p1Side?'':'disabled')+' data-action="tw-start">Start Debate '+Icon('arrow-right')+'</button>'+
+    '</div></div>';
+};
+VIEWS.twlive = function(){
+  if(!TW || !TW.session){ Router.view='dashboard'; return VIEWS.dashboard(); }
+  if(TW.judging) return '<div class="empty-state" style="color:#E6E9F4"><div class="speaking-orb active" style="margin-bottom:14px"></div><p>The judge is reviewing both sides…</p></div>';
+  var s = TW.session;
+  if(s.status==='complete') return '<div class="empty-state"><p>Round complete.</p></div>';
+  var phase = twCurrentPhase();
+  var key = phase.playerKey;
+  var name = twPlayerName(key);
+  if(TWArena.passScreen){
+    return '<div class="reveal-screen">'+
+      '<div class="eyebrow" style="color:#9AA3B2">Pass the device to</div>'+
+      '<div class="fade-up" style="font-family:var(--font-display);font-size:34px;font-weight:700;color:'+TW_COLOR[key]+'">'+esc(name)+'</div>'+
+      '<p class="muted" style="margin-top:6px;color:#C7CDD8">'+esc(phase.label)+' · '+(phase.allottedSec?fmtTime(phase.allottedSec)+' on the clock':'Untimed')+'</p>'+
+      '<button class="btn btn-primary btn-lg" style="margin-top:22px" data-action="tw-pass-ready">'+esc(name)+', I\'m Ready '+Icon('arrow-right')+'</button>'+
+      '<button class="btn btn-ghost" style="margin-top:10px" data-action="tw-quit">End Round Early</button>'+
+    '</div>';
+  }
+  return '<div class="wiz-shell">'+
+    '<div class="row between" style="margin-bottom:10px"><span class="pill" style="background:'+TW_COLOR[key]+';color:#fff;border:none">'+esc(name)+' — Your Turn</span><span class="faint">'+esc(phase.label)+'</span></div>'+
+    '<div id="tw-timer-mount" style="margin:10px 0"></div>'+
+    '<div style="position:relative">'+
+      '<textarea class="textarea" id="tw-textarea" placeholder="Make your case…" style="min-height:140px;padding-right:44px">'+esc(TWArena.draft||'')+'</textarea>'+
+      '<div style="position:absolute;top:8px;right:8px">'+micInlineButton('tw-textarea')+'</div>'+
+    '</div>'+
+    '<div class="row between" style="margin-top:12px">'+
+      '<button class="btn btn-ghost" data-action="tw-quit">End Round Early</button>'+
+      '<button class="btn btn-primary" data-action="tw-submit">Submit '+Icon('send','icon-sm')+'</button>'+
+    '</div>'+
+    '<div class="section-title" style="margin:22px 0 10px;font-size:15px">Transcript</div>'+
+    '<div id="tw-transcript">'+renderTwTranscript(s)+'</div>'+
+  '</div>';
+};
+VIEWS.twreport = function(){
+  var r = TW && TW.report;
+  if(!r) return '<div class="empty-state"><p>No two-player report yet.</p><button class="btn btn-primary" data-action="nav" data-view="dashboard" style="margin-top:10px">Back to Dashboard</button></div>';
+  var verdictLabel = r.winner==='p1' ? r.p1.name+' Wins' : (r.winner==='p2' ? r.p2.name+' Wins' : 'Draw');
+  var skillKeys = [['argument','Argument'],['rebuttal','Rebuttal'],['logic','Logic'],['evidence','Evidence'],['persuasion','Persuasion'],['organization','Organization']];
+  var skillRows = (!r.scores || !r.scores.p1 || !r.scores.p2) ? '<p class="faint" style="font-size:13px">Not enough was said on either side to score skills for this round.</p>' :
+    '<table style="width:100%;border-collapse:collapse;font-size:13.5px"><tr><th style="text-align:left;padding:6px 0"></th><th style="text-align:right;padding:6px 0">'+esc(r.p1.name)+'</th><th style="text-align:right;padding:6px 0">'+esc(r.p2.name)+'</th></tr>'+
+    skillKeys.map(function(k){
+      var a=r.scores.p1[k[0]], b=r.scores.p2[k[0]];
+      return '<tr><td style="padding:6px 0;border-top:1px solid var(--border-soft)">'+k[1]+'</td><td class="tabular" style="text-align:right;border-top:1px solid var(--border-soft)">'+(a!=null?a:'—')+'</td><td class="tabular" style="text-align:right;border-top:1px solid var(--border-soft)">'+(b!=null?b:'—')+'</td></tr>';
+    }).join('')+'</table>';
+  return '<div class="verdict-hero fade-up">'+
+      '<div class="v-label">Verdict</div><div class="v-result">'+esc(verdictLabel)+'</div>'+
+      '<p style="color:#C7CDD8;font-size:13.5px;max-width:560px;margin:8px auto 0">'+esc(r.reason||'')+'</p>'+
+    '</div>'+
+    (r.insufficientContent ? '<div class="card card-pad" style="margin-top:16px;border-color:var(--ember-500);background:var(--against-soft)"><b>Not enough was said on either side to score this round normally.</b></div>' : '')+
+    '<div class="card card-pad" style="margin-top:16px"><div class="section-title" style="margin-bottom:10px">Skill Comparison</div>'+skillRows+'</div>'+
+    '<div class="grid grid-2" style="margin-top:16px">'+
+      reportMiniCard(esc(r.p1.name)+'’s Best Argument','star',r.bestArgumentP1)+
+      reportMiniCard(esc(r.p2.name)+'’s Best Argument','star',r.bestArgumentP2)+
+      reportMiniCard('Strongest Rebuttal','zap',r.strongestRebuttal)+
+      reportMiniCard('Unanswered Argument','search',r.unansweredArgument)+
+      reportMiniCard('Where the Debate Turned','sparkles',r.whereItTurned)+
+    '</div>'+
+    '<div class="row gap-2 wrap" style="margin-top:24px;justify-content:center">'+
+      '<button class="btn btn-primary" data-action="start-two-player">'+Icon('plus','icon-sm')+'New Two-Player Debate</button>'+
+      '<button class="btn btn-ghost" data-action="nav" data-view="dashboard">Back to Dashboard</button>'+
+    '</div>';
+};
+
+/* ======================================================================
    EVENT WIRING + BOOT
    ====================================================================== */
-var LIVE_TEXT_ACTIONS = {'wt-search':1,'tp-search':1,'hist-search':1,'profile-name':1};
+var LIVE_TEXT_ACTIONS = {'wt-search':1,'tp-search':1,'hist-search':1,'profile-name':1,'tw-p1name':1,'tw-p2name':1,'tw-search':1};
 var DRAG_ACTIONS = {'wiz-slider':1,'wiz-ai-speed':1,'setting-ai-speed':1};
 function initEventWiring(){
   document.body.addEventListener('click', function(e){
